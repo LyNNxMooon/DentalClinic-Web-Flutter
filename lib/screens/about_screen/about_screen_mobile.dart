@@ -1,6 +1,6 @@
 import 'package:dental_clinic/constants/colors.dart';
-import 'package:dental_clinic/screens/about_screen/about_screen.dart';
 import 'package:dental_clinic/screens/contact_screen/contact_screen.dart';
+import 'package:dental_clinic/screens/home_screen/home_screen.dart';
 
 import 'package:dental_clinic/widgets/navigation_bar_mobile.dart';
 import 'package:flutter/material.dart';
@@ -21,9 +21,9 @@ class _MobileAboutScreenState extends State<MobileAboutScreen> {
       endDrawer: const Drawer(
           backgroundColor: kPrimaryColor,
           child: CustomNavigationDrawer(
-            title1: "About",
+            title1: "Home",
             title2: "Contact Us",
-            widget1: AboutScreen(),
+            widget1: HomeScreen(),
             widget2: ContactScreen(),
           )),
       body: Padding(

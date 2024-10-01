@@ -38,10 +38,28 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
               const SizedBox(
                 height: 40,
               ),
-              const Text(
-                textAlign: TextAlign.start,
-                "Available Doctors",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    textAlign: TextAlign.start,
+                    "Available Doctors",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                          color: kSecondaryColor,
+                          borderRadius: BorderRadius.circular(6)),
+                      child: const Center(
+                        child: Icon(Icons.add),
+                      ),
+                    ),
+                  )
+                ],
               ),
               const SizedBox(
                 height: 30,
@@ -98,31 +116,47 @@ Widget doctorCard(BuildContext context) {
         const SizedBox(
           height: 15,
         ),
-        const Text(
-          "Doctor's Name",
-          style: TextStyle(fontSize: 15),
-        ),
+        RichText(
+            text: const TextSpan(children: [
+          TextSpan(text: "Name : ", style: TextStyle(fontSize: 14)),
+          TextSpan(text: "John", style: TextStyle(fontSize: 14)),
+        ])),
         const SizedBox(
           height: 5,
         ),
-        const Text(
-          "Specialist",
-          style: TextStyle(fontSize: 12, color: kThirdColor),
-        ),
+        RichText(
+            text: const TextSpan(children: [
+          TextSpan(
+              text: "Specialist : ",
+              style: TextStyle(fontSize: 12, color: kThirdColor)),
+          TextSpan(
+              text: "General",
+              style: TextStyle(fontSize: 12, color: kThirdColor)),
+        ])),
         const SizedBox(
           height: 5,
         ),
-        const Text(
-          "Experience",
-          style: TextStyle(fontSize: 12, color: kThirdColor),
-        ),
+        RichText(
+            text: const TextSpan(children: [
+          TextSpan(
+              text: "Experience : ",
+              style: TextStyle(fontSize: 12, color: kThirdColor)),
+          TextSpan(
+              text: "3 years",
+              style: TextStyle(fontSize: 12, color: kThirdColor)),
+        ])),
         const SizedBox(
           height: 5,
         ),
-        const Text(
-          "Day Off",
-          style: TextStyle(fontSize: 12, color: kThirdColor),
-        ),
+        RichText(
+            text: const TextSpan(children: [
+          TextSpan(
+              text: "DayOff : ",
+              style: TextStyle(fontSize: 12, color: kThirdColor)),
+          TextSpan(
+              text: "Sat/Sun",
+              style: TextStyle(fontSize: 12, color: kThirdColor)),
+        ])),
       ],
     ),
   );

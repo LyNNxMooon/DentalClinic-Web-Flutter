@@ -24,9 +24,27 @@ class DesktopHomeScreen extends StatelessWidget {
               const SizedBox(
                 height: 60,
               ),
-              const Text(
-                "Available Doctors",
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Available Doctors",
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      width: 80,
+                      height: 40,
+                      decoration: BoxDecoration(
+                          color: kSecondaryColor,
+                          borderRadius: BorderRadius.circular(6)),
+                      child: const Center(
+                        child: Icon(Icons.add),
+                      ),
+                    ),
+                  )
+                ],
               ),
               const SizedBox(
                 height: 40,
@@ -82,31 +100,47 @@ Widget doctorCard(BuildContext context) {
         const SizedBox(
           height: 35,
         ),
-        const Text(
-          "Doctor's Name",
-          style: TextStyle(fontSize: 18),
-        ),
+        RichText(
+            text: const TextSpan(children: [
+          TextSpan(text: "Name : ", style: TextStyle(fontSize: 18)),
+          TextSpan(text: "John", style: TextStyle(fontSize: 18)),
+        ])),
         const SizedBox(
           height: 10,
         ),
-        const Text(
-          "Specialist",
-          style: TextStyle(fontSize: 14, color: kThirdColor),
-        ),
+        RichText(
+            text: const TextSpan(children: [
+          TextSpan(
+              text: "Specialist : ",
+              style: TextStyle(fontSize: 14, color: kThirdColor)),
+          TextSpan(
+              text: "General",
+              style: TextStyle(fontSize: 14, color: kThirdColor)),
+        ])),
         const SizedBox(
           height: 10,
         ),
-        const Text(
-          "Experience",
-          style: TextStyle(fontSize: 14, color: kThirdColor),
-        ),
+        RichText(
+            text: const TextSpan(children: [
+          TextSpan(
+              text: "Experience : ",
+              style: TextStyle(fontSize: 14, color: kThirdColor)),
+          TextSpan(
+              text: "3 years",
+              style: TextStyle(fontSize: 14, color: kThirdColor)),
+        ])),
         const SizedBox(
           height: 10,
         ),
-        const Text(
-          "Day Off",
-          style: TextStyle(fontSize: 14, color: kThirdColor),
-        ),
+        RichText(
+            text: const TextSpan(children: [
+          TextSpan(
+              text: "DayOff : ",
+              style: TextStyle(fontSize: 14, color: kThirdColor)),
+          TextSpan(
+              text: "Sat/Sun",
+              style: TextStyle(fontSize: 14, color: kThirdColor)),
+        ])),
       ],
     ),
   );
