@@ -1,5 +1,6 @@
 import 'package:dental_clinic/constants/colors.dart';
-import 'package:dental_clinic/constants/text.dart';
+import 'package:dental_clinic/widgets/logo.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,10 +22,7 @@ class _MobileNavigationBarState extends State<MobileNavigationBar> {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
-          "Dental Clinic",
-          style: mobileTitleStyle,
-        ),
+        const AppLogo(),
         IconButton(
             onPressed: () => widget.scaffoldKey.currentState!.openEndDrawer(),
             icon: const Icon(Icons.menu))
@@ -88,7 +86,7 @@ class CustomNavigationDrawer extends StatelessWidget {
           color: kSecondaryColor,
           child: const Center(
             child: Text(
-              "Find Out More!",
+              "Dental Clinic",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),

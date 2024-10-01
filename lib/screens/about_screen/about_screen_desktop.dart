@@ -21,7 +21,7 @@ class DesktopAboutScreen extends StatelessWidget {
               widget2: ContactScreen(),
             ),
             SizedBox(
-              height: 70,
+              height: 60,
             ),
             Text(
               "About Us!",

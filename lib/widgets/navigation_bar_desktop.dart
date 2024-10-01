@@ -1,4 +1,5 @@
 import 'package:dental_clinic/constants/text.dart';
+import 'package:dental_clinic/widgets/logo.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,9 +22,17 @@ class DesktopNavigationBar extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
-          "Dental Clinic",
-          style: desktopTitleStyle,
+        const Row(
+          children: [
+            AppLogo(),
+            SizedBox(
+              width: 20,
+            ),
+            Text(
+              "Dental Clinic",
+              style: desktopTitleStyle,
+            ),
+          ],
         ),
         Row(
           children: [
