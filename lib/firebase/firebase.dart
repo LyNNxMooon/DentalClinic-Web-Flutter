@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -28,12 +28,12 @@ class FirebaseServices {
   static final _firebaseStorage = FirebaseStorage.instance;
 
   static Future<String> uploadToFirebaseStorage(
-      File file, String path, String contentType) {
+      Uint8List file, String path, String contentType) {
     var metadata = SettableMetadata(contentType: contentType);
     return _firebaseStorage
         .ref(path)
         .child(DateTime.now().millisecondsSinceEpoch.toString())
-        .putFile(file, metadata)
+        .putData(file, metadata)
         .then((takeSnapShot) {
       return takeSnapShot.ref.getDownloadURL().then((value) {
         return value;

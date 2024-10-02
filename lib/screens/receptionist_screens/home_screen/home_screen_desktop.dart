@@ -1,11 +1,38 @@
 import 'package:dental_clinic/constants/colors.dart';
+import 'package:dental_clinic/controller/add_doctor_controller.dart';
 import 'package:dental_clinic/screens/patient_screens/about_screen/about_screen.dart';
 import 'package:dental_clinic/screens/patient_screens/contact_screen/contact_screen.dart';
+import 'package:dental_clinic/utils/file_picker_utils.dart';
 import 'package:dental_clinic/widgets/navigation_bar_desktop.dart';
+import 'package:dental_clinic/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 
-class DesktopHomeScreen extends StatelessWidget {
+final _filePicker = FilePickerUtils();
+final _addDoctorController = AddDoctorController();
+
+class DesktopHomeScreen extends StatefulWidget {
   const DesktopHomeScreen({super.key});
+
+  @override
+  State<DesktopHomeScreen> createState() => _DesktopHomeScreenState();
+}
+
+class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
+  final _doctorNameController = TextEditingController();
+  final _doctorSpecialistController = TextEditingController();
+  final _doctorExperienceController = TextEditingController();
+  final _doctorDayOffController = TextEditingController();
+  final _doctorBiosController = TextEditingController();
+
+  @override
+  void dispose() {
+    _doctorNameController.dispose();
+    _doctorBiosController.dispose();
+    _doctorDayOffController.dispose();
+    _doctorExperienceController.dispose();
+    _doctorSpecialistController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +59,19 @@ class DesktopHomeScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AddDoctorDialog(
+                          function: () {},
+                          nameController: _doctorNameController,
+                          bioController: _doctorBiosController,
+                          specController: _doctorSpecialistController,
+                          expController: _doctorExperienceController,
+                          dayOffController: _doctorDayOffController,
+                        ),
+                      );
+                    },
                     child: Container(
                       width: 80,
                       height: 40,
@@ -144,4 +183,135 @@ Widget doctorCard(BuildContext context) {
       ],
     ),
   );
+}
+
+class AddDoctorDialog extends StatefulWidget {
+  const AddDoctorDialog(
+      {super.key,
+      required this.function,
+      required this.nameController,
+      required this.bioController,
+      required this.specController,
+      required this.expController,
+      required this.dayOffController});
+
+  final VoidCallback function;
+  final TextEditingController nameController;
+  final TextEditingController bioController;
+  final TextEditingController specController;
+  final TextEditingController expController;
+  final TextEditingController dayOffController;
+
+  @override
+  State<AddDoctorDialog> createState() => _AddDoctorDialogState();
+}
+
+class _AddDoctorDialogState extends State<AddDoctorDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      actions: [
+        Center(
+          child: TextButton(
+            onPressed: widget.function,
+            style: const ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(kSecondaryColor)),
+            child: const Text(
+              "Add",
+              style: TextStyle(color: kFourthColor),
+            ),
+          ),
+        )
+      ],
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              "New Doctor",
+              style: TextStyle(fontSize: 28),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            Center(
+              child: Container(
+                  width: 180,
+                  height: 150,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(width: 2, color: kSecondaryColor)),
+                  child: _addDoctorController.selectFile == null
+                      ? GestureDetector(
+                          onTap: () async {
+                            _addDoctorController.selectFile =
+                                await _filePicker.getImage();
+                            setState(() {});
+                          },
+                          child: const Center(
+                            child: Icon(
+                              Icons.add_a_photo_outlined,
+                              size: 40,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          width: 200,
+                          height: 180,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15)),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: Image.memory(
+                              _addDoctorController.selectFile!,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        )),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            CustomTextField(
+              hintText: "Enter doctor name",
+              label: "Name",
+              controller: widget.nameController,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            CustomTextField(
+              hintText: "Enter doctor biography",
+              label: "Biography",
+              controller: widget.bioController,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            CustomTextField(
+              hintText: "Enter doctor specialist",
+              label: "Specialist",
+              controller: widget.specController,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            CustomTextField(
+              hintText: "Enter doctor experience",
+              label: "Experience",
+              controller: widget.expController,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            CustomTextField(
+              hintText: "Enter doctor day off",
+              label: "Day Off",
+              controller: widget.dayOffController,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
