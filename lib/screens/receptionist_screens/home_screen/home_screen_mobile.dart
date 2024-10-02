@@ -1,7 +1,7 @@
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/add_doctor_controller.dart';
-import 'package:dental_clinic/screens/patient_screens/about_screen/about_screen.dart';
-import 'package:dental_clinic/screens/patient_screens/contact_screen/contact_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
 
@@ -34,10 +34,10 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
       endDrawer: const Drawer(
           backgroundColor: kPrimaryColor,
           child: CustomNavigationDrawer(
-            title1: "About",
-            title2: "Contact us",
-            widget1: AboutScreen(),
-            widget2: ContactScreen(),
+            title1: "Patients",
+            title2: "Profile",
+            widget1: PatientManagementScreen(),
+            widget2: ReceptionistProfileScreen(),
           )),
       body: Padding(
         padding: const EdgeInsets.all(25),
