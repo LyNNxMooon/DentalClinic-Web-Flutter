@@ -19,6 +19,7 @@ class FirebaseServices {
           .child(doctorVo.id.toString())
           .set(doctorVo.toJson());
     } on Exception catch (error) {
+      print(error);
       return Future.error(error);
     }
   }
