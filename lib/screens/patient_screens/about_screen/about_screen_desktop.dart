@@ -1,5 +1,5 @@
-import 'package:dental_clinic/screens/contact_screen/contact_screen.dart';
-import 'package:dental_clinic/screens/home_screen/home_screen.dart';
+import 'package:dental_clinic/screens/patient_screens/contact_screen/contact_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/widgets/navigation_bar_desktop.dart';
 import 'package:flutter/material.dart';
 

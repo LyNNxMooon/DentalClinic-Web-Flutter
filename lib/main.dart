@@ -1,5 +1,5 @@
 import 'package:dental_clinic/firebase_options.dart';
-import 'package:dental_clinic/screens/home_screen/home_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

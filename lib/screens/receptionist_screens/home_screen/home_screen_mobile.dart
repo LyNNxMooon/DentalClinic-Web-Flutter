@@ -1,6 +1,6 @@
 import 'package:dental_clinic/constants/colors.dart';
-import 'package:dental_clinic/screens/about_screen/about_screen.dart';
-import 'package:dental_clinic/screens/contact_screen/contact_screen.dart';
+import 'package:dental_clinic/screens/patient_screens/about_screen/about_screen.dart';
+import 'package:dental_clinic/screens/patient_screens/contact_screen/contact_screen.dart';
 
 import 'package:dental_clinic/widgets/navigation_bar_mobile.dart';
 import 'package:flutter/material.dart';
