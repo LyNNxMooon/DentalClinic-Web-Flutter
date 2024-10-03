@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, avoid_print
 
 import 'dart:typed_data';
 
@@ -72,6 +72,7 @@ class AddDoctorController extends BaseController {
           dayOff.clear();
         },
       ).catchError((error) {
+        print(error);
         setLoadingState = LoadingState.error;
         setErrorMessage = error;
         showDialog(

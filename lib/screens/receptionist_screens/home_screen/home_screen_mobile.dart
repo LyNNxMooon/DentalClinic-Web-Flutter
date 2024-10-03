@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/add_doctor_controller.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
@@ -6,6 +9,7 @@ import 'package:dental_clinic/utils/file_picker_utils.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
 
 import 'package:dental_clinic/widgets/navigation_bar_mobile.dart';
+import 'package:dental_clinic/widgets/no_connection_mobile_widget.dart';
 import 'package:dental_clinic/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,6 +31,51 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
   final _doctorExperienceController = TextEditingController();
   final _doctorDayOffController = TextEditingController();
   final _doctorBiosController = TextEditingController();
+
+  List<ConnectivityResult> _connectionStatus = [ConnectivityResult.none];
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  String connection = "online";
+
+  @override
+  void initState() {
+    super.initState();
+    initConnectivity();
+
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> initConnectivity() async {
+    late List<ConnectivityResult> result;
+
+    result = await _connectivity.checkConnectivity();
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(List<ConnectivityResult> result) async {
+    setState(() {
+      _connectionStatus = result;
+      if (_connectionStatus[0] == ConnectivityResult.none) {
+        connection = "offline";
+      } else {
+        connection = "online";
+      }
+    });
+    // ignore: avoid_print
+    print('Connectivity changed: $_connectionStatus');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,81 +88,89 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
             widget1: PatientManagementScreen(),
             widget2: ReceptionistProfileScreen(),
           )),
-      body: Padding(
-        padding: const EdgeInsets.all(25),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              MobileNavigationBar(
-                scaffoldKey: _scaffoldKey,
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    textAlign: TextAlign.start,
-                    "Available Doctors",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AddDoctorDialog(
-                          function: () async {
-                            _addDoctorController.addDoctor(
-                                _doctorNameController,
-                                _doctorBiosController,
-                                _doctorSpecialistController,
-                                _doctorExperienceController,
-                                _doctorDayOffController,
-                                context);
-                          },
-                          nameController: _doctorNameController,
-                          bioController: _doctorBiosController,
-                          specController: _doctorSpecialistController,
-                          expController: _doctorExperienceController,
-                          dayOffController: _doctorDayOffController,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: 40,
+      body: connection == "online"
+          ? Padding(
+              padding: const EdgeInsets.all(25),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MobileNavigationBar(
+                      scaffoldKey: _scaffoldKey,
+                    ),
+                    const SizedBox(
                       height: 40,
-                      decoration: BoxDecoration(
-                          color: kSecondaryColor,
-                          borderRadius: BorderRadius.circular(6)),
-                      child: const Center(
-                        child: Icon(Icons.add),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          textAlign: TextAlign.start,
+                          "Available Doctors",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AddDoctorDialog(
+                                function: () async {
+                                  if (connection == "online") {
+                                    _addDoctorController.addDoctor(
+                                        _doctorNameController,
+                                        _doctorBiosController,
+                                        _doctorSpecialistController,
+                                        _doctorExperienceController,
+                                        _doctorDayOffController,
+                                        context);
+                                  } else {
+                                    Get.back();
+                                  }
+                                },
+                                nameController: _doctorNameController,
+                                bioController: _doctorBiosController,
+                                specController: _doctorSpecialistController,
+                                expController: _doctorExperienceController,
+                                dayOffController: _doctorDayOffController,
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                                color: kSecondaryColor,
+                                borderRadius: BorderRadius.circular(6)),
+                            child: const Center(
+                              child: Icon(Icons.add),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    SizedBox(
+                      height: 230,
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 5.0,
+                          crossAxisSpacing: 0.0,
+                          mainAxisExtent: 220,
+                        ),
+                        itemCount: 6,
+                        itemBuilder: (context, index) => doctorCard(context),
                       ),
                     ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              SizedBox(
-                height: 230,
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 5.0,
-                    crossAxisSpacing: 0.0,
-                    mainAxisExtent: 220,
-                  ),
-                  itemCount: 6,
-                  itemBuilder: (context, index) => doctorCard(context),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            )
+          : const NoConnectionMobileWidget(),
     );
   }
 }
@@ -280,16 +337,22 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                               ),
                             ),
                           )
-                        : Container(
-                            width: 150,
-                            height: 120,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.memory(
-                                _addDoctorController.selectFile.value!,
-                                fit: BoxFit.cover,
+                        : GestureDetector(
+                            onTap: () async {
+                              _addDoctorController.selectFile.value =
+                                  await _filePicker.getImage();
+                            },
+                            child: Container(
+                              width: 150,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.memory(
+                                  _addDoctorController.selectFile.value!,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           )),

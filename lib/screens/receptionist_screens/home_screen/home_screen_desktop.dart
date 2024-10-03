@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/add_doctor_controller.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
@@ -5,6 +8,7 @@ import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profi
 import 'package:dental_clinic/utils/file_picker_utils.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
 import 'package:dental_clinic/widgets/navigation_bar_desktop.dart';
+import 'package:dental_clinic/widgets/no_connection_desktop_widget.dart';
 import 'package:dental_clinic/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,87 +30,137 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
   final _doctorDayOffController = TextEditingController();
   final _doctorBiosController = TextEditingController();
 
+  List<ConnectivityResult> _connectionStatus = [ConnectivityResult.none];
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  String connection = "online";
+
+  @override
+  void initState() {
+    super.initState();
+    initConnectivity();
+
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> initConnectivity() async {
+    late List<ConnectivityResult> result;
+
+    result = await _connectivity.checkConnectivity();
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(List<ConnectivityResult> result) async {
+    setState(() {
+      _connectionStatus = result;
+      if (_connectionStatus[0] == ConnectivityResult.none) {
+        connection = "offline";
+      } else {
+        connection = "online";
+      }
+    });
+    // ignore: avoid_print
+    print('Connectivity changed: $_connectionStatus');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(50),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const DesktopNavigationBar(
-                title1: "Patients",
-                title2: "Profile",
-                widget1: PatientManagementScreen(),
-                widget2: ReceptionistProfileScreen(),
-              ),
-              const SizedBox(
-                height: 60,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Available Doctors",
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AddDoctorDialog(
-                          function: () async {
-                            _addDoctorController.addDoctor(
-                                _doctorNameController,
-                                _doctorBiosController,
-                                _doctorSpecialistController,
-                                _doctorExperienceController,
-                                _doctorDayOffController,
-                                context);
-                          },
-                          nameController: _doctorNameController,
-                          bioController: _doctorBiosController,
-                          specController: _doctorSpecialistController,
-                          expController: _doctorExperienceController,
-                          dayOffController: _doctorDayOffController,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: 80,
-                      height: 40,
-                      decoration: BoxDecoration(
-                          color: kSecondaryColor,
-                          borderRadius: BorderRadius.circular(6)),
-                      child: const Center(
-                        child: Icon(Icons.add),
+        body: connection == "online"
+            ? Padding(
+                padding: const EdgeInsets.all(50),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const DesktopNavigationBar(
+                        title1: "Patients",
+                        title2: "Profile",
+                        widget1: PatientManagementScreen(),
+                        widget2: ReceptionistProfileScreen(),
                       ),
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              SizedBox(
-                height: 300,
-                child: ListView.separated(
-                  separatorBuilder: (context, index) => const SizedBox(
-                    width: 15,
+                      const SizedBox(
+                        height: 60,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Available Doctors",
+                            style: TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.bold),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AddDoctorDialog(
+                                  function: () async {
+                                    if (connection == "online") {
+                                      _addDoctorController.addDoctor(
+                                          _doctorNameController,
+                                          _doctorBiosController,
+                                          _doctorSpecialistController,
+                                          _doctorExperienceController,
+                                          _doctorDayOffController,
+                                          context);
+                                    } else {
+                                      Get.back();
+                                    }
+                                  },
+                                  nameController: _doctorNameController,
+                                  bioController: _doctorBiosController,
+                                  specController: _doctorSpecialistController,
+                                  expController: _doctorExperienceController,
+                                  dayOffController: _doctorDayOffController,
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 80,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: kSecondaryColor,
+                                  borderRadius: BorderRadius.circular(6)),
+                              child: const Center(
+                                child: Icon(Icons.add),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      SizedBox(
+                        height: 300,
+                        child: ListView.separated(
+                          separatorBuilder: (context, index) => const SizedBox(
+                            width: 15,
+                          ),
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemBuilder: (context, index) => GestureDetector(
+                              onTap: () {}, child: doctorCard(context)),
+                          itemCount: 10,
+                        ),
+                      ),
+                    ],
                   ),
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemBuilder: (context, index) =>
-                      GestureDetector(onTap: () {}, child: doctorCard(context)),
-                  itemCount: 10,
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+              )
+            : const NoConnectionDesktopWidget());
   }
 }
 
@@ -270,16 +324,22 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                               ),
                             ),
                           )
-                        : Container(
-                            width: 180,
-                            height: 150,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15)),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: Image.memory(
-                                _addDoctorController.selectFile.value!,
-                                fit: BoxFit.cover,
+                        : GestureDetector(
+                            onTap: () async {
+                              _addDoctorController.selectFile.value =
+                                  await _filePicker.getImage();
+                            },
+                            child: Container(
+                              width: 180,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: Image.memory(
+                                  _addDoctorController.selectFile.value!,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           )),
