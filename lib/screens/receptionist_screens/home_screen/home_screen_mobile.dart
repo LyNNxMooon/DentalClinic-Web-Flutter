@@ -3,9 +3,12 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/add_doctor_controller.dart';
+import 'package:dental_clinic/controller/receptionist_home_controller.dart';
+import 'package:dental_clinic/data/vos/doctor_vo.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
+import 'package:dental_clinic/widgets/load_fail_widget.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
 
 import 'package:dental_clinic/widgets/navigation_bar_mobile.dart';
@@ -15,7 +18,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 final _filePicker = FilePickerUtils();
-final _addDoctorController = AddDoctorController();
+final _addDoctorController = Get.put(AddDoctorController());
+final _receptionistHomeController = Get.put(ReceptionistHomeController());
 
 class MobileHomeScreen extends StatefulWidget {
   const MobileHomeScreen({super.key});
@@ -152,20 +156,24 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
                     const SizedBox(
                       height: 30,
                     ),
-                    SizedBox(
-                      height: 230,
-                      child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 5.0,
-                          crossAxisSpacing: 0.0,
-                          mainAxisExtent: 220,
-                        ),
-                        itemCount: 6,
-                        itemBuilder: (context, index) => doctorCard(context),
-                      ),
-                    ),
+                    Obx(
+                      () => LoadingStateWidget(
+                          paddingTop: 50,
+                          loadingState:
+                              _receptionistHomeController.getLoadingState,
+                          loadingSuccessWidget: DoctorList(
+                            doctors: _receptionistHomeController.doctorsList,
+                          ),
+                          loadingInitWidget: Padding(
+                            padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * 0.22),
+                            child: LoadFailWidget(
+                              function: () {
+                                _receptionistHomeController.callDoctors();
+                              },
+                            ),
+                          )),
+                    )
                   ],
                 ),
               ),
@@ -175,81 +183,113 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
   }
 }
 
-Widget doctorCard(BuildContext context) {
-  return Container(
-    margin: const EdgeInsets.all(7),
-    padding: const EdgeInsets.symmetric(horizontal: 15),
-    decoration: BoxDecoration(
-      border: Border.all(width: 0.5),
-      borderRadius: BorderRadius.circular(8), //border corner radius
-    ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Center(
-          child: Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
+class DoctorList extends StatelessWidget {
+  const DoctorList({super.key, required this.doctors});
+
+  final List<DoctorVO> doctors;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 230,
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 5.0,
+          crossAxisSpacing: 0.0,
+          mainAxisExtent: 220,
+        ),
+        itemCount: _receptionistHomeController.doctorsList.length,
+        itemBuilder: (context, index) => DoctorCard(
+          doctor: doctors[index],
+        ),
+      ),
+    );
+  }
+}
+
+class DoctorCard extends StatelessWidget {
+  const DoctorCard({super.key, required this.doctor});
+
+  final DoctorVO doctor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(7),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      decoration: BoxDecoration(
+        border: Border.all(width: 0.5),
+        borderRadius: BorderRadius.circular(8), //border corner radius
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(45),
+                  border: Border.all(width: 0.3)),
+              child: ClipRRect(
                 borderRadius: BorderRadius.circular(45),
-                border: Border.all(width: 0.3)),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(45),
-              child: Image.asset(
-                "assets/images/doctor_placeholder.jpg",
-                fit: BoxFit.cover,
+                child: Image.network(
+                  doctor.url,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(
-          height: 15,
-        ),
-        RichText(
-            text: const TextSpan(children: [
-          TextSpan(text: "Name : ", style: TextStyle(fontSize: 14)),
-          TextSpan(text: "John", style: TextStyle(fontSize: 14)),
-        ])),
-        const SizedBox(
-          height: 5,
-        ),
-        RichText(
-            text: const TextSpan(children: [
-          TextSpan(
-              text: "Specialist : ",
-              style: TextStyle(fontSize: 12, color: kThirdColor)),
-          TextSpan(
-              text: "General",
-              style: TextStyle(fontSize: 12, color: kThirdColor)),
-        ])),
-        const SizedBox(
-          height: 5,
-        ),
-        RichText(
-            text: const TextSpan(children: [
-          TextSpan(
-              text: "Experience : ",
-              style: TextStyle(fontSize: 12, color: kThirdColor)),
-          TextSpan(
-              text: "3 years",
-              style: TextStyle(fontSize: 12, color: kThirdColor)),
-        ])),
-        const SizedBox(
-          height: 5,
-        ),
-        RichText(
-            text: const TextSpan(children: [
-          TextSpan(
-              text: "DayOff : ",
-              style: TextStyle(fontSize: 12, color: kThirdColor)),
-          TextSpan(
-              text: "Sat/Sun",
-              style: TextStyle(fontSize: 12, color: kThirdColor)),
-        ])),
-      ],
-    ),
-  );
+          const SizedBox(
+            height: 15,
+          ),
+          RichText(
+              text: TextSpan(children: [
+            const TextSpan(text: "Name : ", style: TextStyle(fontSize: 14)),
+            TextSpan(text: doctor.name, style: const TextStyle(fontSize: 14)),
+          ])),
+          const SizedBox(
+            height: 5,
+          ),
+          RichText(
+              text: TextSpan(children: [
+            const TextSpan(
+                text: "Specialist : ",
+                style: TextStyle(fontSize: 12, color: kThirdColor)),
+            TextSpan(
+                text: doctor.specialist,
+                style: const TextStyle(fontSize: 12, color: kThirdColor)),
+          ])),
+          const SizedBox(
+            height: 5,
+          ),
+          RichText(
+              text: TextSpan(children: [
+            const TextSpan(
+                text: "Experience : ",
+                style: TextStyle(fontSize: 12, color: kThirdColor)),
+            TextSpan(
+                text: doctor.experience,
+                style: const TextStyle(fontSize: 12, color: kThirdColor)),
+          ])),
+          const SizedBox(
+            height: 5,
+          ),
+          RichText(
+              text: TextSpan(children: [
+            const TextSpan(
+                text: "DayOff : ",
+                style: TextStyle(fontSize: 12, color: kThirdColor)),
+            TextSpan(
+                text: doctor.dayOff,
+                style: const TextStyle(fontSize: 12, color: kThirdColor)),
+          ])),
+        ],
+      ),
+    );
+  }
 }
 
 class AddDoctorDialog extends StatefulWidget {
@@ -280,6 +320,7 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
       actions: [
         Obx(
           () => LoadingStateWidget(
+              paddingTop: 0,
               loadingState: _addDoctorController.getLoadingState,
               loadingSuccessWidget: Center(
                 child: TextButton(

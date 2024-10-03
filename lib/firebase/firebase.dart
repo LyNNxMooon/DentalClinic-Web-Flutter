@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:typed_data';
 
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
@@ -22,6 +24,15 @@ class FirebaseServices {
       print(error);
       return Future.error(error);
     }
+  }
+
+  Stream<List<DoctorVO>?> getDoctorListStream() {
+    return databaseRef.child("doctors").onValue.map((event) {
+      return event.snapshot.children.map<DoctorVO>((snapshot) {
+        return DoctorVO.fromJson(
+            Map<String, dynamic>.from(snapshot.value as Map));
+      }).toList();
+    });
   }
 
   //firebase file storage

@@ -1,11 +1,13 @@
 import 'dart:async';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/add_doctor_controller.dart';
+import 'package:dental_clinic/controller/receptionist_home_controller.dart';
+import 'package:dental_clinic/data/vos/doctor_vo.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
+import 'package:dental_clinic/widgets/load_fail_widget.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
 import 'package:dental_clinic/widgets/navigation_bar_desktop.dart';
 import 'package:dental_clinic/widgets/no_connection_desktop_widget.dart';
@@ -14,7 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 final _filePicker = FilePickerUtils();
-final _addDoctorController = AddDoctorController();
+final _addDoctorController = Get.put(AddDoctorController());
+final _receptionistHomeController = Get.put(ReceptionistHomeController());
 
 class DesktopHomeScreen extends StatefulWidget {
   const DesktopHomeScreen({super.key});
@@ -142,20 +145,25 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
                       const SizedBox(
                         height: 40,
                       ),
-                      SizedBox(
-                        height: 300,
-                        child: ListView.separated(
-                          separatorBuilder: (context, index) => const SizedBox(
-                            width: 15,
-                          ),
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemBuilder: (context, index) => GestureDetector(
-                              onTap: () {}, child: doctorCard(context)),
-                          itemCount: 10,
-                        ),
-                      ),
+                      Obx(
+                        () => LoadingStateWidget(
+                            paddingTop: 100,
+                            loadingState:
+                                _receptionistHomeController.getLoadingState,
+                            loadingSuccessWidget: DoctorsList(
+                              doctors: _receptionistHomeController.doctorsList,
+                            ),
+                            loadingInitWidget: Padding(
+                              padding: EdgeInsets.only(
+                                  top: MediaQuery.of(context).size.height *
+                                      0.22),
+                              child: LoadFailWidget(
+                                function: () {
+                                  _receptionistHomeController.callDoctors();
+                                },
+                              ),
+                            )),
+                      )
                     ],
                   ),
                 ),
@@ -164,79 +172,114 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
   }
 }
 
-Widget doctorCard(BuildContext context) {
-  return Container(
-    width: 200,
-    decoration: BoxDecoration(
-        border: Border.all(width: 1), borderRadius: BorderRadius.circular(10)),
-    padding: const EdgeInsets.all(15),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Center(
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
+class DoctorsList extends StatelessWidget {
+  const DoctorsList({super.key, required this.doctors});
+
+  final List<DoctorVO> doctors;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 300,
+      child: ListView.separated(
+        separatorBuilder: (context, index) => const SizedBox(
+          width: 15,
+        ),
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemBuilder: (context, index) => GestureDetector(
+            onTap: () {},
+            child: DoctorCard(
+              doctor: doctors[index],
+            )),
+        itemCount: doctors.length,
+      ),
+    );
+  }
+}
+
+class DoctorCard extends StatelessWidget {
+  const DoctorCard({super.key, required this.doctor});
+
+  final DoctorVO doctor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 200,
+      decoration: BoxDecoration(
+          border: Border.all(width: 1),
+          borderRadius: BorderRadius.circular(10)),
+      padding: const EdgeInsets.all(15),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(55),
-                border: Border.all(width: 0.3)),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(55),
-              child: Image.asset(
-                "assets/images/doctor_placeholder.jpg",
-                fit: BoxFit.cover,
+                border: Border.all(width: 0.3),
               ),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(55),
+                  child: Image.network(
+                    doctor.url,
+                    fit: BoxFit.cover,
+                  )),
             ),
           ),
-        ),
-        const SizedBox(
-          height: 35,
-        ),
-        RichText(
-            text: const TextSpan(children: [
-          TextSpan(text: "Name : ", style: TextStyle(fontSize: 18)),
-          TextSpan(text: "John", style: TextStyle(fontSize: 18)),
-        ])),
-        const SizedBox(
-          height: 10,
-        ),
-        RichText(
-            text: const TextSpan(children: [
-          TextSpan(
-              text: "Specialist : ",
-              style: TextStyle(fontSize: 14, color: kThirdColor)),
-          TextSpan(
-              text: "General",
-              style: TextStyle(fontSize: 14, color: kThirdColor)),
-        ])),
-        const SizedBox(
-          height: 10,
-        ),
-        RichText(
-            text: const TextSpan(children: [
-          TextSpan(
-              text: "Experience : ",
-              style: TextStyle(fontSize: 14, color: kThirdColor)),
-          TextSpan(
-              text: "3 years",
-              style: TextStyle(fontSize: 14, color: kThirdColor)),
-        ])),
-        const SizedBox(
-          height: 10,
-        ),
-        RichText(
-            text: const TextSpan(children: [
-          TextSpan(
-              text: "DayOff : ",
-              style: TextStyle(fontSize: 14, color: kThirdColor)),
-          TextSpan(
-              text: "Sat/Sun",
-              style: TextStyle(fontSize: 14, color: kThirdColor)),
-        ])),
-      ],
-    ),
-  );
+          const SizedBox(
+            height: 35,
+          ),
+          RichText(
+              text: TextSpan(children: [
+            const TextSpan(text: "Name : ", style: TextStyle(fontSize: 18)),
+            TextSpan(text: doctor.name, style: const TextStyle(fontSize: 18)),
+          ])),
+          const SizedBox(
+            height: 10,
+          ),
+          RichText(
+              text: TextSpan(children: [
+            const TextSpan(
+                text: "Specialist : ",
+                style: TextStyle(fontSize: 14, color: kThirdColor)),
+            TextSpan(
+                text: doctor.specialist,
+                style: const TextStyle(fontSize: 14, color: kThirdColor)),
+          ])),
+          const SizedBox(
+            height: 10,
+          ),
+          RichText(
+              text: TextSpan(children: [
+            const TextSpan(
+                text: "Experience : ",
+                style: TextStyle(fontSize: 14, color: kThirdColor)),
+            TextSpan(
+                text: doctor.experience,
+                style: const TextStyle(fontSize: 14, color: kThirdColor)),
+          ])),
+          const SizedBox(
+            height: 10,
+          ),
+          RichText(
+              text: TextSpan(children: [
+            const TextSpan(
+                text: "DayOff : ",
+                style: TextStyle(fontSize: 14, color: kThirdColor)),
+            TextSpan(
+                text: doctor.dayOff,
+                style: const TextStyle(fontSize: 14, color: kThirdColor)),
+          ])),
+        ],
+      ),
+    );
+  }
 }
 
 class AddDoctorDialog extends StatefulWidget {
@@ -267,6 +310,7 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
       actions: [
         Obx(
           () => LoadingStateWidget(
+              paddingTop: 0,
               loadingState: _addDoctorController.getLoadingState,
               loadingSuccessWidget: Center(
                 child: TextButton(

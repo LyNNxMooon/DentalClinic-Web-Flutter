@@ -43,6 +43,7 @@ dependencies:
   file_picker: ^8.1.2
   firebase_storage: ^12.3.2
   connectivity_plus: ^6.0.5
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:

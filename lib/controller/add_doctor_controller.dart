@@ -3,6 +3,7 @@
 import 'dart:typed_data';
 
 import 'package:dental_clinic/controller/base_controller.dart';
+import 'package:dental_clinic/controller/receptionist_home_controller.dart';
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
 import 'package:dental_clinic/firebase/firebase.dart';
 import 'package:dental_clinic/utils/enums.dart';
@@ -15,6 +16,7 @@ class AddDoctorController extends BaseController {
   Rxn<Uint8List> selectFile = Rxn<Uint8List>();
 
   final _firebaseService = FirebaseServices();
+  final _receptionistHomeController = Get.put(ReceptionistHomeController());
 
   Future addDoctor(
       TextEditingController name,
@@ -58,6 +60,7 @@ class AddDoctorController extends BaseController {
       return _firebaseService.saveDoctor(doctor).then(
         (value) {
           setLoadingState = LoadingState.complete;
+
           showDialog(
             context: context,
             builder: (context) =>
@@ -70,6 +73,7 @@ class AddDoctorController extends BaseController {
           specialist.clear();
           experience.clear();
           dayOff.clear();
+          _receptionistHomeController.callDoctors();
         },
       ).catchError((error) {
         print(error);
