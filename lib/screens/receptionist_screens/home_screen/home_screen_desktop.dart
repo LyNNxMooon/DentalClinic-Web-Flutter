@@ -4,6 +4,7 @@ import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/add_doctor_controller.dart';
 import 'package:dental_clinic/controller/receptionist_home_controller.dart';
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
+import 'package:dental_clinic/screens/receptionist_screens/doctor_detail_screen/doctor_detail_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
@@ -189,7 +190,9 @@ class DoctorsList extends StatelessWidget {
         shrinkWrap: true,
         physics: const AlwaysScrollableScrollPhysics(),
         itemBuilder: (context, index) => GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Get.to(() => DoctorDetailScreen(doctor: doctors[index]));
+            },
             child: DoctorCard(
               doctor: doctors[index],
             )),
