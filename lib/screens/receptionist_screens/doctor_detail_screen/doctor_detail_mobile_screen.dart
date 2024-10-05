@@ -2,11 +2,22 @@ import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/constants/text.dart';
 import 'package:dental_clinic/controller/doctor_detail_controller.dart';
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
+import 'package:dental_clinic/widgets/loading_state_widget.dart';
 import 'package:dental_clinic/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 final _doctorDetailController = Get.put(DoctorDetailController());
+
+late TextEditingController _nameController;
+
+late TextEditingController _bioController;
+
+late TextEditingController _specialistController;
+
+late TextEditingController _experienceController;
+
+late TextEditingController _dayOffController;
 
 class DoctorDetailMobileScreen extends StatefulWidget {
   const DoctorDetailMobileScreen({super.key, required this.doctor});
@@ -19,16 +30,6 @@ class DoctorDetailMobileScreen extends StatefulWidget {
 }
 
 class _DoctorDetailMobileScreenState extends State<DoctorDetailMobileScreen> {
-  late TextEditingController _nameController;
-
-  late TextEditingController _bioController;
-
-  late TextEditingController _specialistController;
-
-  late TextEditingController _experienceController;
-
-  late TextEditingController _dayOffController;
-
   @override
   void initState() {
     _nameController = TextEditingController(text: widget.doctor.name);
@@ -145,26 +146,54 @@ class _DoctorDetailMobileScreenState extends State<DoctorDetailMobileScreen> {
           const SizedBox(
             height: 15,
           ),
-          Center(
-            child: GestureDetector(
-              onTap: () {},
-              child: Container(
-                width: 200,
-                height: 40,
-                decoration: BoxDecoration(
-                    color: kSecondaryColor,
-                    borderRadius: BorderRadius.circular(10)),
-                child: const Center(
-                  child: Text(
-                    "Update",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                ),
-              ),
-            ),
+          Obx(
+            () => LoadingStateWidget(
+                loadingState: _doctorDetailController.getLoadingState,
+                loadingSuccessWidget:
+                    UpdateBtn(id: widget.doctor.id, url: widget.doctor.url),
+                loadingInitWidget:
+                    UpdateBtn(id: widget.doctor.id, url: widget.doctor.url),
+                paddingTop: 0),
           )
         ],
       )),
+    );
+  }
+}
+
+class UpdateBtn extends StatelessWidget {
+  const UpdateBtn({super.key, required this.id, required this.url});
+
+  final int id;
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: GestureDetector(
+        onTap: () {
+          _doctorDetailController.updateDoctor(
+              id,
+              url,
+              _nameController.text,
+              _bioController.text,
+              _specialistController.text,
+              _experienceController.text,
+              _dayOffController.text);
+        },
+        child: Container(
+          width: 200,
+          height: 40,
+          decoration: BoxDecoration(
+              color: kSecondaryColor, borderRadius: BorderRadius.circular(10)),
+          child: const Center(
+            child: Text(
+              "Update",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

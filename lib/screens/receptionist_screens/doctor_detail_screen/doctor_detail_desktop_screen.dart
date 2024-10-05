@@ -9,6 +9,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 final _doctorDetailController = Get.put(DoctorDetailController());
+late TextEditingController _nameController;
+
+late TextEditingController _bioController;
+
+late TextEditingController _specialistController;
+
+late TextEditingController _experienceController;
+
+late TextEditingController _dayOffController;
 
 class DoctorDetailDesktopScreen extends StatefulWidget {
   const DoctorDetailDesktopScreen({super.key, required this.doctor});
@@ -21,16 +30,6 @@ class DoctorDetailDesktopScreen extends StatefulWidget {
 }
 
 class _DoctorDetailDesktopScreenState extends State<DoctorDetailDesktopScreen> {
-  late TextEditingController _nameController;
-
-  late TextEditingController _bioController;
-
-  late TextEditingController _specialistController;
-
-  late TextEditingController _experienceController;
-
-  late TextEditingController _dayOffController;
-
   @override
   void initState() {
     _nameController = TextEditingController(text: widget.doctor.name);
@@ -151,21 +150,13 @@ class _DoctorDetailDesktopScreenState extends State<DoctorDetailDesktopScreen> {
             () => LoadingStateWidget(
                 loadingState: _doctorDetailController.getLoadingState,
                 loadingSuccessWidget: UpdateBtn(
-                    id: widget.doctor.id,
-                    url: widget.doctor.url,
-                    name: _nameController.text,
-                    bio: _bioController.text,
-                    specialist: _specialistController.text,
-                    experience: _experienceController.text,
-                    dayOff: _dayOffController.text),
+                  id: widget.doctor.id,
+                  url: widget.doctor.url,
+                ),
                 loadingInitWidget: UpdateBtn(
-                    id: widget.doctor.id,
-                    url: widget.doctor.url,
-                    name: _nameController.text,
-                    bio: _bioController.text,
-                    specialist: _specialistController.text,
-                    experience: _experienceController.text,
-                    dayOff: _dayOffController.text),
+                  id: widget.doctor.id,
+                  url: widget.doctor.url,
+                ),
                 paddingTop: 0),
           )
         ],
@@ -175,23 +166,14 @@ class _DoctorDetailDesktopScreenState extends State<DoctorDetailDesktopScreen> {
 }
 
 class UpdateBtn extends StatelessWidget {
-  const UpdateBtn(
-      {super.key,
-      required this.id,
-      required this.url,
-      required this.name,
-      required this.bio,
-      required this.specialist,
-      required this.experience,
-      required this.dayOff});
+  const UpdateBtn({
+    super.key,
+    required this.id,
+    required this.url,
+  });
 
   final int id;
   final String url;
-  final String name;
-  final String bio;
-  final String specialist;
-  final String experience;
-  final String dayOff;
 
   @override
   Widget build(BuildContext context) {
@@ -199,7 +181,13 @@ class UpdateBtn extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           _doctorDetailController.updateDoctor(
-              id, url, name, bio, specialist, experience, dayOff);
+              id,
+              url,
+              _nameController.text,
+              _bioController.text,
+              _specialistController.text,
+              _experienceController.text,
+              _dayOffController.text);
         },
         child: Container(
           width: 400,
