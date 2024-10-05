@@ -21,15 +21,15 @@ class LoadFailWidget extends StatelessWidget {
           height: 20,
         ),
         Center(
-            child: GestureDetector(
-          onTap: function,
-          child: const Text(
-            "Try Again",
-            style: TextStyle(
-                color: kSecondaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 16),
-          ),
+            child: TextButton(
+          style: const ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(kThirdColor)),
+          onPressed: function,
+          child: const Text("Try Again",
+              style: TextStyle(
+                  color: kSecondaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16)),
         ))
       ],
     );

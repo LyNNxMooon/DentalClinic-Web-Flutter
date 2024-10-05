@@ -107,8 +107,29 @@ class _DoctorDetailDesktopScreenState extends State<DoctorDetailDesktopScreen> {
           child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          IconButton(
-              onPressed: () => Get.back(), icon: const Icon(Icons.arrow_back)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                  onPressed: () => Get.back(),
+                  icon: const Icon(Icons.arrow_back)),
+              Obx(
+                () => LoadingStateWidget(
+                    loadingState: _doctorDetailController.getLoadingState,
+                    loadingSuccessWidget: DeleteBtn(
+                      function: () {
+                        _doctorDetailController.deleteDoctor(widget.doctor.id);
+                      },
+                    ),
+                    loadingInitWidget: DeleteBtn(
+                      function: () {
+                        _doctorDetailController.deleteDoctor(widget.doctor.id);
+                      },
+                    ),
+                    paddingTop: 0),
+              )
+            ],
+          ),
           const SizedBox(
             height: 30,
           ),
@@ -236,6 +257,77 @@ class _DoctorDetailDesktopScreenState extends State<DoctorDetailDesktopScreen> {
         ],
       )),
     );
+  }
+}
+
+class DeleteBtn extends StatelessWidget {
+  const DeleteBtn({super.key, required this.function});
+
+  final VoidCallback function;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                actions: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        style: const ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(kErrorColor)),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(color: kPrimaryColor),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      TextButton(
+                        onPressed: function,
+                        style: const ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(kSecondaryColor)),
+                        child: const Text(
+                          "OK",
+                          style: TextStyle(color: kPrimaryColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                content: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      color: kErrorColor,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Are you sure to delete?",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: kErrorColor),
+                    ),
+                  ],
+                )),
+          );
+        },
+        icon: const Icon(
+          Icons.delete,
+          color: kErrorColor,
+          size: 40,
+        ));
   }
 }
 

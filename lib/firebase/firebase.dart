@@ -35,6 +35,15 @@ class FirebaseServices {
     });
   }
 
+  Future deleteDoctor(int id) async {
+    try {
+      return databaseRef.child("doctors").child(id.toString()).remove();
+    } on Exception catch (error) {
+      print(error);
+      return Future.error(error);
+    }
+  }
+
   //firebase file storage
 
   static final _firebaseStorage = FirebaseStorage.instance;

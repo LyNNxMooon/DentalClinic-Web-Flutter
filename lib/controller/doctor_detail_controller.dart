@@ -33,7 +33,7 @@ class DoctorDetailController extends BaseController {
           msg: "Fill all the fields!",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
+          timeInSecForIosWeb: 2,
           backgroundColor: kErrorColor,
           textColor: kPrimaryColor,
           fontSize: 20);
@@ -56,7 +56,7 @@ class DoctorDetailController extends BaseController {
               msg: "Doctor Updated!",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
+              timeInSecForIosWeb: 2,
               backgroundColor: kSuccessColor,
               textColor: kFourthColor,
               fontSize: 20);
@@ -70,11 +70,42 @@ class DoctorDetailController extends BaseController {
             msg: getErrorMessage,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
+            timeInSecForIosWeb: 2,
             backgroundColor: kErrorColor,
             textColor: kPrimaryColor,
             fontSize: 20);
       });
     }
+  }
+
+  Future deleteDoctor(int id) async {
+    setLoadingState = LoadingState.loading;
+    return _firebaseServices.deleteDoctor(id).then(
+      (value) {
+        setLoadingState = LoadingState.complete;
+        Fluttertoast.showToast(
+            msg: "Doctor Deleted!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 2,
+            backgroundColor: kSuccessColor,
+            textColor: kFourthColor,
+            fontSize: 20);
+        Get.back();
+        Get.back();
+        _receptionistHomeController.callDoctors();
+      },
+    ).catchError((error) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = error;
+      Fluttertoast.showToast(
+          msg: getErrorMessage,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: kErrorColor,
+          textColor: kPrimaryColor,
+          fontSize: 20);
+    });
   }
 }
