@@ -15,8 +15,10 @@ class DoctorDetailScreen extends StatelessWidget {
       body: ResponsiveLayout(
           mobileBody: DoctorDetailMobileScreen(
             doctor: doctor,
+            initialAvailability: doctor.availability,
           ),
           desktopBody: DoctorDetailDesktopScreen(
+            initialAvailability: doctor.availability,
             doctor: doctor,
           )),
     );

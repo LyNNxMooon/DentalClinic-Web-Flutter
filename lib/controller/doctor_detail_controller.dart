@@ -22,42 +22,59 @@ class DoctorDetailController extends BaseController {
     String experience,
     Map<String, List> availability,
   ) async {
-    setLoadingState = LoadingState.loading;
-
-    final doctor = DoctorVO(
-        id: id,
-        url: url,
-        name: name,
-        bio: bio,
-        specialist: specialist,
-        experience: experience,
-        availability: availability);
-
-    return _firebaseServices.saveDoctor(doctor).then(
-      (value) {
-        setLoadingState = LoadingState.complete;
-        Fluttertoast.showToast(
-            msg: "Doctor Updated!",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: kSuccessColor,
-            textColor: kFourthColor,
-            fontSize: 20);
-        _receptionistHomeController.callDoctors();
-      },
-    ).catchError((error) {
-      print(error);
+    bool hasWorkingHours = availability.values.any((times) => times.isNotEmpty);
+    if (name.isEmpty ||
+        bio.isEmpty ||
+        specialist.isEmpty ||
+        experience.isEmpty ||
+        !hasWorkingHours) {
       setLoadingState = LoadingState.error;
-      setErrorMessage = error;
       Fluttertoast.showToast(
-          msg: getErrorMessage,
+          msg: "Fill all the fields!",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
           backgroundColor: kErrorColor,
           textColor: kPrimaryColor,
           fontSize: 20);
-    });
+    } else {
+      setLoadingState = LoadingState.loading;
+
+      final doctor = DoctorVO(
+          id: id,
+          url: url,
+          name: name,
+          bio: bio,
+          specialist: specialist,
+          experience: experience,
+          availability: availability);
+
+      return _firebaseServices.saveDoctor(doctor).then(
+        (value) {
+          setLoadingState = LoadingState.complete;
+          Fluttertoast.showToast(
+              msg: "Doctor Updated!",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: kSuccessColor,
+              textColor: kFourthColor,
+              fontSize: 20);
+          _receptionistHomeController.callDoctors();
+        },
+      ).catchError((error) {
+        print(error);
+        setLoadingState = LoadingState.error;
+        setErrorMessage = error;
+        Fluttertoast.showToast(
+            msg: getErrorMessage,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: kErrorColor,
+            textColor: kPrimaryColor,
+            fontSize: 20);
+      });
+    }
   }
 }

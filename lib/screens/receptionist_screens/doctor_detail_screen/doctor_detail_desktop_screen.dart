@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/constants/text.dart';
 import 'package:dental_clinic/controller/doctor_detail_controller.dart';
@@ -9,6 +11,28 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 final _doctorDetailController = Get.put(DoctorDetailController());
+
+Map<String, List> availability = {
+  "Monday": [],
+  "Tuesday": [],
+  "Wednesday": [],
+  "Thursday": [],
+  "Friday": [],
+  "Saturday": [],
+  "Sunday": [],
+};
+
+// Track which days are selected
+Map<String, bool> selectedDays = {
+  "Monday": false,
+  "Tuesday": false,
+  "Wednesday": false,
+  "Thursday": false,
+  "Friday": false,
+  "Saturday": false,
+  "Sunday": false,
+};
+
 late TextEditingController _nameController;
 
 late TextEditingController _bioController;
@@ -18,9 +42,11 @@ late TextEditingController _specialistController;
 late TextEditingController _experienceController;
 
 class DoctorDetailDesktopScreen extends StatefulWidget {
-  const DoctorDetailDesktopScreen({super.key, required this.doctor});
+  const DoctorDetailDesktopScreen(
+      {super.key, required this.doctor, required this.initialAvailability});
 
   final DoctorVO doctor;
+  final Map<dynamic, dynamic> initialAvailability;
 
   @override
   State<DoctorDetailDesktopScreen> createState() =>
@@ -36,8 +62,41 @@ class _DoctorDetailDesktopScreenState extends State<DoctorDetailDesktopScreen> {
         TextEditingController(text: widget.doctor.specialist);
     _experienceController =
         TextEditingController(text: widget.doctor.experience);
-
+    populateInitialData();
     super.initState();
+  }
+
+  void populateInitialData() {
+    // Iterate through the initialAvailability map to update the selectedDays and availability maps
+    widget.initialAvailability.forEach((day, times) {
+      if (selectedDays.containsKey(day)) {
+        selectedDays[day] = true; // Set the day as selected
+        availability[day] =
+            List<String>.from(times); // Populate the time slots for that day
+      }
+    });
+  }
+
+  Future<void> _selectTime(BuildContext context, String day) async {
+    final TimeOfDay? pickedStartTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (pickedStartTime != null) {
+      TimeOfDay? pickedEndTime = await showTimePicker(
+        context: context,
+        initialTime: pickedStartTime,
+      );
+
+      if (pickedEndTime != null) {
+        setState(() {
+          // Store the time slot as a string in the format "HH:mm-HH:mm"
+          availability[day]?.add(
+              "${pickedStartTime.format(context)} - ${pickedEndTime.format(context)}");
+        });
+      }
+    }
   }
 
   @override
@@ -54,6 +113,7 @@ class _DoctorDetailDesktopScreenState extends State<DoctorDetailDesktopScreen> {
             height: 30,
           ),
           const Text(
+            textAlign: TextAlign.start,
             "Doctor Details",
             style: desktopTitleStyle,
           ),
@@ -131,17 +191,46 @@ class _DoctorDetailDesktopScreenState extends State<DoctorDetailDesktopScreen> {
           const SizedBox(
             height: 20,
           ),
+          Center(
+            child: SizedBox(
+              width: 400,
+              height: 500,
+              child: ListView(
+                shrinkWrap: true,
+                children: selectedDays.keys.map((String day) {
+                  return CheckboxListTile(
+                    title: Text(day),
+                    value: selectedDays[day],
+                    onChanged: (bool? value) {
+                      setState(() {
+                        selectedDays[day] = value ?? false;
+                        if (!value!) {
+                          availability[day] =
+                              []; // Clear time slots if unchecked
+                        }
+                      });
+                    },
+                    secondary: IconButton(
+                      icon: const Icon(Icons.access_time),
+                      onPressed: selectedDays[day]!
+                          ? () => _selectTime(context, day)
+                          : null, // Only allow time picking if the day is selected
+                    ),
+                    subtitle: Text(availability[day]!.isNotEmpty
+                        ? "Selected times: ${availability[day]?.join(', ')}"
+                        : "No times selected"),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
           Obx(
             () => LoadingStateWidget(
                 loadingState: _doctorDetailController.getLoadingState,
-                loadingSuccessWidget: UpdateBtn(
-                  id: widget.doctor.id,
-                  url: widget.doctor.url,
-                ),
-                loadingInitWidget: UpdateBtn(
-                  id: widget.doctor.id,
-                  url: widget.doctor.url,
-                ),
+                loadingSuccessWidget:
+                    UpdateBtn(id: widget.doctor.id, url: widget.doctor.url),
+                loadingInitWidget:
+                    UpdateBtn(id: widget.doctor.id, url: widget.doctor.url),
                 paddingTop: 0),
           )
         ],
@@ -151,11 +240,7 @@ class _DoctorDetailDesktopScreenState extends State<DoctorDetailDesktopScreen> {
 }
 
 class UpdateBtn extends StatelessWidget {
-  const UpdateBtn({
-    super.key,
-    required this.id,
-    required this.url,
-  });
+  const UpdateBtn({super.key, required this.id, required this.url});
 
   final int id;
   final String url;
@@ -171,7 +256,8 @@ class UpdateBtn extends StatelessWidget {
               _nameController.text,
               _bioController.text,
               _specialistController.text,
-              _experienceController.text, {});
+              _experienceController.text,
+              availability);
         },
         child: Container(
           width: 400,
