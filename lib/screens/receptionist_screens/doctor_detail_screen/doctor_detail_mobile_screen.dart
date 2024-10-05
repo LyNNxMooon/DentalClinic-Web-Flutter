@@ -17,8 +17,6 @@ late TextEditingController _specialistController;
 
 late TextEditingController _experienceController;
 
-late TextEditingController _dayOffController;
-
 class DoctorDetailMobileScreen extends StatefulWidget {
   const DoctorDetailMobileScreen({super.key, required this.doctor});
 
@@ -38,7 +36,7 @@ class _DoctorDetailMobileScreenState extends State<DoctorDetailMobileScreen> {
         TextEditingController(text: widget.doctor.specialist);
     _experienceController =
         TextEditingController(text: widget.doctor.experience);
-    _dayOffController = TextEditingController(text: widget.doctor.dayOff);
+
     super.initState();
   }
 
@@ -133,19 +131,6 @@ class _DoctorDetailMobileScreenState extends State<DoctorDetailMobileScreen> {
           const SizedBox(
             height: 15,
           ),
-          Center(
-            child: SizedBox(
-              width: 200,
-              child: CustomTextField(
-                hintText: "Enter doctor day off",
-                label: "Day Off",
-                controller: _dayOffController,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
           Obx(
             () => LoadingStateWidget(
                 loadingState: _doctorDetailController.getLoadingState,
@@ -178,8 +163,7 @@ class UpdateBtn extends StatelessWidget {
               _nameController.text,
               _bioController.text,
               _specialistController.text,
-              _experienceController.text,
-              _dayOffController.text);
+              _experienceController.text, {});
         },
         child: Container(
           width: 200,

@@ -9,8 +9,7 @@ class DoctorVO {
   final String bio;
   final String specialist;
   final String experience;
-  @JsonKey(name: "day_off")
-  final String dayOff;
+  final dynamic availability;
 
   DoctorVO(
       {required this.id,
@@ -19,7 +18,7 @@ class DoctorVO {
       required this.bio,
       required this.specialist,
       required this.experience,
-      required this.dayOff});
+      required this.availability});
 
   factory DoctorVO.fromJson(Map<String, dynamic> json) =>
       _$DoctorVOFromJson(json);

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
@@ -20,6 +22,28 @@ final _filePicker = FilePickerUtils();
 final _addDoctorController = Get.put(AddDoctorController());
 final _receptionistHomeController = Get.put(ReceptionistHomeController());
 
+// Keep track of selected days and time slots
+Map<String, List> availability = {
+  "Monday": [],
+  "Tuesday": [],
+  "Wednesday": [],
+  "Thursday": [],
+  "Friday": [],
+  "Saturday": [],
+  "Sunday": [],
+};
+
+// Track which days are selected
+Map<String, bool> selectedDays = {
+  "Monday": false,
+  "Tuesday": false,
+  "Wednesday": false,
+  "Thursday": false,
+  "Friday": false,
+  "Saturday": false,
+  "Sunday": false,
+};
+
 class DesktopHomeScreen extends StatefulWidget {
   const DesktopHomeScreen({super.key});
 
@@ -31,7 +55,6 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
   final _doctorNameController = TextEditingController();
   final _doctorSpecialistController = TextEditingController();
   final _doctorExperienceController = TextEditingController();
-  final _doctorDayOffController = TextEditingController();
   final _doctorBiosController = TextEditingController();
 
   List<ConnectivityResult> _connectionStatus = [ConnectivityResult.none];
@@ -116,7 +139,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
                                           _doctorBiosController,
                                           _doctorSpecialistController,
                                           _doctorExperienceController,
-                                          _doctorDayOffController,
+                                          availability,
                                           context);
                                     } else {
                                       Get.back();
@@ -126,7 +149,6 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
                                   bioController: _doctorBiosController,
                                   specController: _doctorSpecialistController,
                                   expController: _doctorExperienceController,
-                                  dayOffController: _doctorDayOffController,
                                 ),
                               );
                             },
@@ -181,7 +203,7 @@ class DoctorsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 300,
+      height: 250,
       child: ListView.separated(
         separatorBuilder: (context, index) => const SizedBox(
           width: 15,
@@ -267,18 +289,6 @@ class DoctorCard extends StatelessWidget {
                 text: doctor.experience,
                 style: const TextStyle(fontSize: 14, color: kThirdColor)),
           ])),
-          const SizedBox(
-            height: 10,
-          ),
-          RichText(
-              text: TextSpan(children: [
-            const TextSpan(
-                text: "DayOff : ",
-                style: TextStyle(fontSize: 14, color: kThirdColor)),
-            TextSpan(
-                text: doctor.dayOff,
-                style: const TextStyle(fontSize: 14, color: kThirdColor)),
-          ])),
         ],
       ),
     );
@@ -286,27 +296,49 @@ class DoctorCard extends StatelessWidget {
 }
 
 class AddDoctorDialog extends StatefulWidget {
-  const AddDoctorDialog(
-      {super.key,
-      required this.function,
-      required this.nameController,
-      required this.bioController,
-      required this.specController,
-      required this.expController,
-      required this.dayOffController});
+  const AddDoctorDialog({
+    super.key,
+    required this.function,
+    required this.nameController,
+    required this.bioController,
+    required this.specController,
+    required this.expController,
+  });
 
   final VoidCallback function;
   final TextEditingController nameController;
   final TextEditingController bioController;
   final TextEditingController specController;
   final TextEditingController expController;
-  final TextEditingController dayOffController;
 
   @override
   State<AddDoctorDialog> createState() => _AddDoctorDialogState();
 }
 
 class _AddDoctorDialogState extends State<AddDoctorDialog> {
+  // Method to pick time using Flutter's time picker
+  Future<void> _selectTime(BuildContext context, String day) async {
+    TimeOfDay? pickedStartTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (pickedStartTime != null) {
+      TimeOfDay? pickedEndTime = await showTimePicker(
+        context: context,
+        initialTime: pickedStartTime,
+      );
+
+      if (pickedEndTime != null) {
+        setState(() {
+          // Store the time slot as a string in the format "HH:mm-HH:mm"
+          availability[day]?.add(
+              "${pickedStartTime.format(context)} - ${pickedEndTime.format(context)}");
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -424,13 +456,38 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
               label: "Experience",
               controller: widget.expController,
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            CustomTextField(
-              hintText: "Enter doctor day off",
-              label: "Day Off",
-              controller: widget.dayOffController,
+            const SizedBox(height: 20),
+            // Create a checkbox for each day
+            SizedBox(
+              width: 300,
+              height: 500,
+              child: ListView(
+                shrinkWrap: true,
+                children: selectedDays.keys.map((String day) {
+                  return CheckboxListTile(
+                    title: Text(day),
+                    value: selectedDays[day],
+                    onChanged: (bool? value) {
+                      setState(() {
+                        selectedDays[day] = value ?? false;
+                        if (!value!) {
+                          availability[day] =
+                              []; // Clear time slots if unchecked
+                        }
+                      });
+                    },
+                    secondary: IconButton(
+                      icon: const Icon(Icons.access_time),
+                      onPressed: selectedDays[day]!
+                          ? () => _selectTime(context, day)
+                          : null, // Only allow time picking if the day is selected
+                    ),
+                    subtitle: Text(availability[day]!.isNotEmpty
+                        ? "Selected times: ${availability[day]?.join(', ')}"
+                        : "No times selected"),
+                  );
+                }).toList(),
+              ),
             ),
           ],
         ),

@@ -14,7 +14,7 @@ class LoadFailWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         const Text(
-          "Unable to Load Data!",
+          "No Data Available",
           style: desktopTitleStyle,
         ),
         const SizedBox(

@@ -13,7 +13,7 @@ DoctorVO _$DoctorVOFromJson(Map<String, dynamic> json) => DoctorVO(
       bio: json['bio'] as String,
       specialist: json['specialist'] as String,
       experience: json['experience'] as String,
-      dayOff: json['day_off'] as String,
+      availability: json['availability'],
     );
 
 Map<String, dynamic> _$DoctorVOToJson(DoctorVO instance) => <String, dynamic>{
@@ -23,5 +23,5 @@ Map<String, dynamic> _$DoctorVOToJson(DoctorVO instance) => <String, dynamic>{
       'bio': instance.bio,
       'specialist': instance.specialist,
       'experience': instance.experience,
-      'day_off': instance.dayOff,
+      'availability': instance.availability,
     };

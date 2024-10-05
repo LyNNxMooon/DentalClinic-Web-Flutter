@@ -24,6 +24,7 @@ class ReceptionistHomeController extends BaseController {
         } else {
           doctorsList.value = event;
           setLoadingState = LoadingState.complete;
+          print(doctorsList[0].availability);
           print(doctorsList[0].url);
         }
       },

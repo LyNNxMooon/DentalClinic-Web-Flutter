@@ -23,13 +23,15 @@ class AddDoctorController extends BaseController {
       TextEditingController bio,
       TextEditingController specialist,
       TextEditingController experience,
-      TextEditingController dayOff,
+      Map<String, List> availability,
       BuildContext context) async {
+    print(availability);
+    bool hasWorkingHours = availability.values.any((times) => times.isNotEmpty);
     if (name.text.isEmpty ||
         bio.text.isEmpty ||
         specialist.text.isEmpty ||
         experience.text.isEmpty ||
-        dayOff.text.isEmpty ||
+        !hasWorkingHours ||
         selectFile.value == null) {
       setLoadingState = LoadingState.error;
 
@@ -56,7 +58,7 @@ class AddDoctorController extends BaseController {
           bio: bio.text,
           specialist: specialist.text,
           experience: experience.text,
-          dayOff: dayOff.text);
+          availability: availability);
       return _firebaseService.saveDoctor(doctor).then(
         (value) {
           setLoadingState = LoadingState.complete;
@@ -72,7 +74,7 @@ class AddDoctorController extends BaseController {
           bio.clear();
           specialist.clear();
           experience.clear();
-          dayOff.clear();
+
           _receptionistHomeController.callDoctors();
         },
       ).catchError((error) {

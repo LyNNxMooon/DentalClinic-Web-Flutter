@@ -20,7 +20,7 @@ class DoctorDetailController extends BaseController {
     String bio,
     String specialist,
     String experience,
-    String dayOff,
+    Map<String, List> availability,
   ) async {
     setLoadingState = LoadingState.loading;
 
@@ -31,7 +31,7 @@ class DoctorDetailController extends BaseController {
         bio: bio,
         specialist: specialist,
         experience: experience,
-        dayOff: dayOff);
+        availability: availability);
 
     return _firebaseServices.saveDoctor(doctor).then(
       (value) {
