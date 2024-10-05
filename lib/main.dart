@@ -1,4 +1,4 @@
-import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/auth_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Dental Clinic',
       theme: ThemeData(fontFamily: "Ubuntu"),
-      home: const HomeScreen(),
+      home: const AuthPage(),
     );
   }
 }

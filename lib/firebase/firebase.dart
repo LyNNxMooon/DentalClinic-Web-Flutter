@@ -1,8 +1,9 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'dart:typed_data';
 
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -10,6 +11,16 @@ class FirebaseServices {
   FirebaseServices._();
   static final FirebaseServices _singleton = FirebaseServices._();
   factory FirebaseServices() => _singleton;
+
+  //Auth
+  Future firebaseSignIn(String email, String password) async {
+    try {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (error) {
+      return Future.error(error);
+    }
+  }
 
   //Realtime database
   final databaseRef = FirebaseDatabase.instance.ref();
@@ -20,7 +31,7 @@ class FirebaseServices {
           .child("doctors")
           .child(doctorVo.id.toString())
           .set(doctorVo.toJson());
-    } on Exception catch (error) {
+    } on FirebaseException catch (error) {
       print(error);
       return Future.error(error);
     }
@@ -38,7 +49,7 @@ class FirebaseServices {
   Future deleteDoctor(int id) async {
     try {
       return databaseRef.child("doctors").child(id.toString()).remove();
-    } on Exception catch (error) {
+    } on FirebaseException catch (error) {
       print(error);
       return Future.error(error);
     }

@@ -1,4 +1,5 @@
 import 'package:dental_clinic/constants/colors.dart';
+import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_screens/emergency_saving_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
 
@@ -24,9 +25,11 @@ class _MobilePatientManagementScreenState
           backgroundColor: kPrimaryColor,
           child: CustomNavigationDrawer(
             title1: "Home",
-            title2: "Profile",
+            title2: "Emergency",
+            title3: "Profile",
             widget1: HomeScreen(),
-            widget2: ReceptionistProfileScreen(),
+            widget2: EmergencySavingScreen(),
+            widget3: ReceptionistProfileScreen(),
           )),
       body: Padding(
         padding: const EdgeInsets.all(25),

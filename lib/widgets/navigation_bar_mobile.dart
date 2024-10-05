@@ -39,6 +39,7 @@ class DrawerItem extends StatelessWidget {
       required this.widget});
 
   final String title;
+
   final IconData icon;
   final Widget widget;
 
@@ -70,12 +71,16 @@ class CustomNavigationDrawer extends StatelessWidget {
       required this.title1,
       required this.title2,
       required this.widget1,
-      required this.widget2});
+      required this.widget2,
+      required this.title3,
+      required this.widget3});
 
   final String title1;
   final String title2;
+  final String title3;
   final Widget widget1;
   final Widget widget2;
+  final Widget widget3;
 
   @override
   Widget build(BuildContext context) {
