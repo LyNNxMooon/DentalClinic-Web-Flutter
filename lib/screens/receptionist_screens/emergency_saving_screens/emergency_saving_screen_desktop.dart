@@ -1,11 +1,11 @@
-import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_screens/emergency_saving_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
 import 'package:dental_clinic/widgets/navigation_bar_desktop.dart';
 import 'package:flutter/material.dart';
 
-class DesktopReceptionistProfileScreen extends StatelessWidget {
-  const DesktopReceptionistProfileScreen({super.key});
+class DesktopEmergencySavingScreen extends StatelessWidget {
+  const DesktopEmergencySavingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +18,16 @@ class DesktopReceptionistProfileScreen extends StatelessWidget {
             DesktopNavigationBar(
               title1: "Home",
               title2: "Patients",
-              icon: Icons.health_and_safety_rounded,
+              icon: Icons.person_outline,
               widget1: HomeScreen(),
               widget2: PatientManagementScreen(),
-              widget3: EmergencySavingScreen(),
+              widget3: ReceptionistProfileScreen(),
             ),
             SizedBox(
               height: 60,
             ),
             Text(
-              "Profile",
+              "Emergency Saving",
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             )
           ],

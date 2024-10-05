@@ -1,4 +1,5 @@
 import 'package:dental_clinic/constants/colors.dart';
+import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_screens/emergency_saving_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
 import 'package:dental_clinic/widgets/navigation_bar_desktop.dart';
@@ -17,9 +18,11 @@ class DesktopPatientManagementScreen extends StatelessWidget {
           children: [
             const DesktopNavigationBar(
               title1: "Home",
-              title2: "Profile",
+              title2: "Emergency",
+              icon: Icons.person_outlined,
               widget1: HomeScreen(),
-              widget2: ReceptionistProfileScreen(),
+              widget2: EmergencySavingScreen(),
+              widget3: ReceptionistProfileScreen(),
             ),
             const SizedBox(
               height: 60,

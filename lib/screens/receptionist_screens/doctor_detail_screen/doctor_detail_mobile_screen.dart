@@ -1,10 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/constants/text.dart';
 import 'package:dental_clinic/controller/doctor_detail_controller.dart';
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
+import 'package:dental_clinic/widgets/no_connection_mobile_widget.dart';
 import 'package:dental_clinic/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -53,6 +57,11 @@ class DoctorDetailMobileScreen extends StatefulWidget {
 }
 
 class _DoctorDetailMobileScreenState extends State<DoctorDetailMobileScreen> {
+  List<ConnectivityResult> _connectionStatus = [ConnectivityResult.none];
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  String connection = "online";
+
   @override
   void initState() {
     _nameController = TextEditingController(text: widget.doctor.name);
@@ -62,7 +71,42 @@ class _DoctorDetailMobileScreenState extends State<DoctorDetailMobileScreen> {
     _experienceController =
         TextEditingController(text: widget.doctor.experience);
     populateInitialData();
+
+    initConnectivity();
+
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> initConnectivity() async {
+    late List<ConnectivityResult> result;
+
+    result = await _connectivity.checkConnectivity();
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(List<ConnectivityResult> result) async {
+    setState(() {
+      _connectionStatus = result;
+      if (_connectionStatus[0] == ConnectivityResult.none) {
+        connection = "offline";
+      } else {
+        connection = "online";
+      }
+    });
+    // ignore: avoid_print
+    print('Connectivity changed: $_connectionStatus');
   }
 
   void populateInitialData() {
@@ -100,163 +144,170 @@ class _DoctorDetailMobileScreenState extends State<DoctorDetailMobileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(25),
-      child: SingleChildScrollView(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                  onPressed: () => Get.back(),
-                  icon: const Icon(Icons.arrow_back)),
-              Obx(
-                () => LoadingStateWidget(
-                    loadingState: _doctorDetailController.getLoadingState,
-                    loadingSuccessWidget: DeleteBtn(
-                      function: () {
-                        _doctorDetailController.deleteDoctor(widget.doctor.id);
-                      },
+    return Scaffold(
+      body: connection == "online"
+          ? Padding(
+              padding: const EdgeInsets.all(25),
+              child: SingleChildScrollView(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                          onPressed: () => Get.back(),
+                          icon: const Icon(Icons.arrow_back)),
+                      Obx(
+                        () => LoadingStateWidget(
+                            loadingState:
+                                _doctorDetailController.getLoadingState,
+                            loadingSuccessWidget: DeleteBtn(
+                              function: () {
+                                _doctorDetailController
+                                    .deleteDoctor(widget.doctor.id);
+                              },
+                            ),
+                            loadingInitWidget: DeleteBtn(
+                              function: () {
+                                _doctorDetailController
+                                    .deleteDoctor(widget.doctor.id);
+                              },
+                            ),
+                            paddingTop: 0),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text(
+                    "Doctor Details",
+                    style: mobileTitleStyle,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(55),
+                        border: Border.all(width: 0.3),
+                      ),
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(55),
+                          child: Image.network(
+                            widget.doctor.url,
+                            fit: BoxFit.cover,
+                          )),
                     ),
-                    loadingInitWidget: DeleteBtn(
-                      function: () {
-                        _doctorDetailController.deleteDoctor(widget.doctor.id);
-                      },
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: CustomTextField(
+                        hintText: "Enter doctor Name",
+                        label: "Name",
+                        controller: _nameController,
+                      ),
                     ),
-                    paddingTop: 0),
-              )
-            ],
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          const Text(
-            "Doctor Details",
-            style: mobileTitleStyle,
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Center(
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(55),
-                border: Border.all(width: 0.3),
-              ),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(55),
-                  child: Image.network(
-                    widget.doctor.url,
-                    fit: BoxFit.cover,
-                  )),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Center(
-            child: SizedBox(
-              width: 200,
-              child: CustomTextField(
-                hintText: "Enter doctor Name",
-                label: "Name",
-                controller: _nameController,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          Center(
-            child: SizedBox(
-              width: 200,
-              child: CustomTextField(
-                hintText: "Enter doctor Bio",
-                label: "Bio",
-                controller: _bioController,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          Center(
-            child: SizedBox(
-              width: 200,
-              child: CustomTextField(
-                hintText: "Enter doctor Specialist",
-                label: "Specialist",
-                controller: _specialistController,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          Center(
-            child: SizedBox(
-              width: 200,
-              child: CustomTextField(
-                hintText: "Enter doctor experience",
-                label: "Experience",
-                controller: _experienceController,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          Center(
-            child: SizedBox(
-              width: 250,
-              height: 500,
-              child: ListView(
-                shrinkWrap: true,
-                children: selectedDays.keys.map((String day) {
-                  return CheckboxListTile(
-                    title: Text(day),
-                    value: selectedDays[day],
-                    onChanged: (bool? value) {
-                      setState(() {
-                        selectedDays[day] = value ?? false;
-                        if (!value!) {
-                          availability[day] =
-                              []; // Clear time slots if unchecked
-                        }
-                      });
-                    },
-                    secondary: IconButton(
-                      icon: const Icon(Icons.access_time),
-                      onPressed: selectedDays[day]!
-                          ? () => _selectTime(context, day)
-                          : null, // Only allow time picking if the day is selected
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: CustomTextField(
+                        hintText: "Enter doctor Bio",
+                        label: "Bio",
+                        controller: _bioController,
+                      ),
                     ),
-                    subtitle: Text(availability[day]!.isNotEmpty
-                        ? "Selected times: ${availability[day]?.join(', ')}"
-                        : "No times selected"),
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          Obx(
-            () => LoadingStateWidget(
-                loadingState: _doctorDetailController.getLoadingState,
-                loadingSuccessWidget:
-                    UpdateBtn(id: widget.doctor.id, url: widget.doctor.url),
-                loadingInitWidget:
-                    UpdateBtn(id: widget.doctor.id, url: widget.doctor.url),
-                paddingTop: 0),
-          )
-        ],
-      )),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: CustomTextField(
+                        hintText: "Enter doctor Specialist",
+                        label: "Specialist",
+                        controller: _specialistController,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: CustomTextField(
+                        hintText: "Enter doctor experience",
+                        label: "Experience",
+                        controller: _experienceController,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Center(
+                    child: SizedBox(
+                      width: 250,
+                      height: 500,
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: selectedDays.keys.map((String day) {
+                          return CheckboxListTile(
+                            title: Text(day),
+                            value: selectedDays[day],
+                            onChanged: (bool? value) {
+                              setState(() {
+                                selectedDays[day] = value ?? false;
+                                if (!value!) {
+                                  availability[day] =
+                                      []; // Clear time slots if unchecked
+                                }
+                              });
+                            },
+                            secondary: IconButton(
+                              icon: const Icon(Icons.access_time),
+                              onPressed: selectedDays[day]!
+                                  ? () => _selectTime(context, day)
+                                  : null, // Only allow time picking if the day is selected
+                            ),
+                            subtitle: Text(availability[day]!.isNotEmpty
+                                ? "Selected times: ${availability[day]?.join(', ')}"
+                                : "No times selected"),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Obx(
+                    () => LoadingStateWidget(
+                        loadingState: _doctorDetailController.getLoadingState,
+                        loadingSuccessWidget: UpdateBtn(
+                            id: widget.doctor.id, url: widget.doctor.url),
+                        loadingInitWidget: UpdateBtn(
+                            id: widget.doctor.id, url: widget.doctor.url),
+                        paddingTop: 0),
+                  )
+                ],
+              )),
+            )
+          : const NoConnectionMobileWidget(),
     );
   }
 }

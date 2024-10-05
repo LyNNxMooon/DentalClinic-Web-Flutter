@@ -23,7 +23,7 @@ class LoadFailWidget extends StatelessWidget {
         Center(
             child: TextButton(
           style: const ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(kThirdColor)),
+              backgroundColor: WidgetStatePropertyAll(kBtnGrayColor)),
           onPressed: function,
           child: const Text("Try Again",
               style: TextStyle(

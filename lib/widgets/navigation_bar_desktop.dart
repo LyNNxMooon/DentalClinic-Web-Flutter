@@ -9,12 +9,16 @@ class DesktopNavigationBar extends StatelessWidget {
       required this.title1,
       required this.title2,
       required this.widget1,
-      required this.widget2});
+      required this.widget2,
+      required this.icon,
+      required this.widget3});
 
   final String title1;
   final String title2;
+  final IconData icon;
   final Widget widget1;
   final Widget widget2;
+  final Widget widget3;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +60,15 @@ class DesktopNavigationBar extends StatelessWidget {
                 title2,
                 style: const TextStyle(fontSize: 16),
               ),
-            )
+            ),
+            const SizedBox(
+              width: 15,
+            ),
+            IconButton(
+                onPressed: () {
+                  Get.offAll(() => widget3);
+                },
+                icon: Icon(icon))
           ],
         )
       ],
