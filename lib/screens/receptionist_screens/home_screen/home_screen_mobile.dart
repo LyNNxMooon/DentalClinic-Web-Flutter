@@ -203,7 +203,57 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
                               },
                             ),
                           )),
-                    )
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          textAlign: TextAlign.start,
+                          "Manage Appointments",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AddDoctorDialog(
+                                function: () async {
+                                  if (connection == "online") {
+                                    _addDoctorController.addDoctor(
+                                        _doctorNameController,
+                                        _doctorBiosController,
+                                        _doctorSpecialistController,
+                                        _doctorExperienceController,
+                                        availability,
+                                        context);
+                                  } else {
+                                    Get.back();
+                                  }
+                                },
+                                nameController: _doctorNameController,
+                                bioController: _doctorBiosController,
+                                specController: _doctorSpecialistController,
+                                expController: _doctorExperienceController,
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                                color: kSecondaryColor,
+                                borderRadius: BorderRadius.circular(6)),
+                            child: const Center(
+                              child: Icon(Icons.add),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ],
                 ),
               ),
