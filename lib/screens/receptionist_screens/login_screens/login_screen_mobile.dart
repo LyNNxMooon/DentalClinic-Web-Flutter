@@ -64,6 +64,8 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
                   hintText: "Enter your Password",
                   label: "Password",
                   isObsecure: showPassword,
+                  minLines: 1,
+                  maxLines: 1,
                   suffixIcon: IconButton(
                       onPressed: () {
                         showPassword = !showPassword!;

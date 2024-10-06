@@ -5,6 +5,7 @@ import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/add_emergency_saving_controller.dart';
 import 'package:dental_clinic/controller/emergency_saving_controller.dart';
 import 'package:dental_clinic/data/vos/emergency_saving_vo.dart';
+import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_detail_screens/emergency_saving_detail_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_screens/emergency_saving_screen_desktop.dart';
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
@@ -203,7 +204,9 @@ class EmergencySavingList extends StatelessWidget {
       ),
       itemCount: _emergencySavingController.emergencySavingList.length,
       itemBuilder: (context, index) => GestureDetector(
-        onTap: () {},
+        onTap: () {
+          Get.to(() => EmergencySavingDetailScreen(savingVO: savings[index]));
+        },
         child: SavingCard(
           saving: savings[index],
         ),

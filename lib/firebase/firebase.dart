@@ -77,6 +77,15 @@ class FirebaseServices {
     });
   }
 
+  Future deleteEmergencySaving(int id) async {
+    try {
+      return databaseRef.child("emergency").child(id.toString()).remove();
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error);
+    }
+  }
+
   //firebase file storage
 
   static final _firebaseStorage = FirebaseStorage.instance;
