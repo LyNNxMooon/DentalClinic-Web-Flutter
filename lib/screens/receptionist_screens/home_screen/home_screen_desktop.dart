@@ -206,7 +206,7 @@ class DoctorsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 250,
+      height: 290,
       child: ListView.separated(
         separatorBuilder: (context, index) => const SizedBox(
           width: 15,

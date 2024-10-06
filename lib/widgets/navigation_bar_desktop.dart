@@ -50,7 +50,7 @@ class DesktopNavigationBar extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              width: 25,
+              width: 23,
             ),
             GestureDetector(
               onTap: () {
@@ -62,7 +62,7 @@ class DesktopNavigationBar extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              width: 15,
+              width: 10,
             ),
             IconButton(
                 onPressed: () {

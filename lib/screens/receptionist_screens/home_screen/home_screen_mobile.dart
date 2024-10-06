@@ -116,6 +116,9 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
             title1: "Patients",
             title2: "Emergency",
             title3: "Profile",
+            icon1: Icons.people_alt_outlined,
+            icon2: Icons.emergency_outlined,
+            icon3: Icons.person,
             widget1: PatientManagementScreen(),
             widget2: EmergencySavingScreen(),
             widget3: ReceptionistProfileScreen(),
@@ -218,7 +221,7 @@ class DoctorList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 200,
+      height: 250,
       child: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,

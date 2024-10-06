@@ -73,11 +73,17 @@ class CustomNavigationDrawer extends StatelessWidget {
       required this.widget1,
       required this.widget2,
       required this.title3,
-      required this.widget3});
+      required this.widget3,
+      required this.icon1,
+      required this.icon2,
+      required this.icon3});
 
   final String title1;
   final String title2;
   final String title3;
+  final IconData icon1;
+  final IconData icon2;
+  final IconData icon3;
   final Widget widget1;
   final Widget widget2;
   final Widget widget3;
@@ -101,7 +107,7 @@ class CustomNavigationDrawer extends StatelessWidget {
         ),
         DrawerItem(
           title: title1,
-          icon: Icons.question_mark_rounded,
+          icon: icon1,
           widget: widget1,
         ),
         const SizedBox(
@@ -109,8 +115,16 @@ class CustomNavigationDrawer extends StatelessWidget {
         ),
         DrawerItem(
           title: title2,
-          icon: Icons.phone,
+          icon: icon2,
           widget: widget2,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        DrawerItem(
+          title: title3,
+          icon: icon3,
+          widget: widget3,
         )
       ],
     );
