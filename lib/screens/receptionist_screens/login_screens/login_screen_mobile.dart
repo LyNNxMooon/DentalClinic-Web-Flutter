@@ -24,85 +24,87 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(25),
+        padding: const EdgeInsets.only(top: 25, left: 25, right: 25),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AppLogo(),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Text(
-                    "Dental Clinic Admin Login",
-                    style: mobileTitleStyle,
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              SizedBox(
-                width: 250,
-                child: CustomTextField(
-                  hintText: "Enter admin email",
-                  label: "Email",
-                  controller: _emailController,
-                ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              SizedBox(
-                width: 250,
-                child: CustomTextField(
-                  controller: _passwordController,
-                  hintText: "Enter your Password",
-                  label: "Password",
-                  isObsecure: showPassword,
-                  minLines: 1,
-                  maxLines: 1,
-                  suffixIcon: IconButton(
-                      onPressed: () {
-                        showPassword = !showPassword!;
-                        setState(() {});
-                      },
-                      icon: showPassword!
-                          ? const Icon(
-                              Icons.visibility_outlined,
-                              color: kSecondaryColor,
-                            )
-                          : const Icon(
-                              Icons.visibility_off_outlined,
-                              color: kSecondaryColor,
-                            )),
-                ),
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              Obx(
-                () => LoadingStateWidget(
-                    loadingState: _loginController.getLoadingState,
-                    loadingSuccessWidget: LoginBtn(
-                      function: () {
-                        _loginController.login(_emailController.text,
-                            _passwordController.text, context);
-                      },
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AppLogo(),
+                    SizedBox(
+                      width: 20,
                     ),
-                    loadingInitWidget: LoginBtn(
-                      function: () {
-                        _loginController.login(_emailController.text,
-                            _passwordController.text, context);
-                      },
+                    Text(
+                      "Dental Clinic Admin Login",
+                      style: mobileTitleStyle,
                     ),
-                    paddingTop: 0),
-              )
-            ],
+                  ],
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                SizedBox(
+                  width: 250,
+                  child: CustomTextField(
+                    hintText: "Enter admin email",
+                    label: "Email",
+                    controller: _emailController,
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                SizedBox(
+                  width: 250,
+                  child: CustomTextField(
+                    controller: _passwordController,
+                    hintText: "Enter your Password",
+                    label: "Password",
+                    isObsecure: showPassword,
+                    minLines: 1,
+                    maxLines: 1,
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          showPassword = !showPassword!;
+                          setState(() {});
+                        },
+                        icon: showPassword!
+                            ? const Icon(
+                                Icons.visibility_outlined,
+                                color: kSecondaryColor,
+                              )
+                            : const Icon(
+                                Icons.visibility_off_outlined,
+                                color: kSecondaryColor,
+                              )),
+                  ),
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                Obx(
+                  () => LoadingStateWidget(
+                      loadingState: _loginController.getLoadingState,
+                      loadingSuccessWidget: LoginBtn(
+                        function: () {
+                          _loginController.login(_emailController.text,
+                              _passwordController.text, context);
+                        },
+                      ),
+                      loadingInitWidget: LoginBtn(
+                        function: () {
+                          _loginController.login(_emailController.text,
+                              _passwordController.text, context);
+                        },
+                      ),
+                      paddingTop: 0),
+                )
+              ],
+            ),
           ),
         ),
       ),

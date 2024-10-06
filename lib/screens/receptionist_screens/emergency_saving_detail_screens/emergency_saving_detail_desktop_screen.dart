@@ -86,7 +86,7 @@ class _EmergencySavingDesktopScreenState
     return Scaffold(
       body: connection == "online"
           ? Padding(
-              padding: const EdgeInsets.all(50),
+              padding: const EdgeInsets.only(top: 50, left: 50, right: 50),
               child: SingleChildScrollView(
                   child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -35,7 +35,7 @@ class _MobilePatientManagementScreenState
             widget3: ReceptionistProfileScreen(),
           )),
       body: Padding(
-        padding: const EdgeInsets.all(25),
+        padding: const EdgeInsets.only(top: 25, left: 25, right: 25),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

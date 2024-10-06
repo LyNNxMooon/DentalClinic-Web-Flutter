@@ -24,84 +24,102 @@ class _DesktopLoginScreenState extends State<DesktopLoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(50),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Row(
+        padding: const EdgeInsets.only(top: 50, left: 50, right: 50),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                AppLogo(),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AppLogo(),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Text(
+                      "Dental Clinic Admin Login",
+                      style: desktopTitleStyle,
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 70,
+                ),
                 SizedBox(
-                  width: 20,
+                  width: 400,
+                  child: CustomTextField(
+                    hintText: "Enter admin email",
+                    label: "Email",
+                    controller: _emailController,
+                  ),
                 ),
-                Text(
-                  "Dental Clinic Admin Login",
-                  style: desktopTitleStyle,
+                const SizedBox(
+                  height: 20,
                 ),
+                SizedBox(
+                  width: 400,
+                  child: CustomTextField(
+                    controller: _passwordController,
+                    hintText: "Enter your Password",
+                    label: "Password",
+                    isObsecure: showPassword,
+                    minLines: 1,
+                    maxLines: 1,
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          showPassword = !showPassword!;
+                          setState(() {});
+                        },
+                        icon: showPassword!
+                            ? const Icon(
+                                Icons.visibility_outlined,
+                                color: kSecondaryColor,
+                              )
+                            : const Icon(
+                                Icons.visibility_off_outlined,
+                                color: kSecondaryColor,
+                              )),
+                  ),
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                Obx(
+                  () => LoadingStateWidget(
+                      loadingState: _loginController.getLoadingState,
+                      loadingSuccessWidget: LoginBtn(
+                        function: () {
+                          _loginController
+                              .login(_emailController.text,
+                                  _passwordController.text, context)
+                              .then(
+                            (value) {
+                              _emailController.clear();
+                              _passwordController.clear();
+                            },
+                          );
+                        },
+                      ),
+                      loadingInitWidget: LoginBtn(
+                        function: () {
+                          _loginController
+                              .login(_emailController.text,
+                                  _passwordController.text, context)
+                              .then(
+                            (value) {
+                              _emailController.clear();
+                              _passwordController.clear();
+                            },
+                          );
+                        },
+                      ),
+                      paddingTop: 0),
+                )
               ],
             ),
-            const SizedBox(
-              height: 70,
-            ),
-            SizedBox(
-              width: 400,
-              child: CustomTextField(
-                hintText: "Enter admin email",
-                label: "Email",
-                controller: _emailController,
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            SizedBox(
-              width: 400,
-              child: CustomTextField(
-                controller: _passwordController,
-                hintText: "Enter your Password",
-                label: "Password",
-                isObsecure: showPassword,
-                minLines: 1,
-                maxLines: 1,
-                suffixIcon: IconButton(
-                    onPressed: () {
-                      showPassword = !showPassword!;
-                      setState(() {});
-                    },
-                    icon: showPassword!
-                        ? const Icon(
-                            Icons.visibility_outlined,
-                            color: kSecondaryColor,
-                          )
-                        : const Icon(
-                            Icons.visibility_off_outlined,
-                            color: kSecondaryColor,
-                          )),
-              ),
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            Obx(
-              () => LoadingStateWidget(
-                  loadingState: _loginController.getLoadingState,
-                  loadingSuccessWidget: LoginBtn(
-                    function: () {
-                      _loginController.login(_emailController.text,
-                          _passwordController.text, context);
-                    },
-                  ),
-                  loadingInitWidget: LoginBtn(
-                    function: () {
-                      _loginController.login(_emailController.text,
-                          _passwordController.text, context);
-                    },
-                  ),
-                  paddingTop: 0),
-            )
-          ],
+          ),
         ),
       ),
     );

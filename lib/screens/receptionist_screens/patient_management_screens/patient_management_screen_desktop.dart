@@ -12,7 +12,7 @@ class DesktopPatientManagementScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(50),
+        padding: const EdgeInsets.only(top: 50, left: 50, right: 50),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
