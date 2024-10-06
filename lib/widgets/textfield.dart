@@ -8,6 +8,8 @@ class CustomTextField extends StatelessWidget {
       required this.label,
       this.isObsecure,
       this.suffixIcon,
+      this.minLines,
+      this.maxLines,
       required this.controller});
 
   final String hintText;
@@ -15,12 +17,16 @@ class CustomTextField extends StatelessWidget {
   final bool? isObsecure;
   final IconButton? suffixIcon;
   final TextEditingController controller;
+  final int? minLines;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
         obscureText: isObsecure ?? false,
         controller: controller,
+        minLines: minLines,
+        maxLines: maxLines,
         decoration: InputDecoration(
           suffixIcon: suffixIcon,
           hintText: hintText,

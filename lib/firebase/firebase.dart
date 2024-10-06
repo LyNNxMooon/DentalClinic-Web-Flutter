@@ -3,6 +3,7 @@
 import 'dart:typed_data';
 
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
+import 'package:dental_clinic/data/vos/emergency_saving_vo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -53,6 +54,27 @@ class FirebaseServices {
       print(error);
       return Future.error(error);
     }
+  }
+
+  Future saveEmergencySaving(EmergencySavingVO savingVo) async {
+    try {
+      return databaseRef
+          .child("emergency")
+          .child(savingVo.id.toString())
+          .set(savingVo.toJson());
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error);
+    }
+  }
+
+  Stream<List<EmergencySavingVO>?> getEmergencySavingListStream() {
+    return databaseRef.child("emergency").onValue.map((event) {
+      return event.snapshot.children.map<EmergencySavingVO>((snapshot) {
+        return EmergencySavingVO.fromJson(
+            Map<String, dynamic>.from(snapshot.value as Map));
+      }).toList();
+    });
   }
 
   //firebase file storage
