@@ -3,6 +3,7 @@
 import 'dart:typed_data';
 
 import 'package:dental_clinic/controller/base_controller.dart';
+import 'package:dental_clinic/controller/patient_management_controller.dart';
 import 'package:dental_clinic/data/vos/patient_vo.dart';
 import 'package:dental_clinic/firebase/firebase.dart';
 import 'package:dental_clinic/utils/enums.dart';
@@ -15,6 +16,7 @@ import 'package:get/get.dart';
 class AddPatientController extends BaseController {
   final _firebaseService = FirebaseServices();
   Rxn<Uint8List> selectFile = Rxn<Uint8List>();
+  final _patientManagementController = Get.put(PatientManagementController());
 
   Future registerPatients(
       TextEditingController email,
@@ -69,6 +71,8 @@ class AddPatientController extends BaseController {
               age.clear();
               email.clear();
               password.clear();
+
+              _patientManagementController.callPatients();
             },
           );
         },

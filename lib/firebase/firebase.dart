@@ -60,6 +60,15 @@ class FirebaseServices {
     }
   }
 
+  Stream<List<PatientVO>?> getPatientListStream() {
+    return databaseRef.child("patients").onValue.map((event) {
+      return event.snapshot.children.map<PatientVO>((snapshot) {
+        return PatientVO.fromJson(
+            Map<String, dynamic>.from(snapshot.value as Map));
+      }).toList();
+    });
+  }
+
   Stream<List<DoctorVO>?> getDoctorListStream() {
     return databaseRef.child("doctors").onValue.map((event) {
       return event.snapshot.children.map<DoctorVO>((snapshot) {

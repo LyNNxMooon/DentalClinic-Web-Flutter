@@ -1,12 +1,17 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/add_patient_controller.dart';
+import 'package:dental_clinic/controller/patient_management_controller.dart';
+import 'package:dental_clinic/data/vos/patient_vo.dart';
 import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_screens/emergency_saving_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
+import 'package:dental_clinic/widgets/load_fail_widget.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
 import 'package:dental_clinic/widgets/navigation_bar_desktop.dart';
 import 'package:dental_clinic/widgets/no_connection_desktop_widget.dart';
@@ -16,6 +21,7 @@ import 'package:get/get.dart';
 
 final _filePicker = FilePickerUtils();
 final _addPatientController = Get.put(AddPatientController());
+final _patientManagementController = Get.put(PatientManagementController());
 String? _selectedGender;
 
 class DesktopPatientManagementScreen extends StatefulWidget {
@@ -144,11 +150,114 @@ class _DesktopPatientManagementScreenState
                         )
                       ],
                     ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Obx(
+                      () => LoadingStateWidget(
+                          paddingTop: 100,
+                          loadingState:
+                              _patientManagementController.getLoadingState,
+                          loadingSuccessWidget: PatientList(
+                            patients: _patientManagementController.patientList,
+                          ),
+                          loadingInitWidget: Padding(
+                            padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * 0.22),
+                            child: LoadFailWidget(
+                              function: () {
+                                _patientManagementController.callPatients();
+                              },
+                            ),
+                          )),
+                    )
                   ],
                 ),
               ),
             )
           : const NoConnectionDesktopWidget(),
+    );
+  }
+}
+
+class PatientList extends StatelessWidget {
+  const PatientList({super.key, required this.patients});
+
+  final List<PatientVO> patients;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        scrollDirection: Axis.vertical,
+        itemBuilder: (context, index) => PatientTile(patient: patients[index]),
+        separatorBuilder: (context, index) => const SizedBox(
+              height: 20,
+            ),
+        itemCount: patients.length);
+  }
+}
+
+class PatientTile extends StatelessWidget {
+  const PatientTile({super.key, required this.patient});
+
+  final PatientVO patient;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+      height: 50,
+      decoration: BoxDecoration(
+        color: kBtnGrayColor,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1), // Shadow color
+            spreadRadius: 3, // Spread radius
+            blurRadius: 5, // Blur radius
+            offset: const Offset(0, 3), // Offset of the shadow
+          ),
+        ], //border corner radius
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.delete,
+                color: kErrorColor,
+              ),
+              const SizedBox(
+                width: 60,
+              ),
+              Container(
+                width: 35,
+                height: 40,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(width: 0.3),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Image.network(
+                    patient.url,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+              Text(patient.name)
+            ],
+          ),
+          const Icon(Icons.arrow_drop_down)
+        ],
+      ),
     );
   }
 }
