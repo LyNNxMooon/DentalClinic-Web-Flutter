@@ -335,7 +335,7 @@ class _PatientTileState extends State<PatientTile> {
                     paddingTop: 0),
               ),
               const SizedBox(
-                width: 60,
+                width: 30,
               ),
               Container(
                 width: 35,
