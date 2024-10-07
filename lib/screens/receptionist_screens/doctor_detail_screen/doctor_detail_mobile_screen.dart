@@ -303,7 +303,10 @@ class _DoctorDetailMobileScreenState extends State<DoctorDetailMobileScreen> {
                         loadingInitWidget: UpdateBtn(
                             id: widget.doctor.id, url: widget.doctor.url),
                         paddingTop: 0),
-                  )
+                  ),
+                  const SizedBox(
+                    height: 60,
+                  ),
                 ],
               )),
             )

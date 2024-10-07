@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
+import 'package:dental_clinic/screens/receptionist_screens/auth_page.dart';
 import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_screens/emergency_saving_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
-import 'package:dental_clinic/screens/receptionist_screens/login_screens/login_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
 
 import 'package:dental_clinic/widgets/navigation_bar_mobile.dart';
@@ -142,7 +142,7 @@ class _MobileReceptionistProfileScreenState
                     GestureDetector(
                       onTap: () {
                         FirebaseAuth.instance.signOut().then(
-                              (value) => Get.offAll(() => const LoginScreen()),
+                              (value) => Get.offAll(() => const AuthPage()),
                             );
                       },
                       child: Container(

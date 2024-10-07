@@ -239,6 +239,9 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
                           )
                         ],
                       ),
+                      const SizedBox(
+                        height: 40,
+                      ),
                     ],
                   ),
                 ),

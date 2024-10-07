@@ -184,7 +184,10 @@ class _EmergencySavingDesktopScreenState
                         loadingInitWidget: UpdateBtn(
                             id: widget.saving.id, url: widget.saving.url),
                         paddingTop: 0),
-                  )
+                  ),
+                  const SizedBox(
+                    height: 60,
+                  ),
                 ],
               )),
             )

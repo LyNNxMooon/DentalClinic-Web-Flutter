@@ -254,6 +254,9 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
                         )
                       ],
                     ),
+                    const SizedBox(
+                      height: 30,
+                    ),
                   ],
                 ),
               ),

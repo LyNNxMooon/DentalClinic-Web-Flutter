@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
 import 'package:dental_clinic/data/vos/emergency_saving_vo.dart';
+import 'package:dental_clinic/data/vos/patient_vo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -23,6 +24,15 @@ class FirebaseServices {
     }
   }
 
+  Future firebaseSignUp(String email, String password) async {
+    try {
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (error) {
+      return Future.error(error);
+    }
+  }
+
   //Realtime database
   final databaseRef = FirebaseDatabase.instance.ref();
 
@@ -32,6 +42,18 @@ class FirebaseServices {
           .child("doctors")
           .child(doctorVo.id.toString())
           .set(doctorVo.toJson());
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error);
+    }
+  }
+
+  Future savePatient(PatientVO patientVo) async {
+    try {
+      return databaseRef
+          .child("patients")
+          .child(patientVo.id.toString())
+          .set(patientVo.toJson());
     } on FirebaseException catch (error) {
       print(error);
       return Future.error(error);
@@ -84,6 +106,17 @@ class FirebaseServices {
       print(error);
       return Future.error(error);
     }
+  }
+
+  Future<PatientVO?> getPatient(String id) async {
+    return databaseRef.child("patients").child(id).once().then((event) {
+      if (event.snapshot.value == null) {
+        return null;
+      } else {
+        final rawData = event.snapshot.value;
+        return PatientVO.fromJson(Map<String, dynamic>.from(rawData as Map));
+      }
+    });
   }
 
   //firebase file storage
