@@ -199,16 +199,23 @@ class PatientList extends StatelessWidget {
   }
 }
 
-class PatientTile extends StatelessWidget {
+class PatientTile extends StatefulWidget {
   const PatientTile({super.key, required this.patient});
 
   final PatientVO patient;
 
   @override
+  State<PatientTile> createState() => _PatientTileState();
+}
+
+class _PatientTileState extends State<PatientTile> {
+  double tileHeight = 50;
+  bool isDrop = false;
+  @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-      height: 50,
+      height: tileHeight,
       decoration: BoxDecoration(
         color: kBtnGrayColor,
         borderRadius: BorderRadius.circular(8),
@@ -227,38 +234,143 @@ class PatientTile extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.delete,
-                color: kErrorColor,
+              Obx(
+                () => LoadingStateWidget(
+                    loadingState: _patientManagementController.getLoadingState,
+                    loadingSuccessWidget: DeleteBtn(
+                      function: () {
+                        _patientManagementController
+                            .deletePatient(widget.patient.id);
+                      },
+                    ),
+                    loadingInitWidget: DeleteBtn(
+                      function: () {
+                        _patientManagementController
+                            .deletePatient(widget.patient.id);
+                      },
+                    ),
+                    paddingTop: 0),
               ),
               const SizedBox(
                 width: 60,
               ),
               Container(
                 width: 35,
-                height: 40,
+                height: 35,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(20),
                   border: Border.all(width: 0.3),
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(20),
                   child: Image.network(
-                    patient.url,
+                    widget.patient.url,
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
               const SizedBox(
-                width: 20,
+                width: 30,
               ),
-              Text(patient.name)
+              isDrop
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(widget.patient.name),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Text("Age : ${widget.patient.age}"),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Text("Gender : ${widget.patient.gender}"),
+                      ],
+                    )
+                  : Text(widget.patient.name)
             ],
           ),
-          const Icon(Icons.arrow_drop_down)
+          GestureDetector(
+              onTap: () {
+                setState(() {
+                  isDrop = !isDrop;
+                  tileHeight = isDrop ? 110 : 50;
+                });
+              },
+              child: Icon(isDrop ? Icons.arrow_drop_up : Icons.arrow_drop_down))
         ],
       ),
     );
+  }
+}
+
+class DeleteBtn extends StatelessWidget {
+  const DeleteBtn({super.key, required this.function});
+
+  final VoidCallback function;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                actions: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        style: const ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(kErrorColor)),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(color: kPrimaryColor),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      TextButton(
+                        onPressed: function,
+                        style: const ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(kSecondaryColor)),
+                        child: const Text(
+                          "OK",
+                          style: TextStyle(color: kPrimaryColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                content: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      color: kErrorColor,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Are you sure to delete?",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: kErrorColor),
+                    ),
+                  ],
+                )),
+          );
+        },
+        icon: const Icon(
+          Icons.delete,
+          color: kErrorColor,
+        ));
   }
 }
 

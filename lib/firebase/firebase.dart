@@ -60,6 +60,15 @@ class FirebaseServices {
     }
   }
 
+  Future deletePatient(String id) async {
+    try {
+      return databaseRef.child("patients").child(id.toString()).remove();
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error);
+    }
+  }
+
   Stream<List<PatientVO>?> getPatientListStream() {
     return databaseRef.child("patients").onValue.map((event) {
       return event.snapshot.children.map<PatientVO>((snapshot) {
