@@ -10,6 +10,7 @@ class CustomTextField extends StatelessWidget {
       this.suffixIcon,
       this.minLines,
       this.maxLines,
+      this.keyboardType,
       required this.controller});
 
   final String hintText;
@@ -19,6 +20,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final int? minLines;
   final int? maxLines;
+  final TextInputType? keyboardType;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,7 @@ class CustomTextField extends StatelessWidget {
         obscureText: isObsecure ?? false,
         controller: controller,
         minLines: minLines,
+        keyboardType: keyboardType,
         maxLines: maxLines,
         decoration: InputDecoration(
           suffixIcon: suffixIcon,
