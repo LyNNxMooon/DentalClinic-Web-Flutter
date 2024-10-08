@@ -6,6 +6,7 @@ import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/add_doctor_controller.dart';
 import 'package:dental_clinic/controller/receptionist_home_controller.dart';
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
+import 'package:dental_clinic/screens/receptionist_screens/add_appointment_screens/add_appointment_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/doctor_detail_screen/doctor_detail_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_screens/emergency_saving_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
@@ -181,8 +182,8 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
                             ),
                             loadingInitWidget: Padding(
                               padding: EdgeInsets.only(
-                                  top: MediaQuery.of(context).size.height *
-                                      0.22),
+                                  top:
+                                      MediaQuery.of(context).size.height * 0.1),
                               child: LoadFailWidget(
                                 function: () {
                                   _receptionistHomeController.callDoctors();
@@ -203,28 +204,7 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AddDoctorDialog(
-                                  function: () async {
-                                    if (connection == "online") {
-                                      _addDoctorController.addDoctor(
-                                          _doctorNameController,
-                                          _doctorBiosController,
-                                          _doctorSpecialistController,
-                                          _doctorExperienceController,
-                                          availability,
-                                          context);
-                                    } else {
-                                      Get.back();
-                                    }
-                                  },
-                                  nameController: _doctorNameController,
-                                  bioController: _doctorBiosController,
-                                  specController: _doctorSpecialistController,
-                                  expController: _doctorExperienceController,
-                                ),
-                              );
+                              Get.to(() => const AddAppointmentScreen());
                             },
                             child: Container(
                               width: 80,

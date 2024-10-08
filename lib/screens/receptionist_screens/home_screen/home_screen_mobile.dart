@@ -21,6 +21,8 @@ import 'package:dental_clinic/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../add_appointment_screens/add_appointment_screen.dart';
+
 final _filePicker = FilePickerUtils();
 final _addDoctorController = Get.put(AddDoctorController());
 final _receptionistHomeController = Get.put(ReceptionistHomeController());
@@ -218,28 +220,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AddDoctorDialog(
-                                function: () async {
-                                  if (connection == "online") {
-                                    _addDoctorController.addDoctor(
-                                        _doctorNameController,
-                                        _doctorBiosController,
-                                        _doctorSpecialistController,
-                                        _doctorExperienceController,
-                                        availability,
-                                        context);
-                                  } else {
-                                    Get.back();
-                                  }
-                                },
-                                nameController: _doctorNameController,
-                                bioController: _doctorBiosController,
-                                specController: _doctorSpecialistController,
-                                expController: _doctorExperienceController,
-                              ),
-                            );
+                            Get.to(() => const AddAppointmentScreen());
                           },
                           child: Container(
                             width: 40,

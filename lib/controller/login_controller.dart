@@ -13,6 +13,8 @@ import 'package:get/get.dart';
 class LoginController extends BaseController {
   final _firebaseService = FirebaseServices();
 
+  RxString adminEmail = "admin@gmail.com".obs;
+
   Future login(String email, String password, BuildContext context) async {
     setLoadingState = LoadingState.loading;
 
@@ -24,6 +26,7 @@ class LoginController extends BaseController {
           (value) {
             if (value == null) {
               setLoadingState = LoadingState.complete;
+
               print("admin authenticated!");
             } else {
               setLoadingState = LoadingState.error;

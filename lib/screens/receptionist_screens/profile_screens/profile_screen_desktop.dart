@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
+import 'package:dental_clinic/controller/login_controller.dart';
 import 'package:dental_clinic/screens/receptionist_screens/auth_page.dart';
 import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_screens/emergency_saving_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
@@ -13,6 +14,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+final _loginController = Get.put(LoginController());
+
 class DesktopReceptionistProfileScreen extends StatefulWidget {
   const DesktopReceptionistProfileScreen({super.key});
 
@@ -23,8 +26,6 @@ class DesktopReceptionistProfileScreen extends StatefulWidget {
 
 class _DesktopReceptionistProfileScreenState
     extends State<DesktopReceptionistProfileScreen> {
-  final userEmail = FirebaseAuth.instance.currentUser;
-
   List<ConnectivityResult> _connectionStatus = [ConnectivityResult.none];
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
@@ -115,16 +116,18 @@ class _DesktopReceptionistProfileScreenState
                     const SizedBox(
                       height: 40,
                     ),
-                    RichText(
-                        text: TextSpan(children: [
-                      const TextSpan(
-                          text: "Login Email : ",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold)),
-                      TextSpan(
-                          text: userEmail?.email,
-                          style: const TextStyle(fontSize: 18)),
-                    ])),
+                    Obx(
+                      () => RichText(
+                          text: TextSpan(children: [
+                        const TextSpan(
+                            text: "Login Email : ",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        TextSpan(
+                            text: _loginController.adminEmail.value,
+                            style: const TextStyle(fontSize: 18)),
+                      ])),
+                    ),
                     const SizedBox(
                       height: 40,
                     ),
