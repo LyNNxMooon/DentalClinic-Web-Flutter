@@ -2,6 +2,7 @@
 
 import 'dart:typed_data';
 
+import 'package:dental_clinic/data/vos/appointment_vo.dart';
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
 import 'package:dental_clinic/data/vos/emergency_saving_vo.dart';
 import 'package:dental_clinic/data/vos/patient_vo.dart';
@@ -42,6 +43,36 @@ class FirebaseServices {
           .child("doctors")
           .child(doctorVo.id.toString())
           .set(doctorVo.toJson());
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error);
+    }
+  }
+
+  Future saveAppointment(AppointmentVO appointmentVo) async {
+    try {
+      return databaseRef
+          .child("appointments")
+          .child(appointmentVo.id.toString())
+          .set(appointmentVo.toJson());
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error);
+    }
+  }
+
+  Stream<List<AppointmentVO>?> getAppointmentListStream() {
+    return databaseRef.child("appointments").onValue.map((event) {
+      return event.snapshot.children.map<AppointmentVO>((snapshot) {
+        return AppointmentVO.fromJson(
+            Map<String, dynamic>.from(snapshot.value as Map));
+      }).toList();
+    });
+  }
+
+  Future deleteAppointment(int id) async {
+    try {
+      return databaseRef.child("appointments").child(id.toString()).remove();
     } on FirebaseException catch (error) {
       print(error);
       return Future.error(error);

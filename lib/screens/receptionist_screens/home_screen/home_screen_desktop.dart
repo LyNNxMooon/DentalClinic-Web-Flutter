@@ -4,7 +4,9 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/add_doctor_controller.dart';
+import 'package:dental_clinic/controller/appointment_controller.dart';
 import 'package:dental_clinic/controller/receptionist_home_controller.dart';
+import 'package:dental_clinic/data/vos/appointment_vo.dart';
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
 import 'package:dental_clinic/screens/receptionist_screens/add_appointment_screens/add_appointment_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/doctor_detail_screen/doctor_detail_screen.dart';
@@ -23,6 +25,7 @@ import 'package:get/get.dart';
 final _filePicker = FilePickerUtils();
 final _addDoctorController = Get.put(AddDoctorController());
 final _receptionistHomeController = Get.put(ReceptionistHomeController());
+final _appointmentController = Get.put(AppointmentController());
 
 // Keep track of selected days and time slots
 Map<String, List> availability = {
@@ -222,11 +225,197 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
                       const SizedBox(
                         height: 40,
                       ),
+                      Obx(
+                        () => LoadingStateWidget(
+                            paddingTop: 100,
+                            loadingState:
+                                _appointmentController.getLoadingState,
+                            loadingSuccessWidget: AppointmentList(
+                              appointments:
+                                  _appointmentController.appointmentList,
+                            ),
+                            loadingInitWidget: Padding(
+                              padding: EdgeInsets.only(
+                                  top:
+                                      MediaQuery.of(context).size.height * 0.1),
+                              child: LoadFailWidget(
+                                function: () {
+                                  _appointmentController.callAppointments();
+                                },
+                              ),
+                            )),
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
                     ],
                   ),
                 ),
               )
             : const NoConnectionDesktopWidget());
+  }
+}
+
+class DeleteBtn extends StatelessWidget {
+  const DeleteBtn({super.key, required this.function});
+
+  final VoidCallback function;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      style: const ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(kBtnGrayColor)),
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      style: const ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(kErrorColor)),
+                      child: const Text(
+                        "Cancel",
+                        style: TextStyle(color: kPrimaryColor),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    TextButton(
+                      onPressed: function,
+                      style: const ButtonStyle(
+                          backgroundColor:
+                              WidgetStatePropertyAll(kSecondaryColor)),
+                      child: const Text(
+                        "OK",
+                        style: TextStyle(color: kPrimaryColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              content: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    color: kErrorColor,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Are you sure to delete?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: kErrorColor),
+                  ),
+                ],
+              )),
+        );
+      },
+      child: const Text(
+        "Delete",
+        style: TextStyle(color: kErrorColor),
+      ),
+    );
+  }
+}
+
+class AppointmentList extends StatelessWidget {
+  const AppointmentList({super.key, required this.appointments});
+
+  final List<AppointmentVO> appointments;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 5,
+        mainAxisSpacing: 5.0,
+        crossAxisSpacing: 5,
+        mainAxisExtent: 265,
+      ),
+      itemCount: _appointmentController.appointmentList.length,
+      itemBuilder: (context, index) => AppointmentCard(
+        appointment: appointments[index],
+      ),
+    );
+  }
+}
+
+class AppointmentCard extends StatelessWidget {
+  const AppointmentCard({super.key, required this.appointment});
+
+  final AppointmentVO appointment;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(7),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      decoration: BoxDecoration(
+        border: Border.all(width: 0.5),
+        borderRadius: BorderRadius.circular(8), //border corner radius
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Icon(Icons.date_range),
+          const SizedBox(
+            height: 15,
+          ),
+          RichText(
+              text: TextSpan(children: [
+            TextSpan(
+                text: appointment.date,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+          ])),
+          const SizedBox(
+            height: 15,
+          ),
+          RichText(
+              text: TextSpan(children: [
+            TextSpan(
+                text: appointment.time,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+          ])),
+          const SizedBox(
+            height: 15,
+          ),
+          RichText(
+              text: TextSpan(children: [
+            TextSpan(
+              text: "Doctor : ${appointment.doctorName}",
+            ),
+          ])),
+          const SizedBox(
+            height: 15,
+          ),
+          RichText(
+              text: TextSpan(children: [
+            TextSpan(
+              text: "Patient : ${appointment.patientName}",
+            ),
+          ])),
+          const SizedBox(
+            height: 15,
+          ),
+          DeleteBtn(function: () {
+            _appointmentController.deleteAppointments(appointment.id);
+          })
+        ],
+      ),
+    );
   }
 }
 

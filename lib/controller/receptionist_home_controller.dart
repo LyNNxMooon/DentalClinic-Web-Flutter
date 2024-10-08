@@ -1,5 +1,6 @@
 import 'package:dental_clinic/controller/base_controller.dart';
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
+
 import 'package:dental_clinic/firebase/firebase.dart';
 import 'package:dental_clinic/utils/enums.dart';
 import 'package:get/get.dart';
@@ -12,6 +13,7 @@ class ReceptionistHomeController extends BaseController {
   @override
   void onInit() {
     callDoctors();
+
     super.onInit();
   }
 
