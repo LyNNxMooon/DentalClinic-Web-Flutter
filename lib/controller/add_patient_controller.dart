@@ -52,6 +52,7 @@ class AddPatientController extends BaseController {
           final patientVo = PatientVO(
               id: id,
               name: name.text,
+              isBanned: false,
               url: fileURL,
               age: int.parse(age.text),
               gender: gender);

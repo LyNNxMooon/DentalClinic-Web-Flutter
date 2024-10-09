@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/base_controller.dart';
 import 'package:dental_clinic/data/vos/patient_vo.dart';
@@ -33,14 +35,29 @@ class PatientManagementController extends BaseController {
     });
   }
 
-  Future deletePatient(String id) async {
+  Future banOrUnbanPatient(
+    String id,
+    String name,
+    bool isBanned,
+    String url,
+    int age,
+    String gender,
+  ) async {
     setLoadingState = LoadingState.loading;
-    return _firebaseService.deletePatient(id).then(
+
+    final patient = PatientVO(
+        id: id,
+        url: url,
+        name: name,
+        isBanned: isBanned,
+        age: age,
+        gender: gender);
+
+    return _firebaseService.savePatient(patient).then(
       (value) {
         setLoadingState = LoadingState.complete;
-
         Fluttertoast.showToast(
-            msg: "Patient Deleted!",
+            msg: "Patient Banned!",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 2,
@@ -52,6 +69,7 @@ class PatientManagementController extends BaseController {
         callPatients();
       },
     ).catchError((error) {
+      print(error);
       setLoadingState = LoadingState.error;
       setErrorMessage = error;
       Fluttertoast.showToast(

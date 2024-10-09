@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, avoid_function_literals_in_foreach_calls
 
 import 'dart:async';
 
@@ -141,7 +141,6 @@ class _AddAppointmentMobileScreenState
     DateTime start = DateTime.parse("1970-01-01 $startTime");
     DateTime end = DateTime.parse("1970-01-01 $endTime");
 
-    print("Triggered");
     // Check if the selected time is between start and end time
     return selectedTime.isAfter(start) && selectedTime.isBefore(end);
   }
@@ -209,10 +208,10 @@ class _AddAppointmentMobileScreenState
                           children: [
                             Text(
                               selectedDate == null
-                                  ? 'Select Appointment Date'
+                                  ? 'Select Date'
                                   : DateFormat('yMMMMd').format(selectedDate!),
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(
                               width: 10,
@@ -221,8 +220,8 @@ class _AddAppointmentMobileScreenState
                               selectedTime == null
                                   ? ', Select Time'
                                   : ", ${selectedTime!.format(context)}",
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             )
                           ],
                         ),
@@ -233,9 +232,6 @@ class _AddAppointmentMobileScreenState
                                   _selectDate(context);
                                 },
                                 icon: const Icon(Icons.date_range)),
-                            const SizedBox(
-                              width: 10,
-                            ),
                             IconButton(
                                 onPressed: () {
                                   _selectTime(context);
@@ -248,65 +244,69 @@ class _AddAppointmentMobileScreenState
                     const SizedBox(
                       height: 20,
                     ),
-                    Row(
-                      children: [
-                        Obx(
-                          () => Container(
-                            width: 160,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: kBtnGrayColor,
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black
-                                      .withOpacity(0.1), // Shadow color
-                                  spreadRadius: 3, // Spread radius
-                                  blurRadius: 5, // Blur radius
-                                  offset: const Offset(
-                                      0, 3), // Offset of the shadow
-                                ),
-                              ], //border corner radius
-                            ),
-                            child: Center(
-                              child: Text(_appointmentController.doctor.value ==
-                                      null
-                                  ? "Select Doctor"
-                                  : "Doctor: ${_appointmentController.doctor.value!.name}"),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        Obx(
-                          () => Container(
-                            width: 160,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: kBtnGrayColor,
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black
-                                      .withOpacity(0.1), // Shadow color
-                                  spreadRadius: 3, // Spread radius
-                                  blurRadius: 5, // Blur radius
-                                  offset: const Offset(
-                                      0, 3), // Offset of the shadow
-                                ),
-                              ], //border corner radius
-                            ),
-                            child: Center(
-                              child: Text(_appointmentController
-                                          .patient.value ==
-                                      null
-                                  ? "Select Patient"
-                                  : "Patient: ${_appointmentController.patient.value!.name}"),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          Obx(
+                            () => Container(
+                              width: 160,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: kBtnGrayColor,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black
+                                        .withOpacity(0.1), // Shadow color
+                                    spreadRadius: 3, // Spread radius
+                                    blurRadius: 5, // Blur radius
+                                    offset: const Offset(
+                                        0, 3), // Offset of the shadow
+                                  ),
+                                ], //border corner radius
+                              ),
+                              child: Center(
+                                child: Text(_appointmentController
+                                            .doctor.value ==
+                                        null
+                                    ? "Select Doctor"
+                                    : "Doctor: ${_appointmentController.doctor.value!.name}"),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Obx(
+                            () => Container(
+                              width: 160,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: kBtnGrayColor,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black
+                                        .withOpacity(0.1), // Shadow color
+                                    spreadRadius: 3, // Spread radius
+                                    blurRadius: 5, // Blur radius
+                                    offset: const Offset(
+                                        0, 3), // Offset of the shadow
+                                  ),
+                                ], //border corner radius
+                              ),
+                              child: Center(
+                                child: Text(_appointmentController
+                                            .patient.value ==
+                                        null
+                                    ? "Select Patient"
+                                    : "Patient: ${_appointmentController.patient.value!.name}"),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(
                       height: 30,

@@ -5,6 +5,8 @@ part 'patient_vo.g.dart';
 class PatientVO {
   final String id;
   final String name;
+  @JsonKey(name: "is_banned")
+  final bool isBanned;
   final String url;
   final int age;
   final String gender;
@@ -12,6 +14,7 @@ class PatientVO {
   PatientVO(
       {required this.id,
       required this.name,
+      required this.isBanned,
       required this.url,
       required this.age,
       required this.gender});

@@ -234,23 +234,63 @@ class _PatientTileState extends State<PatientTile> {
         children: [
           Row(
             children: [
-              Obx(
-                () => LoadingStateWidget(
-                    loadingState: _patientManagementController.getLoadingState,
-                    loadingSuccessWidget: DeleteBtn(
-                      function: () {
-                        _patientManagementController
-                            .deletePatient(widget.patient.id);
-                      },
+              widget.patient.isBanned
+                  ? Obx(
+                      () => LoadingStateWidget(
+                          loadingState:
+                              _patientManagementController.getLoadingState,
+                          loadingSuccessWidget: UnbanBtn(
+                            function: () {
+                              _patientManagementController.banOrUnbanPatient(
+                                  widget.patient.id,
+                                  widget.patient.name,
+                                  false,
+                                  widget.patient.url,
+                                  widget.patient.age,
+                                  widget.patient.gender);
+                            },
+                          ),
+                          loadingInitWidget: UnbanBtn(
+                            function: () {
+                              _patientManagementController.banOrUnbanPatient(
+                                  widget.patient.id,
+                                  widget.patient.name,
+                                  false,
+                                  widget.patient.url,
+                                  widget.patient.age,
+                                  widget.patient.gender);
+                            },
+                          ),
+                          paddingTop: 0),
+                    )
+                  : Obx(
+                      () => LoadingStateWidget(
+                          loadingState:
+                              _patientManagementController.getLoadingState,
+                          loadingSuccessWidget: BanBtn(
+                            function: () {
+                              _patientManagementController.banOrUnbanPatient(
+                                  widget.patient.id,
+                                  widget.patient.name,
+                                  true,
+                                  widget.patient.url,
+                                  widget.patient.age,
+                                  widget.patient.gender);
+                            },
+                          ),
+                          loadingInitWidget: BanBtn(
+                            function: () {
+                              _patientManagementController.banOrUnbanPatient(
+                                  widget.patient.id,
+                                  widget.patient.name,
+                                  true,
+                                  widget.patient.url,
+                                  widget.patient.age,
+                                  widget.patient.gender);
+                            },
+                          ),
+                          paddingTop: 0),
                     ),
-                    loadingInitWidget: DeleteBtn(
-                      function: () {
-                        _patientManagementController
-                            .deletePatient(widget.patient.id);
-                      },
-                    ),
-                    paddingTop: 0),
-              ),
               const SizedBox(
                 width: 60,
               ),
@@ -304,8 +344,8 @@ class _PatientTileState extends State<PatientTile> {
   }
 }
 
-class DeleteBtn extends StatelessWidget {
-  const DeleteBtn({super.key, required this.function});
+class UnbanBtn extends StatelessWidget {
+  const UnbanBtn({super.key, required this.function});
 
   final VoidCallback function;
 
@@ -359,7 +399,7 @@ class DeleteBtn extends StatelessWidget {
                       height: 20,
                     ),
                     Text(
-                      "Are you sure to delete?",
+                      "Are you sure to unban?",
                       textAlign: TextAlign.center,
                       style: TextStyle(color: kErrorColor),
                     ),
@@ -368,7 +408,77 @@ class DeleteBtn extends StatelessWidget {
           );
         },
         icon: const Icon(
-          Icons.delete,
+          Icons.restore_rounded,
+          color: kThirdColor,
+        ));
+  }
+}
+
+class BanBtn extends StatelessWidget {
+  const BanBtn({super.key, required this.function});
+
+  final VoidCallback function;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                actions: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        style: const ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(kErrorColor)),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(color: kPrimaryColor),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      TextButton(
+                        onPressed: function,
+                        style: const ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(kSecondaryColor)),
+                        child: const Text(
+                          "OK",
+                          style: TextStyle(color: kPrimaryColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                content: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      color: kErrorColor,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Are you sure to Ban?",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: kErrorColor),
+                    ),
+                  ],
+                )),
+          );
+        },
+        icon: const Icon(
+          Icons.no_accounts,
           color: kErrorColor,
         ));
   }
