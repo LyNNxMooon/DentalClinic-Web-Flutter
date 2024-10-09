@@ -183,7 +183,10 @@ class _MobilePatientManagementScreenState
                               },
                             ),
                           )),
-                    )
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
                   ],
                 ),
               ),

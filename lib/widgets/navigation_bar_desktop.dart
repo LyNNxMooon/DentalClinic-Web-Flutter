@@ -1,4 +1,5 @@
 import 'package:dental_clinic/constants/text.dart';
+import 'package:dental_clinic/utils/hover_extensions.dart';
 import 'package:dental_clinic/widgets/logo.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -48,7 +49,7 @@ class DesktopNavigationBar extends StatelessWidget {
                 title1,
                 style: const TextStyle(fontSize: 16),
               ),
-            ),
+            ).showCursorOnHover,
             const SizedBox(
               width: 23,
             ),
@@ -60,15 +61,16 @@ class DesktopNavigationBar extends StatelessWidget {
                 title2,
                 style: const TextStyle(fontSize: 16),
               ),
-            ),
+            ).showCursorOnHover,
             const SizedBox(
               width: 10,
             ),
             IconButton(
-                onPressed: () {
-                  Get.offAll(() => widget3);
-                },
-                icon: Icon(icon))
+                    onPressed: () {
+                      Get.offAll(() => widget3);
+                    },
+                    icon: Icon(icon))
+                .showCursorOnHover
           ],
         )
       ],

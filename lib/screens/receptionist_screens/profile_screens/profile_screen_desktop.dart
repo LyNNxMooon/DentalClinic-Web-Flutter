@@ -151,7 +151,10 @@ class _DesktopReceptionistProfileScreenState
                           ),
                         ),
                       ),
-                    )
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
                   ],
                 ),
               ),

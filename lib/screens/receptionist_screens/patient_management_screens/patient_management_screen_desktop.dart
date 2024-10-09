@@ -170,7 +170,10 @@ class _DesktopPatientManagementScreenState
                               },
                             ),
                           )),
-                    )
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
                   ],
                 ),
               ),
