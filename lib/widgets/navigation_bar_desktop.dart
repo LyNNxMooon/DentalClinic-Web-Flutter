@@ -49,7 +49,7 @@ class DesktopNavigationBar extends StatelessWidget {
                 title1,
                 style: const TextStyle(fontSize: 16),
               ),
-            ).showCursorOnHover,
+            ).showCursorOnHover.moveUpOnHover,
             const SizedBox(
               width: 23,
             ),
@@ -61,7 +61,7 @@ class DesktopNavigationBar extends StatelessWidget {
                 title2,
                 style: const TextStyle(fontSize: 16),
               ),
-            ).showCursorOnHover,
+            ).showCursorOnHover.moveUpOnHover,
             const SizedBox(
               width: 10,
             ),

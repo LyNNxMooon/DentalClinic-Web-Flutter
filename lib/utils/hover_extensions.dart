@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_web_libraries_in_flutter
 
+import 'package:dental_clinic/utils/translate_on_hover.dart';
 import 'package:flutter/material.dart';
 import 'dart:html' as html;
 
@@ -13,5 +14,9 @@ extension HoverExtensions on Widget {
       onHover: (event) => appContainer?.style.cursor = 'pointer',
       onExit: (event) => appContainer?.style.cursor = 'default',
     );
+  }
+
+  Widget get moveUpOnHover {
+    return TranslateOnHover(child: this);
   }
 }
