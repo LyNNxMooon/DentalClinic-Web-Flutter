@@ -4,10 +4,15 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
+import 'package:dental_clinic/constants/text.dart';
 import 'package:dental_clinic/controller/add_patient_controller.dart';
+import 'package:dental_clinic/controller/feed_back_controller.dart';
 import 'package:dental_clinic/controller/patient_management_controller.dart';
+import 'package:dental_clinic/data/vos/feed_back_vo.dart';
 import 'package:dental_clinic/data/vos/patient_vo.dart';
 import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_screens/emergency_saving_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/feed_back_screens/feed_back_detail_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/feed_back_screens/feed_back_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
@@ -23,6 +28,7 @@ import 'package:get/get.dart';
 final _filePicker = FilePickerUtils();
 final _addPatientController = Get.put(AddPatientController());
 final _patientManagementController = Get.put(PatientManagementController());
+final _feedbackController = Get.put(FeedBackController());
 String? _selectedGender;
 
 class MobilePatientManagementScreen extends StatefulWidget {
@@ -120,6 +126,64 @@ class _MobilePatientManagementScreenState
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
+                          "View Feedbacks",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        IconButton(
+                            onPressed: () =>
+                                Get.to(() => const FeedbackScreen()),
+                            icon: const Icon(Icons.arrow_forward_ios))
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Obx(
+                      () => _feedbackController.displayFeedback.isEmpty
+                          ? Padding(
+                              padding: EdgeInsets.only(
+                                  top:
+                                      MediaQuery.of(context).size.height * 0.05,
+                                  bottom: MediaQuery.of(context).size.height *
+                                      0.05),
+                              child: const Center(
+                                child: Text(
+                                  "Choose feedbacks to Display",
+                                  style: mobileTitleStyle,
+                                ),
+                              ),
+                            )
+                          : SizedBox(
+                              height: 265,
+                              child: ListView.separated(
+                                  scrollDirection: Axis.horizontal,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) =>
+                                      GestureDetector(
+                                        onTap: () => Get.to(() =>
+                                            FeedBackDetailScreen(
+                                                feedback: _feedbackController
+                                                    .displayFeedback[index])),
+                                        child: FeedbackCard(
+                                            feedback: _feedbackController
+                                                .displayFeedback[index]),
+                                      ),
+                                  separatorBuilder: (context, index) =>
+                                      const SizedBox(
+                                        width: 2,
+                                      ),
+                                  itemCount: _feedbackController
+                                      .displayFeedback.length),
+                            ),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
                           textAlign: TextAlign.start,
                           "Manage Patients",
                           style: TextStyle(
@@ -192,6 +256,66 @@ class _MobilePatientManagementScreenState
               ),
             )
           : const NoConnectionMobileWidget(),
+    );
+  }
+}
+
+class FeedbackCard extends StatelessWidget {
+  const FeedbackCard({super.key, required this.feedback});
+
+  final FeedBackVO feedback;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 150,
+      margin: const EdgeInsets.all(7),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      decoration: BoxDecoration(
+        border: Border.all(width: 0.5),
+        borderRadius: BorderRadius.circular(8), //border corner radius
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 30,
+            child: ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) => const Icon(
+                      Icons.star,
+                      color: kRateColor,
+                    ),
+                separatorBuilder: (context, index) => const SizedBox(
+                      width: 5,
+                    ),
+                itemCount: feedback.rate),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          RichText(
+              text: TextSpan(children: [
+            TextSpan(
+                text: "${feedback.patientName} : ",
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+          ])),
+          const SizedBox(
+            height: 15,
+          ),
+          RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(children: [
+                TextSpan(
+                    text:
+                        "${feedback.body.length < 150 ? feedback.body : feedback.body.substring(0, 150)}...",
+                    style: const TextStyle()),
+              ])),
+        ],
+      ),
     );
   }
 }

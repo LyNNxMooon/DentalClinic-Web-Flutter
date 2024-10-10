@@ -94,7 +94,7 @@ class FeedBackController extends BaseController {
             textColor: kFourthColor,
             fontSize: 20);
         Get.back();
-
+        Get.back();
         callFeedBacks();
       },
     ).catchError((error) {

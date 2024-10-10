@@ -381,54 +381,57 @@ class AppointmentCard extends StatelessWidget {
         border: Border.all(width: 0.5),
         borderRadius: BorderRadius.circular(8), //border corner radius
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Icon(Icons.date_range),
-          const SizedBox(
-            height: 15,
+      child: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(Icons.date_range),
+              const SizedBox(
+                height: 15,
+              ),
+              RichText(
+                  text: TextSpan(children: [
+                TextSpan(
+                    text: appointment.date,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+              ])),
+              const SizedBox(
+                height: 15,
+              ),
+              RichText(
+                  text: TextSpan(children: [
+                TextSpan(
+                    text: appointment.time,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+              ])),
+              const SizedBox(
+                height: 15,
+              ),
+              RichText(
+                  text: TextSpan(children: [
+                TextSpan(
+                  text: "Doctor : ${appointment.doctorName}",
+                ),
+              ])),
+              const SizedBox(
+                height: 15,
+              ),
+              RichText(
+                  text: TextSpan(children: [
+                TextSpan(
+                  text: "Patient : ${appointment.patientName}",
+                ),
+              ])),
+              const SizedBox(
+                height: 15,
+              ),
+              DeleteBtn(function: () {
+                _appointmentController.deleteAppointments(appointment.id);
+              })
+            ],
           ),
-          RichText(
-              text: TextSpan(children: [
-            TextSpan(
-                text: appointment.date,
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-          ])),
-          const SizedBox(
-            height: 15,
-          ),
-          RichText(
-              text: TextSpan(children: [
-            TextSpan(
-                text: appointment.time,
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-          ])),
-          const SizedBox(
-            height: 15,
-          ),
-          RichText(
-              text: TextSpan(children: [
-            TextSpan(
-              text: "Doctor : ${appointment.doctorName}",
-            ),
-          ])),
-          const SizedBox(
-            height: 15,
-          ),
-          RichText(
-              text: TextSpan(children: [
-            TextSpan(
-              text: "Patient : ${appointment.patientName}",
-            ),
-          ])),
-          const SizedBox(
-            height: 15,
-          ),
-          DeleteBtn(function: () {
-            _appointmentController.deleteAppointments(appointment.id);
-          })
-        ],
+        ),
       ),
     );
   }

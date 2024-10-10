@@ -131,7 +131,7 @@ class FirebaseServices {
   Future saveEmergencySaving(EmergencySavingVO savingVo) async {
     try {
       return databaseRef
-          .child("emergency")
+          .child("patient_feedbacks")
           .child(savingVo.id.toString())
           .set(savingVo.toJson());
     } on FirebaseException catch (error) {

@@ -11,6 +11,7 @@ import 'package:dental_clinic/controller/patient_management_controller.dart';
 import 'package:dental_clinic/data/vos/feed_back_vo.dart';
 import 'package:dental_clinic/data/vos/patient_vo.dart';
 import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_screens/emergency_saving_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/feed_back_screens/feed_back_detail_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/feed_back_screens/feed_back_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
@@ -143,9 +144,16 @@ class _DesktopPatientManagementScreenState
                               child: ListView.separated(
                                   scrollDirection: Axis.horizontal,
                                   shrinkWrap: true,
-                                  itemBuilder: (context, index) => FeedbackCard(
-                                      feedback: _feedbackController
-                                          .displayFeedback[index]),
+                                  itemBuilder: (context, index) =>
+                                      GestureDetector(
+                                        onTap: () => Get.to(() =>
+                                            FeedBackDetailScreen(
+                                                feedback: _feedbackController
+                                                    .displayFeedback[index])),
+                                        child: FeedbackCard(
+                                            feedback: _feedbackController
+                                                .displayFeedback[index]),
+                                      ),
                                   separatorBuilder: (context, index) =>
                                       const SizedBox(
                                         width: 20,

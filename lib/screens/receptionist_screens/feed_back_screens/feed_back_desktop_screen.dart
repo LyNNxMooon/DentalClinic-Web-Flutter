@@ -5,6 +5,8 @@ import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/constants/text.dart';
 import 'package:dental_clinic/controller/feed_back_controller.dart';
 import 'package:dental_clinic/data/vos/feed_back_vo.dart';
+import 'package:dental_clinic/screens/receptionist_screens/feed_back_screens/feed_back_detail_screen.dart';
+import 'package:dental_clinic/utils/hover_extensions.dart';
 import 'package:dental_clinic/widgets/load_fail_widget.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
 import 'package:dental_clinic/widgets/no_connection_desktop_widget.dart';
@@ -73,7 +75,6 @@ class _DesktopFeedbackScreenState extends State<DesktopFeedbackScreen> {
               padding: const EdgeInsets.only(top: 50, left: 50, right: 50),
               child: SingleChildScrollView(
                   child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -133,7 +134,7 @@ class FeedbackList extends StatelessWidget {
         crossAxisCount: 4,
         mainAxisSpacing: 5.0,
         crossAxisSpacing: 5,
-        mainAxisExtent: 265,
+        mainAxisExtent: 300,
       ),
       itemCount: _feedbackController.feedbackList.length,
       itemBuilder: (context, index) => GestureDetector(
@@ -163,22 +164,23 @@ class FeedbackCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(7),
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: feedback.display
+          ? const EdgeInsets.only(top: 15, right: 15, left: 15)
+          : const EdgeInsets.all(15),
       decoration: BoxDecoration(
         border: Border.all(
-            width: feedback.display ? 3 : 1,
+            width: feedback.display ? 5 : 1,
             color: feedback.display ? kSuccessColor : kFourthColor),
         borderRadius: BorderRadius.circular(8), //border corner radius
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
             height: 30,
             child: ListView.separated(
                 shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) => const Icon(
                       Icons.star,
@@ -189,28 +191,40 @@ class FeedbackCard extends StatelessWidget {
                     ),
                 itemCount: feedback.rate),
           ),
-          const SizedBox(
-            height: 10,
-          ),
           RichText(
               text: TextSpan(children: [
             TextSpan(
                 text: "${feedback.patientName} : ",
                 style: const TextStyle(fontWeight: FontWeight.bold)),
           ])),
-          const SizedBox(
-            height: 15,
-          ),
           RichText(
               textAlign: TextAlign.center,
               text: TextSpan(children: [
                 TextSpan(
                     text:
-                        "${feedback.body.length < 200 ? feedback.body : feedback.body.substring(0, 200)}...",
+                        "${feedback.body.length < 60 ? feedback.body : feedback.body.substring(0, 60)}...",
                     style: const TextStyle()),
               ])),
+          TextButton(
+              onPressed: () {
+                Get.to(() => FeedBackDetailScreen(
+                      feedback: feedback,
+                    ));
+              },
+              child: const Text(
+                "View",
+                style: TextStyle(
+                    color: kSecondaryColor, fontWeight: FontWeight.bold),
+              )),
+          feedback.display
+              ? const Icon(
+                  Icons.check_circle,
+                  color: kSuccessColor,
+                  size: 20,
+                )
+              : const SizedBox()
         ],
       ),
-    );
+    ).showCursorOnHover.moveUpOnHover;
   }
 }
