@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:dental_clinic/data/vos/appointment_vo.dart';
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
 import 'package:dental_clinic/data/vos/emergency_saving_vo.dart';
+import 'package:dental_clinic/data/vos/feed_back_vo.dart';
 import 'package:dental_clinic/data/vos/patient_vo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -146,6 +147,39 @@ class FirebaseServices {
             Map<String, dynamic>.from(snapshot.value as Map));
       }).toList();
     });
+  }
+
+  Stream<List<FeedBackVO>?> getFeedBackListStream() {
+    return databaseRef.child("patient_feedbacks").onValue.map((event) {
+      return event.snapshot.children.map<FeedBackVO>((snapshot) {
+        return FeedBackVO.fromJson(
+            Map<String, dynamic>.from(snapshot.value as Map));
+      }).toList();
+    });
+  }
+
+  Future saveFeedback(FeedBackVO feedbackVo) async {
+    try {
+      return databaseRef
+          .child("patient_feedbacks")
+          .child(feedbackVo.id.toString())
+          .set(feedbackVo.toJson());
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error);
+    }
+  }
+
+  Future deleteFeedback(int id) async {
+    try {
+      return databaseRef
+          .child("patient_feedbacks")
+          .child(id.toString())
+          .remove();
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error);
+    }
   }
 
   Future deleteEmergencySaving(int id) async {
