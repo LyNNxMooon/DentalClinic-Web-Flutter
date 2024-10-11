@@ -13,7 +13,22 @@ import 'package:get/get.dart';
 class LoginController extends BaseController {
   final _firebaseService = FirebaseServices();
 
-  RxString adminEmail = "admin@gmail.com".obs;
+  RxString adminEmail = "".obs;
+  RxString adminPassword = "".obs;
+
+  Future<bool> checkAdmin(
+      String email, String password, BuildContext context) async {
+    if (FirebaseAuth.instance.currentUser?.email != email) {
+      return false;
+    }
+    return _firebaseService.firebaseSignIn(email, password).then(
+      (value) {
+        return true;
+      },
+    ).catchError((error) {
+      return false;
+    });
+  }
 
   Future login(String email, String password, BuildContext context) async {
     setLoadingState = LoadingState.loading;

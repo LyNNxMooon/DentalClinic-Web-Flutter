@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:async';
 
@@ -9,6 +9,7 @@ import 'package:dental_clinic/constants/text.dart';
 import 'package:dental_clinic/controller/add_patient_controller.dart';
 import 'package:dental_clinic/controller/chat_controller.dart';
 import 'package:dental_clinic/controller/feed_back_controller.dart';
+import 'package:dental_clinic/controller/login_controller.dart';
 import 'package:dental_clinic/controller/patient_management_controller.dart';
 import 'package:dental_clinic/data/vos/feed_back_vo.dart';
 import 'package:dental_clinic/data/vos/patient_vo.dart';
@@ -18,6 +19,7 @@ import 'package:dental_clinic/screens/receptionist_screens/feed_back_screens/fee
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
+import 'package:dental_clinic/widgets/error_widget.dart';
 import 'package:dental_clinic/widgets/load_fail_widget.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
 import 'package:dental_clinic/widgets/loading_widget.dart';
@@ -33,6 +35,8 @@ final _addPatientController = Get.put(AddPatientController());
 final _patientManagementController = Get.put(PatientManagementController());
 final _feedbackController = Get.put(FeedBackController());
 final _chatController = Get.put(ChatController());
+final _loginController = Get.put(LoginController());
+
 String? _selectedGender;
 
 class DesktopPatientManagementScreen extends StatefulWidget {
@@ -54,6 +58,8 @@ class _DesktopPatientManagementScreenState
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
   final _ageController = TextEditingController();
+  final _adminEmailController = TextEditingController();
+  final _adminPasswordController = TextEditingController();
 
   @override
   void initState() {
@@ -182,25 +188,61 @@ class _DesktopPatientManagementScreenState
                           onTap: () {
                             showDialog(
                               context: context,
-                              builder: (context) => AddPatientDialog(
-                                function: () async {
-                                  if (connection == "online") {
-                                    _addPatientController.registerPatients(
-                                        _emailController,
-                                        _passwordController,
-                                        _nameController,
-                                        _ageController,
-                                        _selectedGender ?? '',
-                                        context);
-                                  } else {
-                                    Get.back();
-                                  }
-                                },
-                                emailController: _emailController,
-                                passwordController: _passwordController,
-                                ageController: _ageController,
-                                nameController: _nameController,
-                              ),
+                              builder: (context) => CheckAdminDialog(
+                                  function: () {
+                                    _loginController
+                                        .checkAdmin(
+                                            _adminEmailController.text,
+                                            _adminPasswordController.text,
+                                            context)
+                                        .then(
+                                      (value) {
+                                        if (value) {
+                                          Get.back();
+                                          _loginController.adminEmail.value =
+                                              _adminEmailController.text;
+                                          _loginController.adminPassword.value =
+                                              _adminPasswordController.text;
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                AddPatientDialog(
+                                              function: () async {
+                                                _addPatientController
+                                                    .registerPatients(
+                                                        _emailController,
+                                                        _passwordController,
+                                                        _nameController,
+                                                        _ageController,
+                                                        _selectedGender ?? '',
+                                                        context);
+                                              },
+                                              emailController: _emailController,
+                                              passwordController:
+                                                  _passwordController,
+                                              ageController: _ageController,
+                                              nameController: _nameController,
+                                            ),
+                                          );
+                                          _adminEmailController.clear();
+                                          _adminPasswordController.clear();
+                                        } else {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                CustomErrorWidget(
+                                              errorMessage: "Auth Fail",
+                                              function: () {
+                                                Get.back();
+                                              },
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    );
+                                  },
+                                  emailController: _adminEmailController,
+                                  passwordController: _adminPasswordController),
                             );
                           },
                           child: Container(
@@ -246,6 +288,65 @@ class _DesktopPatientManagementScreenState
             )
           : const NoConnectionDesktopWidget(),
     );
+  }
+}
+
+class CheckAdminDialog extends StatelessWidget {
+  const CheckAdminDialog(
+      {super.key,
+      required this.function,
+      required this.emailController,
+      required this.passwordController});
+
+  final VoidCallback function;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+        actions: [
+          Center(
+            child: TextButton(
+              onPressed: function,
+              style: const ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(kSecondaryColor)),
+              child: const Text(
+                "OK",
+                style: TextStyle(color: kPrimaryColor),
+              ),
+            ),
+          )
+        ],
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              "Admin Credentials",
+              style: TextStyle(
+                  color: kSecondaryColor, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            CustomTextField(
+              hintText: "Enter admin email",
+              label: "Email",
+              controller: emailController,
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            CustomTextField(
+              hintText: "Enter admin password",
+              label: "password",
+              minLines: 1,
+              maxLines: 1,
+              isObsecure: true,
+              controller: passwordController,
+            ),
+          ],
+        ));
   }
 }
 

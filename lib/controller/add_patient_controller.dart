@@ -3,6 +3,7 @@
 import 'dart:typed_data';
 
 import 'package:dental_clinic/controller/base_controller.dart';
+import 'package:dental_clinic/controller/login_controller.dart';
 import 'package:dental_clinic/controller/patient_management_controller.dart';
 import 'package:dental_clinic/data/vos/patient_vo.dart';
 import 'package:dental_clinic/firebase/firebase.dart';
@@ -17,6 +18,8 @@ class AddPatientController extends BaseController {
   final _firebaseService = FirebaseServices();
   Rxn<Uint8List> selectFile = Rxn<Uint8List>();
   final _patientManagementController = Get.put(PatientManagementController());
+
+  final _loginController = Get.put(LoginController());
 
   Future registerPatients(
       TextEditingController email,
@@ -76,6 +79,11 @@ class AddPatientController extends BaseController {
               _patientManagementController.callPatients();
             },
           );
+
+          FirebaseAuth.instance.signOut();
+
+          _firebaseService.firebaseSignIn(_loginController.adminEmail.value,
+              _loginController.adminPassword.value);
         },
       ).catchError((error) {
         setLoadingState = LoadingState.error;
