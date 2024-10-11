@@ -239,13 +239,22 @@ class SavingCard extends StatelessWidget {
           const SizedBox(
             height: 15,
           ),
-          RichText(
-              text: TextSpan(children: [
-            TextSpan(
-                text: saving.title,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          ])),
+          Center(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  RichText(
+                      text: TextSpan(children: [
+                    TextSpan(
+                        text: saving.title,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
+                  ])),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

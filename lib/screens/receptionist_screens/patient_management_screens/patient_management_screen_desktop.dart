@@ -2,10 +2,12 @@
 
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/constants/text.dart';
 import 'package:dental_clinic/controller/add_patient_controller.dart';
+import 'package:dental_clinic/controller/chat_controller.dart';
 import 'package:dental_clinic/controller/feed_back_controller.dart';
 import 'package:dental_clinic/controller/patient_management_controller.dart';
 import 'package:dental_clinic/data/vos/feed_back_vo.dart';
@@ -18,9 +20,11 @@ import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profi
 import 'package:dental_clinic/utils/file_picker_utils.dart';
 import 'package:dental_clinic/widgets/load_fail_widget.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
+import 'package:dental_clinic/widgets/loading_widget.dart';
 import 'package:dental_clinic/widgets/navigation_bar_desktop.dart';
 import 'package:dental_clinic/widgets/no_connection_desktop_widget.dart';
 import 'package:dental_clinic/widgets/textfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -28,6 +32,7 @@ final _filePicker = FilePickerUtils();
 final _addPatientController = Get.put(AddPatientController());
 final _patientManagementController = Get.put(PatientManagementController());
 final _feedbackController = Get.put(FeedBackController());
+final _chatController = Get.put(ChatController());
 String? _selectedGender;
 
 class DesktopPatientManagementScreen extends StatefulWidget {
@@ -454,15 +459,188 @@ class _PatientTileState extends State<PatientTile> {
                   : Text(widget.patient.name)
             ],
           ),
-          GestureDetector(
-              onTap: () {
-                setState(() {
-                  isDrop = !isDrop;
-                  tileHeight = isDrop ? 110 : 50;
-                });
-              },
-              child: Icon(isDrop ? Icons.arrow_drop_up : Icons.arrow_drop_down))
+          Row(
+            children: [
+              IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => ChatDialog(
+                        patient: widget.patient,
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.message_rounded,
+                    color: kSecondaryColor,
+                  )),
+              const SizedBox(
+                width: 10,
+              ),
+              GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isDrop = !isDrop;
+                      tileHeight = isDrop ? 110 : 50;
+                    });
+                  },
+                  child: Icon(
+                      isDrop ? Icons.arrow_drop_up : Icons.arrow_drop_down)),
+            ],
+          )
         ],
+      ),
+    );
+  }
+}
+
+class ChatDialog extends StatefulWidget {
+  const ChatDialog({super.key, required this.patient});
+
+  final PatientVO patient;
+
+  @override
+  State<ChatDialog> createState() => _ChatDialogState();
+}
+
+class _ChatDialogState extends State<ChatDialog> {
+  final TextEditingController _messageController = TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+            const Text(
+              "Discussion",
+              style: TextStyle(
+                  color: kSecondaryColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            StreamBuilder(
+              stream: _chatController.getMessages(
+                  FirebaseAuth.instance.currentUser!.uid, widget.patient.id),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text("Cannot load messages"),
+                  );
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: LoadingWidget(),
+                  );
+                }
+
+                return SizedBox(
+                  height: 400,
+                  width: 350,
+                  child: ListView(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    reverse: true,
+                    children: snapshot.data!.docs
+                        .map((document) => MessageItemView(document: document))
+                        .toList(),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 300,
+                  height: 60,
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(25)),
+                  child: TextField(
+                    controller: _messageController,
+                    cursorRadius: const Radius.circular(25),
+                    decoration: InputDecoration(
+                      hintText: "Send Message",
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          )),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          )),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: IconButton(
+                      onPressed: () {
+                        if (_messageController.text.isNotEmpty) {
+                          _chatController
+                              .sendMessages(
+                                  widget.patient.id,
+                                  _messageController.text,
+                                  widget.patient.name,
+                                  widget.patient.url)
+                              .then(
+                            (value) {
+                              _messageController.clear();
+                            },
+                          );
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.send,
+                        size: 30,
+                      )),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MessageItemView extends StatelessWidget {
+  const MessageItemView({super.key, required this.document});
+
+  final DocumentSnapshot document;
+
+  @override
+  Widget build(BuildContext context) {
+    Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+    Color bubbleColor =
+        (data['sender_id'] == FirebaseAuth.instance.currentUser!.uid)
+            ? kSecondaryColor
+            : kMessageBubbleColor;
+
+    var alignment =
+        (data['sender_id'] == FirebaseAuth.instance.currentUser!.uid)
+            ? Alignment.centerRight
+            : Alignment.centerLeft;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      alignment: alignment,
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        constraints: const BoxConstraints(maxWidth: 200),
+        decoration: BoxDecoration(
+            color: bubbleColor, borderRadius: BorderRadius.circular(15)),
+        child: Text(
+          data['message'],
+          style: const TextStyle(),
+        ),
       ),
     );
   }

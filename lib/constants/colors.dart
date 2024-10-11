@@ -8,3 +8,4 @@ const kErrorColor = Colors.red;
 const kSuccessColor = Colors.green;
 const kBtnGrayColor = Color.fromARGB(255, 237, 235, 235);
 const kRateColor = Colors.yellow;
+const kMessageBubbleColor = Color.fromARGB(255, 224, 220, 220);

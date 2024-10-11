@@ -35,7 +35,7 @@ class DesktopNavigationBar extends StatelessWidget {
             ),
             Text(
               "Dental Clinic",
-              style: desktopTitleStyle,
+              style: mobileTitleStyle,
             ),
           ],
         ),

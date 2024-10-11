@@ -408,21 +408,39 @@ class AppointmentCard extends StatelessWidget {
               const SizedBox(
                 height: 15,
               ),
-              RichText(
-                  text: TextSpan(children: [
-                TextSpan(
-                  text: "Doctor : ${appointment.doctorName}",
+              Center(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      RichText(
+                          text: TextSpan(children: [
+                        TextSpan(
+                          text: "Doctor : ${appointment.doctorName}",
+                        ),
+                      ])),
+                    ],
+                  ),
                 ),
-              ])),
+              ),
               const SizedBox(
                 height: 15,
               ),
-              RichText(
-                  text: TextSpan(children: [
-                TextSpan(
-                  text: "Patient : ${appointment.patientName}",
+              Center(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      RichText(
+                          text: TextSpan(children: [
+                        TextSpan(
+                          text: "Patient : ${appointment.patientName}",
+                        ),
+                      ])),
+                    ],
+                  ),
                 ),
-              ])),
+              ),
               const SizedBox(
                 height: 15,
               ),
@@ -504,23 +522,39 @@ class DoctorCard extends StatelessWidget {
           const SizedBox(
             height: 15,
           ),
-          RichText(
-              text: TextSpan(children: [
-            const TextSpan(text: "Name : ", style: TextStyle(fontSize: 14)),
-            TextSpan(text: doctor.name, style: const TextStyle(fontSize: 14)),
-          ])),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                RichText(
+                    text: TextSpan(children: [
+                  const TextSpan(
+                      text: "Name : ", style: TextStyle(fontSize: 14)),
+                  TextSpan(
+                      text: doctor.name, style: const TextStyle(fontSize: 14)),
+                ])),
+              ],
+            ),
+          ),
           const SizedBox(
             height: 5,
           ),
-          RichText(
-              text: TextSpan(children: [
-            const TextSpan(
-                text: "Specialist : ",
-                style: TextStyle(fontSize: 12, color: kThirdColor)),
-            TextSpan(
-                text: doctor.specialist,
-                style: const TextStyle(fontSize: 12, color: kThirdColor)),
-          ])),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                RichText(
+                    text: TextSpan(children: [
+                  const TextSpan(
+                      text: "Specialist : ",
+                      style: TextStyle(fontSize: 12, color: kThirdColor)),
+                  TextSpan(
+                      text: doctor.specialist,
+                      style: const TextStyle(fontSize: 12, color: kThirdColor)),
+                ])),
+              ],
+            ),
+          ),
           const SizedBox(
             height: 5,
           ),

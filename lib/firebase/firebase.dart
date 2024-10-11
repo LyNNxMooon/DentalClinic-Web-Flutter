@@ -2,10 +2,12 @@
 
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dental_clinic/data/vos/appointment_vo.dart';
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
 import 'package:dental_clinic/data/vos/emergency_saving_vo.dart';
 import 'package:dental_clinic/data/vos/feed_back_vo.dart';
+import 'package:dental_clinic/data/vos/message_vo.dart';
 import 'package:dental_clinic/data/vos/patient_vo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -218,5 +220,80 @@ class FirebaseServices {
         return value;
       });
     });
+  }
+
+  //chat services
+
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  Future<void> sendMessages(String receiverID, String message,
+      String receiverName, String receiverProfile) async {
+    final String currentUserID = _firebaseAuth.currentUser!.uid;
+    final String currentUserEmail = _firebaseAuth.currentUser!.email.toString();
+    final Timestamp timeStamp = Timestamp.now();
+
+    MessageVO newMessage = MessageVO(
+        senderID: currentUserID,
+        senderEmail: currentUserEmail,
+        receiverID: receiverID,
+        message: message,
+        timeStamp: timeStamp);
+
+    //Chat Room
+
+    List<String> ids = [currentUserID, receiverID];
+    ids.sort();
+    String chatRoomID = ids.join("_");
+
+    //Add Message and receiver to Chat Room
+
+    await _firebaseFirestore
+        .collection('chat_rooms')
+        .doc(chatRoomID)
+        .collection('messages')
+        .add(newMessage.toJson());
+
+    await _firebaseFirestore
+        .collection('users')
+        .doc(currentUserID)
+        .collection('chats')
+        .doc(receiverID)
+        .set({
+      'name': receiverName,
+      'chatted_user_uid': receiverID,
+      'last_sender_uid': currentUserID,
+      'profile_url': receiverProfile,
+      'last_message': message,
+      'date_time': "${DateTime.now()}",
+    }, SetOptions(merge: true));
+
+    await _firebaseFirestore
+        .collection('users')
+        .doc(receiverID)
+        .collection('chats')
+        .doc(currentUserID)
+        .set({
+      'name': "Admin",
+      'chatted_user_uid': currentUserID,
+      'last_sender_uid': currentUserID,
+      'profile_url':
+          "https://www.shutterstock.com/image-vector/user-icon-vector-600nw-393536320.jpg",
+      'last_message': message,
+      'date_time': "${DateTime.now()}",
+    }, SetOptions(merge: true));
+  }
+
+  Stream<QuerySnapshot> getMessages(String userID, String otherUserID) {
+    List<String> ids = [userID, otherUserID];
+    ids.sort();
+    String chatRoomID = ids.join("_");
+
+    return _firebaseFirestore
+        .collection('chat_rooms')
+        .doc(chatRoomID)
+        .collection('messages')
+        .orderBy('time_stamp', descending: true)
+        .snapshots();
   }
 }

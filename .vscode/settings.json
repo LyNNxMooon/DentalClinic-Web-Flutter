@@ -3,6 +3,7 @@
         "appspot",
         "Debouncer",
         "firebaseapp",
+        "firestore",
         "Fluttertoast",
         "Obsecure",
         "timelapse",

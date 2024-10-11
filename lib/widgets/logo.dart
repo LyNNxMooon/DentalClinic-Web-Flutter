@@ -6,8 +6,8 @@ class AppLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 70,
-      height: 70,
+      width: 50,
+      height: 50,
       child: Image.asset(
         "assets/images/dental.png",
         fit: BoxFit.fill,
