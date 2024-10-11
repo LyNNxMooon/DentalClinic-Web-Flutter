@@ -10,6 +10,7 @@ import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_scre
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
+import 'package:dental_clinic/widgets/chatted_patients_dialog.dart';
 import 'package:dental_clinic/widgets/load_fail_widget.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
 import 'package:dental_clinic/widgets/navigation_bar_desktop.dart';
@@ -82,6 +83,22 @@ class _DesktopEmergencySavingScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (connection == "online") {
+            showDialog(
+              context: context,
+              builder: (context) => const ChattedPatientsDialog(),
+            );
+          }
+        },
+        backgroundColor: kPrimaryColor,
+        child: const Icon(
+          Icons.message,
+          color: kSecondaryColor,
+          size: 40,
+        ),
+      ),
       body: connection == "online"
           ? Padding(
               padding: const EdgeInsets.only(top: 50, left: 50, right: 50),
