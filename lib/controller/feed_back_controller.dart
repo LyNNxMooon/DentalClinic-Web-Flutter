@@ -18,7 +18,7 @@ class FeedBackController extends BaseController {
   }
 
   callFeedBacks() async {
-    displayFeedback.clear();
+    displayFeedback.value = [];
     setLoadingState = LoadingState.loading;
     _firebaseService.getFeedBackListStream().listen(
       (event) {
