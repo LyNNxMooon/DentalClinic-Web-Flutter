@@ -225,14 +225,13 @@ class FirebaseServices {
 
   //chat services
 
-  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
+  final FirebaseDatabase _firebaseDatabase = FirebaseDatabase.instance;
   Future<void> sendMessages(String receiverID, String message,
       String receiverName, String receiverProfile) async {
     final String currentUserID = _firebaseAuth.currentUser!.uid;
     final String currentUserEmail = _firebaseAuth.currentUser!.email.toString();
-    final Timestamp timeStamp = Timestamp.now();
+    final DateTime timeStamp = DateTime.now();
 
     MessageVO newMessage = MessageVO(
         senderID: currentUserID,
@@ -242,71 +241,64 @@ class FirebaseServices {
         timeStamp: timeStamp);
 
     //Chat Room
-
     List<String> ids = [currentUserID, receiverID];
     ids.sort();
     String chatRoomID = ids.join("_");
 
-    //Add Message and receiver to Chat Room
+    // Add Message and receiver to Chat Room
+    await _firebaseDatabase
+        .ref('chat_rooms/$chatRoomID/messages')
+        .push()
+        .set(newMessage.toJson());
 
-    await _firebaseFirestore
-        .collection('chat_rooms')
-        .doc(chatRoomID)
-        .collection('messages')
-        .add(newMessage.toJson());
-
-    await _firebaseFirestore
-        .collection('users')
-        .doc(currentUserID)
-        .collection('chats')
-        .doc(receiverID)
-        .set({
+    await _firebaseDatabase.ref('users/$currentUserID/chats/$receiverID').set({
       'name': receiverName,
       'chatted_user_uid': receiverID,
       'last_sender_uid': currentUserID,
       'profile_url': receiverProfile,
       'last_message': message,
-      'date_time': "${DateTime.now()}",
-    }, SetOptions(merge: true));
+      'date_time': timeStamp.toIso8601String(),
+    });
 
-    await _firebaseFirestore
-        .collection('users')
-        .doc(receiverID)
-        .collection('chats')
-        .doc(currentUserID)
-        .set({
+    await _firebaseDatabase.ref('users/$receiverID/chats/$currentUserID').set({
       'name': "Admin",
       'chatted_user_uid': currentUserID,
       'last_sender_uid': currentUserID,
       'profile_url':
           "https://www.shutterstock.com/image-vector/user-icon-vector-600nw-393536320.jpg",
       'last_message': message,
-      'date_time': "${DateTime.now()}",
-    }, SetOptions(merge: true));
+      'date_time': timeStamp.toIso8601String(),
+    });
   }
 
-  Stream<QuerySnapshot> getMessages(String userID, String otherUserID) {
+  Stream<DatabaseEvent> getMessages(String userID, String otherUserID) {
     List<String> ids = [userID, otherUserID];
     ids.sort();
     String chatRoomID = ids.join("_");
 
-    return _firebaseFirestore
-        .collection('chat_rooms')
-        .doc(chatRoomID)
-        .collection('messages')
-        .orderBy('time_stamp', descending: true)
-        .snapshots();
+    // Return a stream from Realtime Database reference for the messages
+    return _firebaseDatabase
+        .ref('chat_rooms/$chatRoomID/messages')
+        .orderByChild('time_stamp') // Ordering by timestamp
+        .onValue; // This listens to any changes in the data
   }
 
-  Stream<List<ChattedUserVO>?> getChatListStream() => _firebaseFirestore
-          .collection('users')
-          .doc(_firebaseAuth.currentUser!.uid)
-          .collection('chats')
-          .orderBy('date_time', descending: true)
-          .snapshots()
-          .map((event) {
-        return event.docs.map((e) {
-          return ChattedUserVO.fromJson(e.data());
+  Stream<List<ChattedUserVO>?> getChatListStream() {
+    final String currentUserID = _firebaseAuth.currentUser!.uid;
+
+    return _firebaseDatabase
+        .ref('users/$currentUserID/chats')
+        .orderByChild('date_time') // Order by 'date_time'
+        .onValue // Listen to changes in the 'chats' node
+        .map((event) {
+      if (event.snapshot.value != null) {
+        final data = Map<String, dynamic>.from(event.snapshot.value as Map);
+        return data.values.map((e) {
+          return ChattedUserVO.fromJson(Map<String, dynamic>.from(e));
         }).toList();
-      });
+      } else {
+        return null; // Return null if there's no data
+      }
+    });
+  }
 }

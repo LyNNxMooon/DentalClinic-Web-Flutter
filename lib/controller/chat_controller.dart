@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dental_clinic/controller/base_controller.dart';
 import 'package:dental_clinic/data/vos/chatted_user_vo.dart';
 import 'package:dental_clinic/firebase/firebase.dart';
 import 'package:dental_clinic/utils/enums.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
 
 class ChatController extends BaseController {
@@ -21,7 +21,7 @@ class ChatController extends BaseController {
       _firebaseService.sendMessages(
           receiverID, message, receiverName, receiverProfile);
 
-  Stream<QuerySnapshot> getMessages(String userID, String otherUserID) =>
+  Stream<DatabaseEvent> getMessages(String userID, String otherUserID) =>
       _firebaseService.getMessages(userID, otherUserID);
 
   callChattedUsers() async {
