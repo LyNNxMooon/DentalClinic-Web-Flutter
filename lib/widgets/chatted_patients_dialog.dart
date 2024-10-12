@@ -234,6 +234,7 @@ class _ChatDialogState extends State<ChatDialog> {
 
                   return SizedBox(
                     height: 400,
+                    width: 350,
                     child: ListView(
                       reverse: true,
                       shrinkWrap: true,
@@ -410,6 +411,7 @@ class _MobileChatDialogState extends State<MobileChatDialog> {
 
                   return SizedBox(
                     height: 400,
+                    width: 350,
                     child: ListView(
                       reverse: true,
                       shrinkWrap: true,

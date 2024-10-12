@@ -742,7 +742,7 @@ class _PatientTileState extends State<PatientTile> {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (context) => ChatDialog(
+                      builder: (context) => MobileChatDialog(
                         patientId: widget.patient.id,
                         patientName: widget.patient.name,
                         url: widget.patient.url,
