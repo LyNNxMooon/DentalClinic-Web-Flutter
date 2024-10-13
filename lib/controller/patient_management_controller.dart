@@ -33,6 +33,8 @@ class PatientManagementController extends BaseController {
     ).onError((error) {
       setLoadingState = LoadingState.error;
     });
+
+    update();
   }
 
   Future banOrUnbanPatient(
@@ -53,7 +55,7 @@ class PatientManagementController extends BaseController {
         age: age,
         gender: gender);
 
-    return _firebaseService.savePatient(patient).then(
+    _firebaseService.savePatient(patient).then(
       (value) {
         setLoadingState = LoadingState.complete;
         Fluttertoast.showToast(
@@ -81,5 +83,6 @@ class PatientManagementController extends BaseController {
           textColor: kPrimaryColor,
           fontSize: 20);
     });
+    update();
   }
 }

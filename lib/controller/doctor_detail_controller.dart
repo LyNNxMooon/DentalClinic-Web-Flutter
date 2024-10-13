@@ -76,11 +76,13 @@ class DoctorDetailController extends BaseController {
             fontSize: 20);
       });
     }
+
+    update();
   }
 
   Future deleteDoctor(int id) async {
     setLoadingState = LoadingState.loading;
-    return _firebaseServices.deleteDoctor(id).then(
+    _firebaseServices.deleteDoctor(id).then(
       (value) {
         setLoadingState = LoadingState.complete;
         Fluttertoast.showToast(
@@ -107,5 +109,7 @@ class DoctorDetailController extends BaseController {
           textColor: kPrimaryColor,
           fontSize: 20);
     });
+
+    update();
   }
 }

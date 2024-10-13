@@ -13,7 +13,9 @@ import 'package:dental_clinic/screens/receptionist_screens/doctor_detail_screen/
 import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_screens/emergency_saving_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/treatment_management_screens/treatment_managament_screen.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
+import 'package:dental_clinic/utils/hover_extensions.dart';
 import 'package:dental_clinic/widgets/chatted_patients_dialog.dart';
 import 'package:dental_clinic/widgets/load_fail_widget.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
@@ -135,10 +137,12 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
                       const DesktopNavigationBar(
                         title1: "Patients",
                         title2: "Emergency",
-                        icon: Icons.person_outlined,
+                        icon: Icons.medical_services_outlined,
+                        icon2: Icons.person_outline_sharp,
                         widget1: PatientManagementScreen(),
                         widget2: EmergencySavingScreen(),
-                        widget3: ReceptionistProfileScreen(),
+                        widget3: TreatmentManagementScreen(),
+                        widget4: ReceptionistProfileScreen(),
                       ),
                       const SizedBox(
                         height: 60,
@@ -364,7 +368,7 @@ class AppointmentList extends StatelessWidget {
       itemCount: _appointmentController.appointmentList.length,
       itemBuilder: (context, index) => AppointmentCard(
         appointment: appointments[index],
-      ),
+      ).showCursorOnHover.moveUpOnHover,
     );
   }
 }
@@ -479,7 +483,7 @@ class DoctorsList extends StatelessWidget {
             },
             child: DoctorCard(
               doctor: doctors[index],
-            )),
+            ).showCursorOnHover),
         itemCount: doctors.length,
       ),
     );

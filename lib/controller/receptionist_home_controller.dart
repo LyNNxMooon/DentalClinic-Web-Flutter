@@ -33,5 +33,7 @@ class ReceptionistHomeController extends BaseController {
     ).onError((error) {
       setLoadingState = LoadingState.error;
     });
+
+    update();
   }
 }

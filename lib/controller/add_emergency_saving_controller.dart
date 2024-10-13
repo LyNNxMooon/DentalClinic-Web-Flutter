@@ -74,6 +74,8 @@ class AddEmergencySavingController extends BaseController {
         );
       });
     }
+
+    update();
   }
 
   Future _uploadFileToFirebaseStorage() {

@@ -8,6 +8,7 @@ import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_scre
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/treatment_management_screens/treatment_managament_screen.dart';
 import 'package:dental_clinic/widgets/navigation_bar_desktop.dart';
 import 'package:dental_clinic/widgets/no_connection_desktop_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -81,10 +82,12 @@ class _DesktopReceptionistProfileScreenState
                     const DesktopNavigationBar(
                       title1: "Home",
                       title2: "Patients",
-                      icon: Icons.health_and_safety_rounded,
+                      icon: Icons.medical_services_outlined,
+                      icon2: Icons.health_and_safety_rounded,
                       widget1: HomeScreen(),
                       widget2: PatientManagementScreen(),
-                      widget3: EmergencySavingScreen(),
+                      widget3: TreatmentManagementScreen(),
+                      widget4: EmergencySavingScreen(),
                     ),
                     const SizedBox(
                       height: 60,

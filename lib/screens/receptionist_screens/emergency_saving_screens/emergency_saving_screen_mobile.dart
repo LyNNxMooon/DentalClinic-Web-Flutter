@@ -6,10 +6,11 @@ import 'package:dental_clinic/controller/add_emergency_saving_controller.dart';
 import 'package:dental_clinic/controller/emergency_saving_controller.dart';
 import 'package:dental_clinic/data/vos/emergency_saving_vo.dart';
 import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_detail_screens/emergency_saving_detail_screen.dart';
-import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_screens/emergency_saving_screen_desktop.dart';
+
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/treatment_management_screens/treatment_managament_screen.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
 import 'package:dental_clinic/widgets/chatted_patients_dialog.dart';
 import 'package:dental_clinic/widgets/load_fail_widget.dart';
@@ -109,13 +110,16 @@ class _MobileEmergencySavingScreenState
           child: CustomNavigationDrawer(
             title1: "Home",
             title2: "Patients",
-            title3: "Profile",
+            title3: "Treatments",
+            title4: "Profile",
             icon1: Icons.home,
             icon2: Icons.people_alt_outlined,
-            icon3: Icons.person,
+            icon3: Icons.medical_services_outlined,
+            icon4: Icons.person,
             widget1: HomeScreen(),
             widget2: PatientManagementScreen(),
-            widget3: ReceptionistProfileScreen(),
+            widget3: TreatmentManagementScreen(),
+            widget4: ReceptionistProfileScreen(),
           )),
       body: connection == "online"
           ? Padding(
@@ -290,8 +294,8 @@ class SavingCard extends StatelessWidget {
   }
 }
 
-class AddDoctorDialog extends StatefulWidget {
-  const AddDoctorDialog({
+class AddEmergencySavingDialog extends StatefulWidget {
+  const AddEmergencySavingDialog({
     super.key,
     required this.function,
     required this.titleController,
@@ -303,10 +307,11 @@ class AddDoctorDialog extends StatefulWidget {
   final TextEditingController bodyController;
 
   @override
-  State<AddDoctorDialog> createState() => _AddDoctorDialogState();
+  State<AddEmergencySavingDialog> createState() =>
+      _AddEmergencySavingDialogState();
 }
 
-class _AddDoctorDialogState extends State<AddDoctorDialog> {
+class _AddEmergencySavingDialogState extends State<AddEmergencySavingDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

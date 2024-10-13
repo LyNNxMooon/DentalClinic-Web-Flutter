@@ -76,17 +76,23 @@ class CustomNavigationDrawer extends StatelessWidget {
       required this.widget3,
       required this.icon1,
       required this.icon2,
-      required this.icon3});
+      required this.icon3,
+      required this.title4,
+      required this.icon4,
+      required this.widget4});
 
   final String title1;
   final String title2;
   final String title3;
+  final String title4;
   final IconData icon1;
   final IconData icon2;
   final IconData icon3;
+  final IconData icon4;
   final Widget widget1;
   final Widget widget2;
   final Widget widget3;
+  final Widget widget4;
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +131,14 @@ class CustomNavigationDrawer extends StatelessWidget {
           title: title3,
           icon: icon3,
           widget: widget3,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        DrawerItem(
+          title: title4,
+          icon: icon4,
+          widget: widget4,
         )
       ],
     );

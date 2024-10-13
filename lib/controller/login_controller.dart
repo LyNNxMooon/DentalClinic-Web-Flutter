@@ -33,7 +33,7 @@ class LoginController extends BaseController {
   Future login(String email, String password, BuildContext context) async {
     setLoadingState = LoadingState.loading;
 
-    return _firebaseService.firebaseSignIn(email, password).then(
+    _firebaseService.firebaseSignIn(email, password).then(
       (value) {
         String id = FirebaseAuth.instance.currentUser?.uid ?? '';
 
@@ -65,5 +65,7 @@ class LoginController extends BaseController {
         ),
       );
     });
+
+    update();
   }
 }

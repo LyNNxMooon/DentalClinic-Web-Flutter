@@ -38,5 +38,7 @@ class ChatController extends BaseController {
     ).onError((error) {
       setLoadingState = LoadingState.error;
     });
+
+    update();
   }
 }

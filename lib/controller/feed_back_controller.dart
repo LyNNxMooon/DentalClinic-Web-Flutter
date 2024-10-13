@@ -37,6 +37,8 @@ class FeedBackController extends BaseController {
     ).onError((error) {
       setLoadingState = LoadingState.error;
     });
+
+    update();
   }
 
   Future chooseFeedback(int id, String body, String patientID,

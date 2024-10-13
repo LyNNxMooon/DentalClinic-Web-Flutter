@@ -16,6 +16,7 @@ import 'package:dental_clinic/screens/receptionist_screens/feed_back_screens/fee
 import 'package:dental_clinic/screens/receptionist_screens/feed_back_screens/feed_back_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/treatment_management_screens/treatment_managament_screen.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
 import 'package:dental_clinic/widgets/chatted_patients_dialog.dart';
 import 'package:dental_clinic/widgets/error_widget.dart';
@@ -123,13 +124,16 @@ class _MobilePatientManagementScreenState
           child: CustomNavigationDrawer(
             title1: "Home",
             title2: "Emergency",
-            title3: "Profile",
+            title3: "Treatments",
+            title4: "Profile",
             icon1: Icons.home,
             icon2: Icons.emergency_outlined,
-            icon3: Icons.person,
+            icon3: Icons.medical_services_outlined,
+            icon4: Icons.person,
             widget1: HomeScreen(),
             widget2: EmergencySavingScreen(),
-            widget3: ReceptionistProfileScreen(),
+            widget3: TreatmentManagementScreen(),
+            widget4: ReceptionistProfileScreen(),
           )),
       body: connection == "online"
           ? Padding(

@@ -93,6 +93,8 @@ class AddDoctorController extends BaseController {
         );
       });
     }
+
+    update();
   }
 
   Future _uploadFileToFirebaseStorage() {

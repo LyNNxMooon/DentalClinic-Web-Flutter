@@ -15,6 +15,7 @@ import 'package:dental_clinic/screens/receptionist_screens/feed_back_screens/fee
 import 'package:dental_clinic/screens/receptionist_screens/feed_back_screens/feed_back_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/treatment_management_screens/treatment_managament_screen.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
 import 'package:dental_clinic/widgets/chatted_patients_dialog.dart';
 import 'package:dental_clinic/widgets/error_widget.dart';
@@ -124,10 +125,12 @@ class _DesktopPatientManagementScreenState
                     const DesktopNavigationBar(
                       title1: "Home",
                       title2: "Emergency",
-                      icon: Icons.person_outlined,
+                      icon: Icons.medical_services_outlined,
+                      icon2: Icons.person_outlined,
                       widget1: HomeScreen(),
                       widget2: EmergencySavingScreen(),
-                      widget3: ReceptionistProfileScreen(),
+                      widget3: TreatmentManagementScreen(),
+                      widget4: ReceptionistProfileScreen(),
                     ),
                     const SizedBox(
                       height: 60,

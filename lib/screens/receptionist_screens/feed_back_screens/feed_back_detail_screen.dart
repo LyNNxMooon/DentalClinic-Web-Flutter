@@ -127,7 +127,7 @@ class _FeedBackDetailScreenState extends State<FeedBackDetailScreen> {
                         text: TextSpan(children: [
                           TextSpan(
                               text: widget.feedback.body,
-                              style: const TextStyle()),
+                              style: const TextStyle(fontSize: 18)),
                         ])),
                     const SizedBox(
                       height: 40,

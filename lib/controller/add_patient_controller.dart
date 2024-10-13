@@ -100,6 +100,7 @@ class AddPatientController extends BaseController {
         );
       });
     }
+    update();
   }
 
   Future _uploadFileToFirebaseStorage() {

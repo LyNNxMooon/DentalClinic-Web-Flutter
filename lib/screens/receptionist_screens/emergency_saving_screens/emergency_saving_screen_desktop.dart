@@ -9,7 +9,9 @@ import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_deta
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/treatment_management_screens/treatment_managament_screen.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
+import 'package:dental_clinic/utils/hover_extensions.dart';
 import 'package:dental_clinic/widgets/chatted_patients_dialog.dart';
 import 'package:dental_clinic/widgets/load_fail_widget.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
@@ -109,10 +111,12 @@ class _DesktopEmergencySavingScreenState
                     const DesktopNavigationBar(
                       title1: "Home",
                       title2: "Patients",
-                      icon: Icons.person_outline,
+                      icon: Icons.medical_services_outlined,
+                      icon2: Icons.person_outline,
                       widget1: HomeScreen(),
                       widget2: PatientManagementScreen(),
-                      widget3: ReceptionistProfileScreen(),
+                      widget3: TreatmentManagementScreen(),
+                      widget4: ReceptionistProfileScreen(),
                     ),
                     const SizedBox(
                       height: 60,
@@ -213,7 +217,7 @@ class EmergencySavingList extends StatelessWidget {
         },
         child: SavingCard(
           saving: savings[index],
-        ),
+        ).showCursorOnHover.moveUpOnHover,
       ),
     );
   }

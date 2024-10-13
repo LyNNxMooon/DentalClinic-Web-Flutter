@@ -62,11 +62,13 @@ class EmergencySavingDetailController extends BaseController {
             fontSize: 20);
       });
     }
+
+    update();
   }
 
   Future deleteEmergencySaving(int id) async {
     setLoadingState = LoadingState.loading;
-    return _firebaseService.deleteEmergencySaving(id).then(
+    _firebaseService.deleteEmergencySaving(id).then(
       (value) {
         setLoadingState = LoadingState.complete;
         Fluttertoast.showToast(
@@ -93,5 +95,7 @@ class EmergencySavingDetailController extends BaseController {
           textColor: kPrimaryColor,
           fontSize: 20);
     });
+
+    update();
   }
 }

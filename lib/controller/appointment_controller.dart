@@ -88,13 +88,14 @@ class AppointmentController extends BaseController {
         );
       });
     }
+
+    update();
   }
 
   callAppointments() async {
     setLoadingState = LoadingState.loading;
     _firebaseService.getAppointmentListStream().listen(
       (event) {
-        print(event);
         if (event == null || event.isEmpty) {
           setLoadingState = LoadingState.error;
         } else {
@@ -105,11 +106,12 @@ class AppointmentController extends BaseController {
     ).onError((error) {
       setLoadingState = LoadingState.error;
     });
+    update();
   }
 
   Future deleteAppointments(int id) async {
     setLoadingState = LoadingState.loading;
-    return _firebaseService.deleteAppointment(id).then(
+    _firebaseService.deleteAppointment(id).then(
       (value) {
         setLoadingState = LoadingState.complete;
         Fluttertoast.showToast(
@@ -136,5 +138,7 @@ class AppointmentController extends BaseController {
           textColor: kPrimaryColor,
           fontSize: 20);
     });
+
+    update();
   }
 }
