@@ -91,8 +91,9 @@ class TreatmentController extends BaseController {
       setLoadingState = LoadingState.loading;
       int id = DateTime.now().millisecondsSinceEpoch;
 
-      double finalCost =
-          double.parse(cost.text) * (double.parse(discount.text) / 100);
+      double finalCost = double.parse(discount.text) == 0
+          ? double.parse(cost.text)
+          : double.parse(cost.text) * (double.parse(discount.text) / 100);
 
       final treatment = TreatmentVO(
           id: id,
@@ -156,7 +157,7 @@ class TreatmentController extends BaseController {
       String dosage,
       double cost,
       double discount) async {
-    double finalCost = cost * (discount / 100);
+    double finalCost = discount == 0 ? cost : cost * (discount / 100);
     setLoadingState = LoadingState.loading;
 
     final treatmentVO = TreatmentVO(

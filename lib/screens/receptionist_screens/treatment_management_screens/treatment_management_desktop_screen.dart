@@ -1,10 +1,14 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/constants/text.dart';
+import 'package:dental_clinic/controller/payment_controller.dart';
 
 import 'package:dental_clinic/controller/treatment_controller.dart';
+import 'package:dental_clinic/data/vos/payment_vo.dart';
 
 import 'package:dental_clinic/data/vos/treatment_vo.dart';
 import 'package:dental_clinic/screens/receptionist_screens/add_treatment_screens/add_treatment_screen.dart';
@@ -13,6 +17,7 @@ import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_scre
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
+import 'package:dental_clinic/utils/file_picker_utils.dart';
 import 'package:dental_clinic/utils/hover_extensions.dart';
 
 import 'package:dental_clinic/widgets/chatted_patients_dialog.dart';
@@ -25,7 +30,9 @@ import 'package:dental_clinic/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+final _filePicker = FilePickerUtils();
 final _treatmentController = Get.put(TreatmentController());
+final _paymentController = Get.put(PaymentController());
 
 class DesktopTreatmentManagementScreen extends StatefulWidget {
   const DesktopTreatmentManagementScreen({super.key});
@@ -41,6 +48,9 @@ class _DesktopTreatmentManagementScreenState
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   String connection = "online";
+
+  final _accountNameController = TextEditingController();
+  final _accountNumberController = TextEditingController();
 
   @override
   void initState() {
@@ -124,6 +134,70 @@ class _DesktopTreatmentManagementScreenState
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
+                          "Management Payments",
+                          style: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.bold),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AddPaymentDialog(
+                                  function: () {
+                                    if (connection == "online") {
+                                      _paymentController.addPayment(
+                                          _accountNameController,
+                                          _accountNumberController,
+                                          context);
+                                    } else {
+                                      Get.back();
+                                    }
+                                  },
+                                  accountNameController: _accountNameController,
+                                  accountNumberController:
+                                      _accountNumberController),
+                            );
+                          },
+                          child: Container(
+                            width: 80,
+                            height: 40,
+                            decoration: BoxDecoration(
+                                color: kSecondaryColor,
+                                borderRadius: BorderRadius.circular(6)),
+                            child: const Center(
+                              child: Icon(Icons.add),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Obx(
+                      () => LoadingStateWidget(
+                          paddingTop: 100,
+                          loadingState: _paymentController.getLoadingState,
+                          loadingSuccessWidget: PaymentList(
+                            payments: _paymentController.payments,
+                          ),
+                          loadingInitWidget: Padding(
+                            padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * 0.1),
+                            child: LoadFailWidget(
+                              function: () {
+                                _paymentController.callPayments();
+                              },
+                            ),
+                          )),
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
                           "Management Treatments",
                           style: TextStyle(
                               fontSize: 30, fontWeight: FontWeight.bold),
@@ -170,6 +244,303 @@ class _DesktopTreatmentManagementScreenState
               ),
             )
           : const NoConnectionDesktopWidget(),
+    );
+  }
+}
+
+class PaymentList extends StatelessWidget {
+  const PaymentList({super.key, required this.payments});
+
+  final List<PaymentVO> payments;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 190,
+      child: ListView.separated(
+        separatorBuilder: (context, index) => const SizedBox(
+          width: 25,
+        ),
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemBuilder: (context, index) => GestureDetector(
+            onTap: () {},
+            child: PaymentCard(
+              payment: payments[index],
+            ).showCursorOnHover),
+        itemCount: payments.length,
+      ),
+    );
+  }
+}
+
+class PaymentCard extends StatelessWidget {
+  const PaymentCard({super.key, required this.payment});
+
+  final PaymentVO payment;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 200,
+      decoration: BoxDecoration(
+        color: kBtnGrayColor,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1), // Shadow color
+            spreadRadius: 3, // Spread radius
+            blurRadius: 5, // Blur radius
+            offset: const Offset(0, 3), // Offset of the shadow
+          ),
+        ], //border corner radius
+      ),
+      padding: const EdgeInsets.all(15),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(width: 0.3),
+              ),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Image.network(
+                    payment.url,
+                    fit: BoxFit.cover,
+                  )),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                RichText(
+                    text: TextSpan(children: [
+                  TextSpan(
+                    text: payment.accountName,
+                  ),
+                ])),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                RichText(
+                    text: TextSpan(children: [
+                  TextSpan(
+                    text: payment.accountNumber,
+                  ),
+                ])),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Get.back();
+                              },
+                              style: const ButtonStyle(
+                                  backgroundColor:
+                                      WidgetStatePropertyAll(kErrorColor)),
+                              child: const Text(
+                                "Cancel",
+                                style: TextStyle(color: kPrimaryColor),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                _paymentController.deletePayments(payment.id);
+                              },
+                              style: const ButtonStyle(
+                                  backgroundColor:
+                                      WidgetStatePropertyAll(kSecondaryColor)),
+                              child: const Text(
+                                "OK",
+                                style: TextStyle(color: kPrimaryColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                      content: const Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            color: kErrorColor,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            "Are you sure to delete?",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: kErrorColor),
+                          ),
+                        ],
+                      )),
+                );
+              },
+              child: const Icon(
+                Icons.delete,
+                color: kErrorColor,
+              ))
+        ],
+      ),
+    );
+  }
+}
+
+class AddPaymentDialog extends StatefulWidget {
+  const AddPaymentDialog({
+    super.key,
+    required this.function,
+    required this.accountNameController,
+    required this.accountNumberController,
+  });
+
+  final VoidCallback function;
+  final TextEditingController accountNameController;
+  final TextEditingController accountNumberController;
+
+  @override
+  State<AddPaymentDialog> createState() => _AddPaymentDialogState();
+}
+
+class _AddPaymentDialogState extends State<AddPaymentDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      actions: [
+        Obx(
+          () => LoadingStateWidget(
+              paddingTop: 0,
+              loadingState: _paymentController.getLoadingState,
+              loadingSuccessWidget: Center(
+                child: TextButton(
+                  onPressed: widget.function,
+                  style: const ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(kSecondaryColor)),
+                  child: const Text(
+                    "Add",
+                    style: TextStyle(color: kFourthColor),
+                  ),
+                ),
+              ),
+              loadingInitWidget: Center(
+                child: TextButton(
+                  onPressed: widget.function,
+                  style: const ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(kSecondaryColor)),
+                  child: const Text(
+                    "Add",
+                    style: TextStyle(color: kFourthColor),
+                  ),
+                ),
+              )),
+        )
+      ],
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              "New Payment",
+              style: TextStyle(fontSize: 25),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            Obx(
+              () => Center(
+                child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all(width: 2, color: kSecondaryColor)),
+                    child: _paymentController.selectFile.value == null
+                        ? GestureDetector(
+                            onTap: () async {
+                              _paymentController.selectFile.value =
+                                  await _filePicker.getImage();
+                            },
+                            child: const Center(
+                              child: Icon(
+                                Icons.add_a_photo_outlined,
+                                size: 40,
+                              ),
+                            ),
+                          )
+                        : GestureDetector(
+                            onTap: () async {
+                              _paymentController.selectFile.value =
+                                  await _filePicker.getImage();
+                            },
+                            child: Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50)),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(50),
+                                child: Image.memory(
+                                  _paymentController.selectFile.value!,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          )),
+              ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            CustomTextField(
+              hintText: "Enter Account Name",
+              label: "Account Name",
+              controller: widget.accountNameController,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            CustomTextField(
+              hintText: "Enter Account Number",
+              label: "Account Number",
+              controller: widget.accountNumberController,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -322,8 +693,9 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
     treatmentNameController =
         TextEditingController(text: widget.treatment.treatment);
     dosageController = TextEditingController(text: widget.treatment.dosage);
-    double initCost =
-        widget.treatment.cost / ((widget.treatment.discount / 100));
+    double initCost = widget.treatment.discount == 0
+        ? widget.treatment.cost
+        : widget.treatment.cost / ((widget.treatment.discount / 100));
 
     costController = TextEditingController(text: initCost.toString());
     discountController =
