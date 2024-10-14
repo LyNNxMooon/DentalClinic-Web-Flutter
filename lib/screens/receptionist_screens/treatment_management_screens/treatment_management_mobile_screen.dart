@@ -329,12 +329,20 @@ class TreatmentDialog extends StatefulWidget {
 class _TreatmentDialogState extends State<TreatmentDialog> {
   late TextEditingController treatmentNameController;
   late TextEditingController dosageController;
+  late TextEditingController costController;
+  late TextEditingController discountController;
 
   @override
   void initState() {
     treatmentNameController =
         TextEditingController(text: widget.treatment.treatment);
     dosageController = TextEditingController(text: widget.treatment.dosage);
+    double initCost =
+        widget.treatment.cost / ((widget.treatment.discount / 100));
+
+    costController = TextEditingController(text: initCost.toString());
+    discountController =
+        TextEditingController(text: widget.treatment.discount.toString());
     super.initState();
   }
 
@@ -348,8 +356,13 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
               loadingSuccessWidget: Center(
                 child: TextButton(
                   onPressed: () {
+                    RegExp letterRegExp = RegExp(r'[a-zA-Z]');
                     if (treatmentNameController.text.isNotEmpty ||
-                        dosageController.text.isNotEmpty) {
+                        dosageController.text.isNotEmpty ||
+                        costController.text.isNotEmpty ||
+                        discountController.text.isNotEmpty ||
+                        letterRegExp.hasMatch(costController.text) ||
+                        letterRegExp.hasMatch(discountController.text)) {
                       _treatmentController.updateTreatment(
                           widget.treatment.id,
                           widget.treatment.patientID,
@@ -358,7 +371,9 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
                           widget.treatment.doctorName,
                           widget.treatment.date,
                           treatmentNameController.text,
-                          dosageController.text);
+                          dosageController.text,
+                          double.parse(costController.text),
+                          double.parse(discountController.text));
                     }
                   },
                   style: const ButtonStyle(
@@ -372,8 +387,13 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
               loadingInitWidget: Center(
                 child: TextButton(
                   onPressed: () {
+                    RegExp letterRegExp = RegExp(r'[a-zA-Z]');
                     if (treatmentNameController.text.isNotEmpty ||
-                        dosageController.text.isNotEmpty) {
+                        dosageController.text.isNotEmpty ||
+                        costController.text.isNotEmpty ||
+                        discountController.text.isNotEmpty ||
+                        letterRegExp.hasMatch(costController.text) ||
+                        letterRegExp.hasMatch(discountController.text)) {
                       _treatmentController.updateTreatment(
                           widget.treatment.id,
                           widget.treatment.patientID,
@@ -382,7 +402,9 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
                           widget.treatment.doctorName,
                           widget.treatment.date,
                           treatmentNameController.text,
-                          dosageController.text);
+                          dosageController.text,
+                          double.parse(costController.text),
+                          double.parse(discountController.text));
                     }
                   },
                   style: const ButtonStyle(
@@ -426,6 +448,13 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(
+              height: 20,
+            ),
+            Text(
+              "Final Cost : ${widget.treatment.cost}",
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
               height: 30,
             ),
             CustomTextField(
@@ -437,11 +466,59 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
               height: 20,
             ),
             CustomTextField(
-              hintText: "Enter Dosage",
-              label: "Dosage",
+              hintText: "Enter Medical information and dosage",
+              label: "Medical information",
               minLines: 5,
               maxLines: 10,
               controller: dosageController,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 150,
+                  child: CustomTextField(
+                    hintText: "Enter Cost",
+                    label: "Cost",
+                    keyboardType: TextInputType.number,
+                    controller: costController,
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  "\$",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 145,
+                  child: CustomTextField(
+                    hintText: "Enter discount",
+                    label: "Discount",
+                    keyboardType: TextInputType.number,
+                    controller: discountController,
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  "%",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                )
+              ],
             ),
           ],
         ),

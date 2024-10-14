@@ -28,10 +28,12 @@ class AddPatientController extends BaseController {
       TextEditingController age,
       String gender,
       BuildContext context) async {
+    RegExp letterRegExp = RegExp(r'[a-zA-Z]');
     if (name.text.isEmpty ||
         email.text.isEmpty ||
         password.text.isEmpty ||
         age.text.isEmpty ||
+        letterRegExp.hasMatch(age.text) ||
         gender.isEmpty ||
         selectFile.value == null) {
       setLoadingState = LoadingState.error;
@@ -40,7 +42,7 @@ class AddPatientController extends BaseController {
         barrierDismissible: false,
         context: context,
         builder: (context) => CustomErrorWidget(
-          errorMessage: "Fill all the fields!",
+          errorMessage: "Invalid Inputs!",
           function: () {
             Get.back();
           },

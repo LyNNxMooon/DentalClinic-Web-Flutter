@@ -10,10 +10,14 @@ class TreatmentVO {
   final String patientName;
   final String treatment;
   final String dosage;
+  final double cost;
+  final double discount;
   final String date;
 
   TreatmentVO(
       {required this.id,
+      required this.cost,
+      required this.discount,
       required this.doctorID,
       required this.doctorName,
       required this.patientID,

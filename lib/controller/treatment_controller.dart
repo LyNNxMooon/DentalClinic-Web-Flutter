@@ -61,10 +61,19 @@ class TreatmentController extends BaseController {
     update();
   }
 
-  Future addTreatment(TextEditingController treatmentController,
-      TextEditingController dosageController, BuildContext context) async {
+  Future addTreatment(
+      TextEditingController treatmentController,
+      TextEditingController dosageController,
+      TextEditingController cost,
+      TextEditingController discount,
+      BuildContext context) async {
+    RegExp letterRegExp = RegExp(r'[a-zA-Z]');
     if (treatmentController.text.isEmpty ||
         dosageController.text.isEmpty ||
+        cost.text.isEmpty ||
+        discount.text.isEmpty ||
+        letterRegExp.hasMatch(cost.text) ||
+        letterRegExp.hasMatch(discount.text) ||
         selectedAppointment.value == null) {
       setLoadingState = LoadingState.error;
 
@@ -72,7 +81,7 @@ class TreatmentController extends BaseController {
         barrierDismissible: false,
         context: context,
         builder: (context) => CustomErrorWidget(
-          errorMessage: "Fill all the fields!",
+          errorMessage: "Invalid inputs!",
           function: () {
             Get.back();
           },
@@ -82,8 +91,13 @@ class TreatmentController extends BaseController {
       setLoadingState = LoadingState.loading;
       int id = DateTime.now().millisecondsSinceEpoch;
 
+      double finalCost =
+          double.parse(cost.text) * (double.parse(discount.text) / 100);
+
       final treatment = TreatmentVO(
           id: id,
+          cost: finalCost,
+          discount: double.parse(discount.text),
           date: DateFormat('yMMMMd').format(todayDate),
           doctorID: selectedAppointment.value!.doctorId,
           doctorName: selectedAppointment.value!.doctorName,
@@ -108,6 +122,8 @@ class TreatmentController extends BaseController {
           selectedAppointment.value = null;
           treatmentController.clear();
           dosageController.clear();
+          cost.clear();
+          discount.clear();
         },
       ).catchError((error) {
         print(error);
@@ -130,18 +146,22 @@ class TreatmentController extends BaseController {
   }
 
   Future updateTreatment(
-    int id,
-    String patientID,
-    String patientName,
-    int doctorID,
-    String doctorName,
-    String date,
-    String treatment,
-    String dosage,
-  ) async {
+      int id,
+      String patientID,
+      String patientName,
+      int doctorID,
+      String doctorName,
+      String date,
+      String treatment,
+      String dosage,
+      double cost,
+      double discount) async {
+    double finalCost = cost * (discount / 100);
     setLoadingState = LoadingState.loading;
 
     final treatmentVO = TreatmentVO(
+        cost: finalCost,
+        discount: discount,
         id: id,
         doctorID: doctorID,
         doctorName: doctorName,

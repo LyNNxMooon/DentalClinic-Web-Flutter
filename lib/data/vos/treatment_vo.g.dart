@@ -8,6 +8,8 @@ part of 'treatment_vo.dart';
 
 TreatmentVO _$TreatmentVOFromJson(Map<String, dynamic> json) => TreatmentVO(
       id: (json['id'] as num).toInt(),
+      cost: (json['cost'] as num).toDouble(),
+      discount: (json['discount'] as num).toDouble(),
       doctorID: (json['doctorID'] as num).toInt(),
       doctorName: json['doctorName'] as String,
       patientID: json['patientID'] as String,
@@ -26,5 +28,7 @@ Map<String, dynamic> _$TreatmentVOToJson(TreatmentVO instance) =>
       'patientName': instance.patientName,
       'treatment': instance.treatment,
       'dosage': instance.dosage,
+      'cost': instance.cost,
+      'discount': instance.discount,
       'date': instance.date,
     };

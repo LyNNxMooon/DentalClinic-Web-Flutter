@@ -28,6 +28,8 @@ class MobileAddTreatmentScreen extends StatefulWidget {
 class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
   final _treatmentNameController = TextEditingController();
   final _dosageController = TextEditingController();
+  final _costController = TextEditingController();
+  final _discountController = TextEditingController();
   List<ConnectivityResult> _connectionStatus = [ConnectivityResult.none];
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
@@ -204,13 +206,63 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 30),
                       child: Center(
                         child: CustomTextField(
-                          hintText: "Enter Medical Dosage",
-                          label: "Dosage",
+                          hintText: "Enter Medical Information and dosage",
+                          label: "Medical information",
                           minLines: 5,
                           maxLines: 10,
                           controller: _dosageController,
                         ),
                       ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 150,
+                          child: CustomTextField(
+                            hintText: "Enter Cost",
+                            label: "Cost",
+                            keyboardType: TextInputType.number,
+                            controller: _costController,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        const Text(
+                          "\$",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 150,
+                          child: CustomTextField(
+                            hintText: "Enter discount",
+                            label: "Discount",
+                            keyboardType: TextInputType.number,
+                            controller: _discountController,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        const Text(
+                          "%",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        )
+                      ],
                     ),
                     const SizedBox(
                       height: 20,
@@ -222,12 +274,16 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                             _treatmentController.addTreatment(
                                 _treatmentNameController,
                                 _dosageController,
+                                _costController,
+                                _discountController,
                                 context);
                           }),
                           loadingInitWidget: AddBtn(function: () {
                             _treatmentController.addTreatment(
                                 _treatmentNameController,
                                 _dosageController,
+                                _costController,
+                                _discountController,
                                 context);
                           }),
                           paddingTop: 0),
