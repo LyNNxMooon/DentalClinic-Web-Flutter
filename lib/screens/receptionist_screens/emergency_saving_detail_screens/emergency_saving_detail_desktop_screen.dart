@@ -148,10 +148,13 @@ class _EmergencySavingDesktopScreenState
                     height: 30,
                   ),
                   Center(
-                    child: CustomTextField(
-                      hintText: "Enter title",
-                      label: "Title",
-                      controller: _tileController,
+                    child: SizedBox(
+                      width: 400,
+                      child: CustomTextField(
+                        hintText: "Enter title",
+                        label: "Title",
+                        controller: _tileController,
+                      ),
                     ),
                   ),
                   const SizedBox(
