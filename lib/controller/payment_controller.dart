@@ -107,22 +107,22 @@ class PaymentController extends BaseController {
     update();
   }
 
-  Future updatePayment(
-    int id,
-    String name,
-    String number,
-    String url,
-  ) async {
+  Future updatePayment(int id, String name, String number, String url,
+      BuildContext context) async {
     if (name.isEmpty || number.isEmpty) {
       setLoadingState = LoadingState.error;
-      Fluttertoast.showToast(
-          msg: "Fill all the fields!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 2,
-          backgroundColor: kErrorColor,
-          textColor: kPrimaryColor,
-          fontSize: 20);
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Fill all the fields!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+
+      callPayments();
     } else {
       setLoadingState = LoadingState.loading;
 
@@ -139,6 +139,8 @@ class PaymentController extends BaseController {
               backgroundColor: kSuccessColor,
               textColor: kFourthColor,
               fontSize: 20);
+
+          Get.back();
           callPayments();
         },
       ).catchError((error) {

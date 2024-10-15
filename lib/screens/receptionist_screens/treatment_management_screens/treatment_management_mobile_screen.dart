@@ -279,7 +279,13 @@ class PaymentList extends StatelessWidget {
         shrinkWrap: true,
         physics: const AlwaysScrollableScrollPhysics(),
         itemBuilder: (context, index) => GestureDetector(
-            onTap: () {},
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) =>
+                    UpdatePaymentDialog(payment: payments[index]),
+              );
+            },
             child: PaymentCard(
               payment: payments[index],
             ).showCursorOnHover),
@@ -429,6 +435,104 @@ class PaymentCard extends StatelessWidget {
                 color: kErrorColor,
               ))
         ],
+      ),
+    );
+  }
+}
+
+class UpdatePaymentDialog extends StatefulWidget {
+  const UpdatePaymentDialog({super.key, required this.payment});
+
+  final PaymentVO payment;
+
+  @override
+  State<UpdatePaymentDialog> createState() => _UpdatePaymentDialogState();
+}
+
+class _UpdatePaymentDialogState extends State<UpdatePaymentDialog> {
+  late TextEditingController _accountNameController;
+  late TextEditingController _accountNumberController;
+
+  @override
+  void initState() {
+    _accountNameController =
+        TextEditingController(text: widget.payment.accountName);
+    _accountNumberController =
+        TextEditingController(text: widget.payment.accountNumber);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      actions: [
+        Obx(
+          () => LoadingStateWidget(
+              paddingTop: 0,
+              loadingState: _paymentController.getLoadingState,
+              loadingSuccessWidget: Center(
+                child: TextButton(
+                  onPressed: () {
+                    _paymentController.updatePayment(
+                        widget.payment.id,
+                        _accountNameController.text,
+                        _accountNumberController.text,
+                        widget.payment.url,
+                        context);
+                  },
+                  style: const ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(kSecondaryColor)),
+                  child: const Text(
+                    "Update",
+                    style: TextStyle(color: kFourthColor),
+                  ),
+                ),
+              ),
+              loadingInitWidget: Center(
+                child: TextButton(
+                  onPressed: () {
+                    _paymentController.updatePayment(
+                        widget.payment.id,
+                        _accountNameController.text,
+                        _accountNumberController.text,
+                        widget.payment.url,
+                        context);
+                  },
+                  style: const ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(kSecondaryColor)),
+                  child: const Text(
+                    "Update",
+                    style: TextStyle(color: kFourthColor),
+                  ),
+                ),
+              )),
+        )
+      ],
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+            const Text(
+              "Update Payment",
+              style: mobileTitleStyle,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            CustomTextField(
+              hintText: "Enter Account Name",
+              label: "Account Name",
+              controller: _accountNameController,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            CustomTextField(
+              hintText: "Enter Account Number",
+              label: "Account Number",
+              controller: _accountNumberController,
+            ),
+          ],
+        ),
       ),
     );
   }
