@@ -2,7 +2,6 @@
 
 import 'dart:typed_data';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dental_clinic/data/vos/appointment_vo.dart';
 import 'package:dental_clinic/data/vos/chatted_user_vo.dart';
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
