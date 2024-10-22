@@ -18,13 +18,13 @@ class FeedBackController extends BaseController {
   }
 
   callFeedBacks() async {
-    displayFeedback.value = [];
     setLoadingState = LoadingState.loading;
     _firebaseService.getFeedBackListStream().listen(
       (event) {
         if (event == null || event.isEmpty) {
           setLoadingState = LoadingState.error;
         } else {
+          displayFeedback.value = [];
           feedbackList.value = event;
           for (FeedBackVO feedback in feedbackList) {
             if (feedback.display) {
