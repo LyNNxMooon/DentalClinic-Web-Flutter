@@ -198,15 +198,35 @@ class TreatmentController extends BaseController {
       String treatment,
       String dosage,
       double cost,
-      double discount) async {
-    double finalCost = discount == 0 ? cost : cost * (discount / 100);
+      double discount,
+      String time,
+      String paymentStatus,
+      String slip,
+      String type) async {
+    double finalCost = discount == 0 ? cost : cost - (cost * (discount / 100));
     setLoadingState = LoadingState.loading;
 
+    String url = "";
+
+    if (selectFile.value != null) {
+      url = await _uploadFileToFirebaseStorage();
+    } else {
+      url = slip;
+    }
+
     final treatmentVO = TreatmentVO(
-        time: "",
-        paymentStatus: "",
-        paymentType: "",
-        slip: "",
+        time: time,
+        paymentStatus: paymentStatus,
+        paymentType: paymentStatus == "Un-paid"
+            ? ""
+            : selectedPayment.value == null
+                ? type
+                : selectedPayment.value!.type,
+        slip: paymentStatus == "Un-paid"
+            ? ""
+            : (selectedPayment.value?.accountName == "Cash")
+                ? ""
+                : url,
         cost: finalCost,
         discount: discount,
         id: id,
@@ -232,6 +252,9 @@ class TreatmentController extends BaseController {
             fontSize: 20);
 
         callTreatments();
+
+        selectedPayment.value = null;
+        selectFile.value = null;
       },
     ).catchError((error) {
       print(error);

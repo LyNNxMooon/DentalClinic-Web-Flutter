@@ -837,6 +837,12 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
   late TextEditingController costController;
   late TextEditingController discountController;
 
+  String? _paymentStatus;
+
+  bool isDrop = false;
+
+  List<PaymentVO> payments = [];
+
   @override
   void initState() {
     treatmentNameController =
@@ -844,12 +850,28 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
     dosageController = TextEditingController(text: widget.treatment.dosage);
     double initCost = widget.treatment.discount == 0
         ? widget.treatment.cost
-        : widget.treatment.cost / ((widget.treatment.discount / 100));
+        : widget.treatment.cost / (1 - (widget.treatment.discount / 100));
 
     costController = TextEditingController(text: initCost.toString());
     discountController =
         TextEditingController(text: widget.treatment.discount.toString());
+
+    setPaymentStatus();
+    populatePayments();
+
     super.initState();
+  }
+
+  setPaymentStatus() {
+    setState(() {
+      _paymentStatus = widget.treatment.paymentStatus;
+    });
+  }
+
+  populatePayments() {
+    payments.clear();
+
+    payments = _paymentController.payments;
   }
 
   @override
@@ -879,7 +901,11 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
                           treatmentNameController.text,
                           dosageController.text,
                           double.parse(costController.text),
-                          double.parse(discountController.text));
+                          double.parse(discountController.text),
+                          widget.treatment.time,
+                          _paymentStatus!,
+                          widget.treatment.slip,
+                          widget.treatment.paymentType);
                     }
                   },
                   style: const ButtonStyle(
@@ -910,7 +936,11 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
                           treatmentNameController.text,
                           dosageController.text,
                           double.parse(costController.text),
-                          double.parse(discountController.text));
+                          double.parse(discountController.text),
+                          widget.treatment.time,
+                          _paymentStatus!,
+                          widget.treatment.slip,
+                          widget.treatment.paymentType);
                     }
                   },
                   style: const ButtonStyle(
@@ -924,109 +954,352 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
               paddingTop: 0),
         )
       ],
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Treatment Details",
-              style: mobileTitleStyle,
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Text(
-              widget.treatment.date,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              "Doctor : ${widget.treatment.doctorName}",
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              "Patient : ${widget.treatment.patientName}",
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              "Final Cost : ${widget.treatment.cost}",
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            CustomTextField(
-              hintText: "Enter Treatment Name",
-              label: "Treatment Name",
-              controller: treatmentNameController,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            CustomTextField(
-              hintText: "Enter Medical information and dosage",
-              label: "Medical information",
-              minLines: 5,
-              maxLines: 10,
-              controller: dosageController,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 150,
-                  child: CustomTextField(
-                    hintText: "Enter Cost",
-                    label: "Cost",
-                    keyboardType: TextInputType.number,
-                    controller: costController,
+      content: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Treatment Details",
+                style: mobileTitleStyle,
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.treatment.date,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    " , ${widget.treatment.time}",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Doctor : ${widget.treatment.doctorName}",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    " , Patient : ${widget.treatment.patientName}",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Final Cost : ${widget.treatment.cost}",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    " , Payment : ${widget.treatment.paymentType}",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: CustomTextField(
+                  hintText: "Enter Treatment Name",
+                  label: "Treatment Name",
+                  controller: treatmentNameController,
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: CustomTextField(
+                  hintText: "Enter Medical information and dosage",
+                  label: "Medical information",
+                  minLines: 5,
+                  maxLines: 10,
+                  controller: dosageController,
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        child: CustomTextField(
+                          hintText: "Enter Cost (Ks)",
+                          label: "Cost (Ks)",
+                          keyboardType: TextInputType.number,
+                          controller: costController,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                      child: SizedBox(
+                        child: CustomTextField(
+                          hintText: "Discount %",
+                          label: "Discount %",
+                          keyboardType: TextInputType.number,
+                          controller: discountController,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: RadioListTile<String>(
+                        title: const Text('Paid'),
+                        value: 'Paid',
+                        groupValue: _paymentStatus,
+                        onChanged: (String? value) {
+                          setState(() {
+                            _paymentStatus = value;
+                          });
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: RadioListTile<String>(
+                        title: const Text('Un-paid'),
+                        value: 'Un-paid',
+                        groupValue: _paymentStatus,
+                        onChanged: (String? value) {
+                          setState(() {
+                            _paymentStatus = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              _paymentStatus == "Paid"
+                  ? Obx(() => selectPaymentTile(context))
+                  : const SizedBox(),
+              isDrop
+                  ? Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) =>
+                              paymentTile(context, payments[index]),
+                          separatorBuilder: (context, index) => const SizedBox(
+                                height: 10,
+                              ),
+                          itemCount: payments.length),
+                    )
+                  : const SizedBox(),
+              isDrop
+                  ? paymentTile(
+                      context,
+                      PaymentVO(
+                          id: 0,
+                          accountName: "Cash",
+                          accountNumber: "",
+                          type: "Cash",
+                          url:
+                              "https://www.shutterstock.com/image-vector/transparent-money-icon-png-vector-600nw-1946627578.jpg"))
+                  : const SizedBox(),
+              _paymentStatus == "Paid" &&
+                      _treatmentController.selectedPayment.value?.accountName !=
+                          "Cash"
+                  ? Obx(() => slipBox(context))
+                  : const SizedBox(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget slipBox(BuildContext context) {
+    return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        height: 250,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(width: 1)),
+        child: _treatmentController.selectFile.value == null
+            ? GestureDetector(
+                onTap: () async {
+                  _treatmentController.selectFile.value =
+                      await _filePicker.getImage();
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(
+                    widget.treatment.slip.isEmpty
+                        ? "https://cdn.pixabay.com/photo/2017/11/10/05/24/add-2935429_960_720.png"
+                        : widget.treatment.slip,
+                    fit: BoxFit.contain,
                   ),
                 ),
-                const SizedBox(
-                  width: 10,
-                ),
-                const Text(
-                  "\$",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 145,
-                  child: CustomTextField(
-                    hintText: "Enter discount",
-                    label: "Discount",
-                    keyboardType: TextInputType.number,
-                    controller: discountController,
+              )
+            : GestureDetector(
+                onTap: () async {
+                  _treatmentController.selectFile.value =
+                      await _filePicker.getImage();
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.memory(
+                    _treatmentController.selectFile.value!,
+                    fit: BoxFit.contain,
                   ),
                 ),
-                const SizedBox(
-                  width: 10,
-                ),
-                const Text(
-                  "%",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ));
+  }
+
+  Widget selectPaymentTile(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(left: 30, right: 30, bottom: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      height: 50,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(width: 1)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _treatmentController.selectedPayment.value == null
+              ? const Text(
+                  "Select Payment to update",
+                  style: TextStyle(color: kThirdColor),
                 )
-              ],
-            ),
-          ],
+              : SizedBox(
+                  width: 180,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 35,
+                          height: 35,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(width: 0.3),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Image.network(
+                              _treatmentController.selectedPayment.value!.url,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Text(_treatmentController
+                            .selectedPayment.value!.accountName),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Text(
+                            "/ ${_treatmentController.selectedPayment.value!.accountNumber}"),
+                      ],
+                    ),
+                  ),
+                ),
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  isDrop = !isDrop;
+                });
+              },
+              icon: isDrop
+                  ? const Icon(Icons.arrow_drop_up)
+                  : const Icon(Icons.arrow_drop_down))
+        ],
+      ),
+    );
+  }
+
+  Widget paymentTile(BuildContext context, PaymentVO payment) {
+    return GestureDetector(
+      onTap: () {
+        _treatmentController.selectedPayment.value = payment;
+        setState(() {
+          isDrop = !isDrop;
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.only(
+          left: 30,
+          right: 30,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        height: 50,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(width: 1)),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              Container(
+                width: 35,
+                height: 35,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(width: 0.3),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.network(
+                    payment.url,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              Text(payment.accountName),
+              const SizedBox(
+                width: 15,
+              ),
+              Text("/ ${payment.accountNumber}"),
+            ],
+          ),
         ),
       ),
     );

@@ -1,11 +1,16 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 
 import 'package:dental_clinic/constants/text.dart';
+import 'package:dental_clinic/controller/payment_controller.dart';
 import 'package:dental_clinic/controller/treatment_controller.dart';
 import 'package:dental_clinic/data/vos/appointment_vo.dart';
+import 'package:dental_clinic/data/vos/payment_vo.dart';
+import 'package:dental_clinic/utils/file_picker_utils.dart';
 import 'package:dental_clinic/utils/hover_extensions.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
 
@@ -16,6 +21,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 final _treatmentController = Get.put(TreatmentController());
+final _paymentController = Get.put(PaymentController());
+final _filePicker = FilePickerUtils();
+
+String? _paymentStatus;
 
 class MobileAddTreatmentScreen extends StatefulWidget {
   const MobileAddTreatmentScreen({super.key});
@@ -35,6 +44,12 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   String connection = "online";
 
+  List<PaymentVO> payments = [];
+
+  bool isDrop = false;
+
+  TimeOfDay? selectedTime;
+
   @override
   void initState() {
     super.initState();
@@ -44,12 +59,36 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
 
     _treatmentController.getTodayAppointments();
+
+    populatePayments();
   }
 
   @override
   void dispose() {
     _connectivitySubscription.cancel();
     super.dispose();
+  }
+
+  populatePayments() {
+    payments.clear();
+
+    payments = _paymentController.payments;
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (pickedTime != null && pickedTime != selectedTime) {
+      setState(() {
+        selectedTime = pickedTime;
+      });
+    }
+  }
+
+  String formatTime(TimeOfDay time) {
+    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
   }
 
   Future<void> initConnectivity() async {
@@ -130,61 +169,128 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                     const SizedBox(
                       height: 30,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Obx(
-                          () => Container(
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: kBtnGrayColor),
-                            child: RichText(
-                                text: TextSpan(children: [
-                              const TextSpan(
-                                  text: "Doctor : ",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                              TextSpan(
-                                text: _treatmentController
-                                            .selectedAppointment.value ==
-                                        null
-                                    ? " - "
-                                    : _treatmentController
-                                        .selectedAppointment.value!.doctorName,
+                    Center(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Obx(
+                              () => Container(
+                                padding: const EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: kBtnGrayColor,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black
+                                          .withOpacity(0.1), // Shadow color
+                                      spreadRadius: 3, // Spread radius
+                                      blurRadius: 5, // Blur radius
+                                      offset: const Offset(
+                                          0, 3), // Offset of the shadow
+                                    ),
+                                  ],
+                                ),
+                                child: RichText(
+                                    text: TextSpan(children: [
+                                  const TextSpan(
+                                      text: "Doctor : ",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                  TextSpan(
+                                    text: _treatmentController
+                                                .selectedAppointment.value ==
+                                            null
+                                        ? " - "
+                                        : _treatmentController
+                                            .selectedAppointment
+                                            .value!
+                                            .doctorName,
+                                  ),
+                                ])),
                               ),
-                            ])),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        Obx(
-                          () => Container(
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: kBtnGrayColor),
-                            child: RichText(
-                                text: TextSpan(children: [
-                              const TextSpan(
-                                  text: "Patient : ",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                              TextSpan(
-                                text: _treatmentController
-                                            .selectedAppointment.value ==
-                                        null
-                                    ? " - "
-                                    : _treatmentController
-                                        .selectedAppointment.value!.patientName,
+                            ),
+                            const SizedBox(
+                              width: 15,
+                            ),
+                            Obx(
+                              () => Container(
+                                padding: const EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: kBtnGrayColor,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black
+                                          .withOpacity(0.1), // Shadow color
+                                      spreadRadius: 3, // Spread radius
+                                      blurRadius: 5, // Blur radius
+                                      offset: const Offset(
+                                          0, 3), // Offset of the shadow
+                                    ),
+                                  ],
+                                ),
+                                child: RichText(
+                                    text: TextSpan(children: [
+                                  const TextSpan(
+                                      text: "Patient : ",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                  TextSpan(
+                                    text: _treatmentController
+                                                .selectedAppointment.value ==
+                                            null
+                                        ? " - "
+                                        : _treatmentController
+                                            .selectedAppointment
+                                            .value!
+                                            .patientName,
+                                  ),
+                                ])),
                               ),
-                            ])),
-                          ),
-                        )
-                      ],
+                            ),
+                            const SizedBox(
+                              width: 15,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: kBtnGrayColor,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black
+                                        .withOpacity(0.1), // Shadow color
+                                    spreadRadius: 3, // Spread radius
+                                    blurRadius: 5, // Blur radius
+                                    offset: const Offset(
+                                        0, 3), // Offset of the shadow
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    selectedTime == null
+                                        ? 'Select Time'
+                                        : selectedTime!.format(context),
+                                  ),
+                                  const SizedBox(
+                                    width: 7,
+                                  ),
+                                  GestureDetector(
+                                      onTap: () => _selectTime(context),
+                                      child:
+                                          const Icon(Icons.timelapse_outlined))
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                     const SizedBox(
                       height: 30,
@@ -217,56 +323,109 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          child: CustomTextField(
-                            hintText: "Enter Cost",
-                            label: "Cost",
-                            keyboardType: TextInputType.number,
-                            controller: _costController,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              child: CustomTextField(
+                                hintText: "Enter Cost (Ks)",
+                                label: "Cost (Ks)",
+                                keyboardType: TextInputType.number,
+                                controller: _costController,
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Text(
-                          "\$",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                        )
-                      ],
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Expanded(
+                            child: SizedBox(
+                              child: CustomTextField(
+                                hintText: "Discount %",
+                                label: "Discount %",
+                                keyboardType: TextInputType.number,
+                                controller: _discountController,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          child: CustomTextField(
-                            hintText: "Enter discount",
-                            label: "Discount",
-                            keyboardType: TextInputType.number,
-                            controller: _discountController,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: RadioListTile<String>(
+                              title: const Text('Paid'),
+                              value: 'Paid',
+                              groupValue: _paymentStatus,
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _paymentStatus = value;
+                                });
+                              },
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Text(
-                          "%",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                        )
-                      ],
+                          Expanded(
+                            child: RadioListTile<String>(
+                              title: const Text('Un-paid'),
+                              value: 'Un-paid',
+                              groupValue: _paymentStatus,
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _paymentStatus = value;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
                     ),
+                    _paymentStatus == "Paid"
+                        ? Obx(() => selectPaymentTile(context))
+                        : const SizedBox(),
+                    isDrop
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) =>
+                                    paymentTile(context, payments[index]),
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                itemCount: payments.length),
+                          )
+                        : const SizedBox(),
+                    isDrop
+                        ? paymentTile(
+                            context,
+                            PaymentVO(
+                                id: 0,
+                                accountName: "Cash",
+                                accountNumber: "",
+                                type: "Cash",
+                                url:
+                                    "https://www.shutterstock.com/image-vector/transparent-money-icon-png-vector-600nw-1946627578.jpg"))
+                        : const SizedBox(),
+                    _paymentStatus == "Paid" &&
+                            _treatmentController
+                                    .selectedPayment.value?.accountName !=
+                                "Cash"
+                        ? Obx(() => slipBox(context))
+                        : const SizedBox(),
                     Obx(
                       () => LoadingStateWidget(
                           loadingState: _treatmentController.getLoadingState,
@@ -276,8 +435,8 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                                 _dosageController,
                                 _costController,
                                 _discountController,
-                                "",
-                                "",
+                                selectedTime?.format(context) ?? "",
+                                _paymentStatus ?? "",
                                 context);
                           }),
                           loadingInitWidget: AddBtn(function: () {
@@ -286,8 +445,8 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                                 _dosageController,
                                 _costController,
                                 _discountController,
-                                "",
-                                "",
+                                selectedTime?.format(context) ?? "",
+                                _paymentStatus ?? "",
                                 context);
                           }),
                           paddingTop: 0),
@@ -300,6 +459,157 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
               ),
             )
           : const NoConnectionMobileWidget(),
+    );
+  }
+
+  Widget slipBox(BuildContext context) {
+    return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        height: 200,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(width: 1)),
+        child: _treatmentController.selectFile.value == null
+            ? GestureDetector(
+                onTap: () async {
+                  _treatmentController.selectFile.value =
+                      await _filePicker.getImage();
+                },
+                child: const Center(
+                  child: Icon(
+                    Icons.add_a_photo_outlined,
+                  ),
+                ),
+              )
+            : GestureDetector(
+                onTap: () async {
+                  _treatmentController.selectFile.value =
+                      await _filePicker.getImage();
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.memory(
+                    _treatmentController.selectFile.value!,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ));
+  }
+
+  Widget selectPaymentTile(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(left: 30, right: 30, bottom: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      height: 50,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(width: 1)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _treatmentController.selectedPayment.value == null
+              ? const Text(
+                  "Select Payment",
+                  style: TextStyle(color: kThirdColor),
+                )
+              : SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 35,
+                          height: 35,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(width: 0.3),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Image.network(
+                              _treatmentController.selectedPayment.value!.url,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Text(_treatmentController
+                            .selectedPayment.value!.accountName),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Text(
+                            "/ ${_treatmentController.selectedPayment.value!.accountNumber}"),
+                      ],
+                    ),
+                  ),
+                ),
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  isDrop = !isDrop;
+                });
+              },
+              icon: isDrop
+                  ? const Icon(Icons.arrow_drop_up)
+                  : const Icon(Icons.arrow_drop_down))
+        ],
+      ),
+    );
+  }
+
+  Widget paymentTile(BuildContext context, PaymentVO payment) {
+    return GestureDetector(
+      onTap: () {
+        _treatmentController.selectedPayment.value = payment;
+        setState(() {
+          isDrop = !isDrop;
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.only(
+          left: 30,
+          right: 30,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        height: 50,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(width: 1)),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              Container(
+                width: 35,
+                height: 35,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(width: 0.3),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.network(
+                    payment.url,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              Text(payment.accountName),
+              const SizedBox(
+                width: 15,
+              ),
+              Text("/ ${payment.accountNumber}"),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

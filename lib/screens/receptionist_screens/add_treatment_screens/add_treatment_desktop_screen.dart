@@ -56,24 +56,20 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
     initConnectivity();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-
+    populatePayments();
     _treatmentController.getTodayAppointments();
-
-    payments = _paymentController.payments;
-
-    payments.add(PaymentVO(
-        id: 0,
-        accountName: "Cash",
-        accountNumber: "",
-        type: "Cash",
-        url:
-            "https://www.shutterstock.com/image-vector/transparent-money-icon-png-vector-600nw-1946627578.jpg"));
   }
 
   @override
   void dispose() {
     _connectivitySubscription.cancel();
     super.dispose();
+  }
+
+  populatePayments() {
+    payments.clear();
+
+    payments = _paymentController.payments;
   }
 
   Future<void> _selectTime(BuildContext context) async {
@@ -170,119 +166,129 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                     const SizedBox(
                       height: 50,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Obx(
-                          () => Container(
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: kBtnGrayColor,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black
-                                      .withOpacity(0.1), // Shadow color
-                                  spreadRadius: 3, // Spread radius
-                                  blurRadius: 5, // Blur radius
-                                  offset: const Offset(
-                                      0, 3), // Offset of the shadow
+                    Center(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Obx(
+                              () => Container(
+                                padding: const EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: kBtnGrayColor,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black
+                                          .withOpacity(0.1), // Shadow color
+                                      spreadRadius: 3, // Spread radius
+                                      blurRadius: 5, // Blur radius
+                                      offset: const Offset(
+                                          0, 3), // Offset of the shadow
+                                    ),
+                                  ],
                                 ),
-                              ],
+                                child: RichText(
+                                    text: TextSpan(children: [
+                                  const TextSpan(
+                                      text: "Doctor : ",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                  TextSpan(
+                                      text: _treatmentController
+                                                  .selectedAppointment.value ==
+                                              null
+                                          ? " - "
+                                          : _treatmentController
+                                              .selectedAppointment
+                                              .value!
+                                              .doctorName,
+                                      style: const TextStyle(fontSize: 18)),
+                                ])),
+                              ),
                             ),
-                            child: RichText(
-                                text: TextSpan(children: [
-                              const TextSpan(
-                                  text: "Doctor : ",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              TextSpan(
-                                  text: _treatmentController
-                                              .selectedAppointment.value ==
-                                          null
-                                      ? " - "
-                                      : _treatmentController.selectedAppointment
-                                          .value!.doctorName,
-                                  style: const TextStyle(fontSize: 18)),
-                            ])),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Obx(
-                          () => Container(
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: kBtnGrayColor,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black
-                                      .withOpacity(0.1), // Shadow color
-                                  spreadRadius: 3, // Spread radius
-                                  blurRadius: 5, // Blur radius
-                                  offset: const Offset(
-                                      0, 3), // Offset of the shadow
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Obx(
+                              () => Container(
+                                padding: const EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: kBtnGrayColor,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black
+                                          .withOpacity(0.1), // Shadow color
+                                      spreadRadius: 3, // Spread radius
+                                      blurRadius: 5, // Blur radius
+                                      offset: const Offset(
+                                          0, 3), // Offset of the shadow
+                                    ),
+                                  ],
                                 ),
-                              ],
+                                child: RichText(
+                                    text: TextSpan(children: [
+                                  const TextSpan(
+                                      text: "Patient : ",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                  TextSpan(
+                                      text: _treatmentController
+                                                  .selectedAppointment.value ==
+                                              null
+                                          ? " - "
+                                          : _treatmentController
+                                              .selectedAppointment
+                                              .value!
+                                              .patientName,
+                                      style: const TextStyle(fontSize: 18)),
+                                ])),
+                              ),
                             ),
-                            child: RichText(
-                                text: TextSpan(children: [
-                              const TextSpan(
-                                  text: "Patient : ",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              TextSpan(
-                                  text: _treatmentController
-                                              .selectedAppointment.value ==
-                                          null
-                                      ? " - "
-                                      : _treatmentController.selectedAppointment
-                                          .value!.patientName,
-                                  style: const TextStyle(fontSize: 18)),
-                            ])),
-                          ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: kBtnGrayColor,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black
+                                        .withOpacity(0.1), // Shadow color
+                                    spreadRadius: 3, // Spread radius
+                                    blurRadius: 5, // Blur radius
+                                    offset: const Offset(
+                                        0, 3), // Offset of the shadow
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    selectedTime == null
+                                        ? 'Select Time'
+                                        : selectedTime!.format(context),
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  GestureDetector(
+                                      onTap: () => _selectTime(context),
+                                      child:
+                                          const Icon(Icons.timelapse_outlined))
+                                ],
+                              ),
+                            )
+                          ],
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: kBtnGrayColor,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black
-                                    .withOpacity(0.1), // Shadow color
-                                spreadRadius: 3, // Spread radius
-                                blurRadius: 5, // Blur radius
-                                offset:
-                                    const Offset(0, 3), // Offset of the shadow
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                selectedTime == null
-                                    ? 'Select Time'
-                                    : selectedTime!.format(context),
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              GestureDetector(
-                                  onTap: () => _selectTime(context),
-                                  child: const Icon(Icons.timelapse_outlined))
-                            ],
-                          ),
-                        )
-                      ],
+                      ),
                     ),
                     const SizedBox(
                       height: 40,
@@ -325,7 +331,6 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                         children: [
                           Expanded(
                             child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.2,
                               child: CustomTextField(
                                 hintText: "Enter Cost (Ks)",
                                 label: "Cost (Ks)",
@@ -373,7 +378,7 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                           Expanded(
                             child: RadioListTile<String>(
                               title: const Text('Un-paid'),
-                              value: 'un-paid',
+                              value: 'Un-paid',
                               groupValue: _paymentStatus,
                               onChanged: (String? value) {
                                 setState(() {
@@ -393,7 +398,7 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                         : const SizedBox(),
                     isDrop
                         ? Padding(
-                            padding: const EdgeInsets.only(bottom: 20),
+                            padding: const EdgeInsets.only(bottom: 10),
                             child: ListView.separated(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
@@ -406,6 +411,17 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                                 itemCount: payments.length),
                           )
                         : const SizedBox(),
+                    isDrop
+                        ? paymentTile(
+                            context,
+                            PaymentVO(
+                                id: 0,
+                                accountName: "Cash",
+                                accountNumber: "",
+                                type: "Cash",
+                                url:
+                                    "https://www.shutterstock.com/image-vector/transparent-money-icon-png-vector-600nw-1946627578.jpg"))
+                        : const SizedBox(),
                     _paymentStatus == "Paid" &&
                             _treatmentController
                                     .selectedPayment.value?.accountName !=
@@ -416,24 +432,48 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                       () => LoadingStateWidget(
                           loadingState: _treatmentController.getLoadingState,
                           loadingSuccessWidget: AddBtn(function: () {
-                            _treatmentController.addTreatment(
-                                _treatmentNameController,
-                                _dosageController,
-                                _costController,
-                                _discountController,
-                                selectedTime?.format(context) ?? "",
-                                _paymentStatus ?? "",
-                                context);
+                            _treatmentController
+                                .addTreatment(
+                                    _treatmentNameController,
+                                    _dosageController,
+                                    _costController,
+                                    _discountController,
+                                    selectedTime?.format(context) ?? "",
+                                    _paymentStatus ?? "",
+                                    context)
+                                .then(
+                              (value) {
+                                payments.remove(PaymentVO(
+                                    id: 0,
+                                    accountName: "Cash",
+                                    accountNumber: "",
+                                    type: "Cash",
+                                    url:
+                                        "https://www.shutterstock.com/image-vector/transparent-money-icon-png-vector-600nw-1946627578.jpg"));
+                              },
+                            );
                           }),
                           loadingInitWidget: AddBtn(function: () {
-                            _treatmentController.addTreatment(
-                                _treatmentNameController,
-                                _dosageController,
-                                _costController,
-                                _discountController,
-                                selectedTime?.format(context) ?? "",
-                                _paymentStatus ?? "",
-                                context);
+                            _treatmentController
+                                .addTreatment(
+                                    _treatmentNameController,
+                                    _dosageController,
+                                    _costController,
+                                    _discountController,
+                                    selectedTime?.format(context) ?? "",
+                                    _paymentStatus ?? "",
+                                    context)
+                                .then(
+                              (value) {
+                                payments.remove(PaymentVO(
+                                    id: 0,
+                                    accountName: "Cash",
+                                    accountNumber: "",
+                                    type: "Cash",
+                                    url:
+                                        "https://www.shutterstock.com/image-vector/transparent-money-icon-png-vector-600nw-1946627578.jpg"));
+                              },
+                            );
                           }),
                           paddingTop: 0),
                     ),
@@ -570,32 +610,35 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
             border: Border.all(width: 1)),
-        child: Row(
-          children: [
-            Container(
-              width: 35,
-              height: 35,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(width: 0.3),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  payment.url,
-                  fit: BoxFit.cover,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              Container(
+                width: 35,
+                height: 35,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(width: 0.3),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.network(
+                    payment.url,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              width: 15,
-            ),
-            Text(payment.accountName),
-            const SizedBox(
-              width: 15,
-            ),
-            Text("/ ${payment.accountNumber}"),
-          ],
+              const SizedBox(
+                width: 15,
+              ),
+              Text(payment.accountName),
+              const SizedBox(
+                width: 15,
+              ),
+              Text("/ ${payment.accountNumber}"),
+            ],
+          ),
         ),
       ),
     );
