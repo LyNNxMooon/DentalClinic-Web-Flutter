@@ -182,7 +182,8 @@ class _DesktopEmergencySavingScreenState
                               },
                             ),
                           )),
-                    )
+                    ),
+                    const SizedBox(height: 50)
                   ],
                 ),
               ),

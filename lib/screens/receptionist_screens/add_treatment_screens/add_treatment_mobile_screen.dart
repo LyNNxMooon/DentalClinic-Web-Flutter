@@ -276,6 +276,8 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                                 _dosageController,
                                 _costController,
                                 _discountController,
+                                "",
+                                "",
                                 context);
                           }),
                           loadingInitWidget: AddBtn(function: () {
@@ -284,6 +286,8 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                                 _dosageController,
                                 _costController,
                                 _discountController,
+                                "",
+                                "",
                                 context);
                           }),
                           paddingTop: 0),

@@ -1,9 +1,12 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
+import 'dart:typed_data';
+
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/appointment_controller.dart';
 import 'package:dental_clinic/controller/base_controller.dart';
 import 'package:dental_clinic/data/vos/appointment_vo.dart';
+import 'package:dental_clinic/data/vos/payment_vo.dart';
 import 'package:dental_clinic/data/vos/treatment_vo.dart';
 import 'package:dental_clinic/firebase/firebase.dart';
 import 'package:dental_clinic/utils/enums.dart';
@@ -26,6 +29,10 @@ class TreatmentController extends BaseController {
   DateTime todayDate = DateTime.now();
 
   final _firebaseService = FirebaseServices();
+
+  Rxn<PaymentVO> selectedPayment = Rxn<PaymentVO>();
+
+  Rxn<Uint8List> selectFile = Rxn<Uint8List>();
 
   @override
   void onInit() {
@@ -66,6 +73,8 @@ class TreatmentController extends BaseController {
       TextEditingController dosageController,
       TextEditingController cost,
       TextEditingController discount,
+      String time,
+      String paymentStatus,
       BuildContext context) async {
     RegExp letterRegExp = RegExp(r'[a-zA-Z]');
     if (treatmentController.text.isEmpty ||
@@ -74,7 +83,9 @@ class TreatmentController extends BaseController {
         discount.text.isEmpty ||
         letterRegExp.hasMatch(cost.text) ||
         letterRegExp.hasMatch(discount.text) ||
-        selectedAppointment.value == null) {
+        selectedAppointment.value == null ||
+        time.isEmpty ||
+        paymentStatus.isEmpty) {
       setLoadingState = LoadingState.error;
 
       showDialog(
@@ -87,13 +98,38 @@ class TreatmentController extends BaseController {
           },
         ),
       );
+    } else if (paymentStatus == "Paid" && selectedPayment.value == null) {
+      setLoadingState = LoadingState.error;
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Select payments!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
     } else {
       setLoadingState = LoadingState.loading;
       int id = DateTime.now().millisecondsSinceEpoch;
 
       double finalCost = double.parse(discount.text) == 0
           ? double.parse(cost.text)
-          : double.parse(cost.text) * (double.parse(discount.text) / 100);
+          : double.parse(cost.text) -
+              (double.parse(cost.text) * (double.parse(discount.text) / 100));
+
+      String fileURL = "";
+
+      if (selectFile.value != null) {
+        fileURL = await _uploadFileToFirebaseStorage();
+      } else if (selectedPayment.value?.accountName != "Cash" &&
+          paymentStatus == "Paid" &&
+          selectFile.value == null) {
+        fileURL =
+            "https://thumbs.dreamstime.com/b/sad-document-no-data-file-icon-white-334021734.jpg";
+      }
 
       final treatment = TreatmentVO(
           id: id,
@@ -105,7 +141,11 @@ class TreatmentController extends BaseController {
           patientID: selectedAppointment.value!.patientId,
           patientName: selectedAppointment.value!.patientName,
           dosage: dosageController.text,
-          treatment: treatmentController.text);
+          treatment: treatmentController.text,
+          slip: fileURL,
+          time: time,
+          paymentStatus: paymentStatus,
+          paymentType: selectedPayment.value?.type ?? "");
       return _firebaseService.saveTreatment(treatment).then(
         (value) {
           setLoadingState = LoadingState.complete;
@@ -121,6 +161,8 @@ class TreatmentController extends BaseController {
           );
 
           selectedAppointment.value = null;
+          selectedPayment.value = null;
+          selectFile.value = null;
           treatmentController.clear();
           dosageController.clear();
           cost.clear();
@@ -161,6 +203,10 @@ class TreatmentController extends BaseController {
     setLoadingState = LoadingState.loading;
 
     final treatmentVO = TreatmentVO(
+        time: "",
+        paymentStatus: "",
+        paymentType: "",
+        slip: "",
         cost: finalCost,
         discount: discount,
         id: id,
@@ -235,5 +281,13 @@ class TreatmentController extends BaseController {
     });
 
     update();
+  }
+
+  Future _uploadFileToFirebaseStorage() {
+    String path = 'image';
+    String contentType = 'image/jpg';
+
+    return FirebaseServices.uploadToFirebaseStorage(
+        selectFile.value!, path, contentType);
   }
 }

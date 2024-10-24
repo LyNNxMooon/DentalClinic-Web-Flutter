@@ -53,6 +53,7 @@ class _MobileTreatmentManagementScreenState
 
   final _accountNameController = TextEditingController();
   final _accountNumberController = TextEditingController();
+  final _accountTypeController = TextEditingController();
 
   @override
   void initState() {
@@ -156,19 +157,22 @@ class _MobileTreatmentManagementScreenState
                             showDialog(
                               context: context,
                               builder: (context) => AddPaymentDialog(
-                                  function: () {
-                                    if (connection == "online") {
-                                      _paymentController.addPayment(
-                                          _accountNameController,
-                                          _accountNumberController,
-                                          context);
-                                    } else {
-                                      Get.back();
-                                    }
-                                  },
-                                  accountNameController: _accountNameController,
-                                  accountNumberController:
-                                      _accountNumberController),
+                                function: () {
+                                  if (connection == "online") {
+                                    _paymentController.addPayment(
+                                        _accountNameController,
+                                        _accountNumberController,
+                                        _accountTypeController,
+                                        context);
+                                  } else {
+                                    Get.back();
+                                  }
+                                },
+                                accountNameController: _accountNameController,
+                                accountNumberController:
+                                    _accountNumberController,
+                                accountTypeController: _accountTypeController,
+                              ),
                             );
                           },
                           child: Container(
@@ -245,13 +249,16 @@ class _MobileTreatmentManagementScreenState
                           ),
                           loadingInitWidget: Padding(
                             padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.22),
+                                top: MediaQuery.of(context).size.height * 0.16),
                             child: LoadFailWidget(
                               function: () {
                                 _treatmentController.callTreatments();
                               },
                             ),
                           )),
+                    ),
+                    const SizedBox(
+                      height: 30,
                     )
                   ],
                 ),
@@ -452,6 +459,7 @@ class UpdatePaymentDialog extends StatefulWidget {
 class _UpdatePaymentDialogState extends State<UpdatePaymentDialog> {
   late TextEditingController _accountNameController;
   late TextEditingController _accountNumberController;
+  late TextEditingController _accountTypeController;
 
   @override
   void initState() {
@@ -459,6 +467,7 @@ class _UpdatePaymentDialogState extends State<UpdatePaymentDialog> {
         TextEditingController(text: widget.payment.accountName);
     _accountNumberController =
         TextEditingController(text: widget.payment.accountNumber);
+    _accountTypeController = TextEditingController(text: widget.payment.type);
     super.initState();
   }
 
@@ -477,6 +486,7 @@ class _UpdatePaymentDialogState extends State<UpdatePaymentDialog> {
                         widget.payment.id,
                         _accountNameController.text,
                         _accountNumberController.text,
+                        _accountTypeController.text,
                         widget.payment.url,
                         context);
                   },
@@ -495,6 +505,7 @@ class _UpdatePaymentDialogState extends State<UpdatePaymentDialog> {
                         widget.payment.id,
                         _accountNameController.text,
                         _accountNumberController.text,
+                        _accountTypeController.text,
                         widget.payment.url,
                         context);
                   },
@@ -531,6 +542,14 @@ class _UpdatePaymentDialogState extends State<UpdatePaymentDialog> {
               label: "Account Number",
               controller: _accountNumberController,
             ),
+            const SizedBox(
+              height: 20,
+            ),
+            CustomTextField(
+              hintText: "Enter Account Type",
+              label: "Type (Kpay/ WavePay/ etc..)",
+              controller: _accountTypeController,
+            ),
           ],
         ),
       ),
@@ -544,11 +563,13 @@ class AddPaymentDialog extends StatefulWidget {
     required this.function,
     required this.accountNameController,
     required this.accountNumberController,
+    required this.accountTypeController,
   });
 
   final VoidCallback function;
   final TextEditingController accountNameController;
   final TextEditingController accountNumberController;
+  final TextEditingController accountTypeController;
 
   @override
   State<AddPaymentDialog> createState() => _AddPaymentDialogState();
@@ -655,6 +676,14 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
               hintText: "Enter Account Number",
               label: "Account Number",
               controller: widget.accountNumberController,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            CustomTextField(
+              hintText: "Enter Account Type",
+              label: "Type (Kpay/ WavePay/ etc..)",
+              controller: widget.accountTypeController,
             ),
           ],
         ),

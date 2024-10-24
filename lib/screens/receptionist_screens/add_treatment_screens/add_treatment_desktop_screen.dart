@@ -6,8 +6,11 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 
 import 'package:dental_clinic/constants/text.dart';
+import 'package:dental_clinic/controller/payment_controller.dart';
 import 'package:dental_clinic/controller/treatment_controller.dart';
 import 'package:dental_clinic/data/vos/appointment_vo.dart';
+import 'package:dental_clinic/data/vos/payment_vo.dart';
+import 'package:dental_clinic/utils/file_picker_utils.dart';
 import 'package:dental_clinic/utils/hover_extensions.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
 
@@ -18,6 +21,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 final _treatmentController = Get.put(TreatmentController());
+final _paymentController = Get.put(PaymentController());
+final _filePicker = FilePickerUtils();
+
+String? _paymentStatus;
 
 class DesktopAddTreatmentScreen extends StatefulWidget {
   const DesktopAddTreatmentScreen({super.key});
@@ -37,6 +44,12 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   String connection = "online";
 
+  List<PaymentVO> payments = [];
+
+  bool isDrop = false;
+
+  TimeOfDay? selectedTime;
+
   @override
   void initState() {
     super.initState();
@@ -45,12 +58,38 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
 
     _treatmentController.getTodayAppointments();
+
+    payments = _paymentController.payments;
+
+    payments.add(PaymentVO(
+        id: 0,
+        accountName: "Cash",
+        accountNumber: "",
+        type: "Cash",
+        url:
+            "https://www.shutterstock.com/image-vector/transparent-money-icon-png-vector-600nw-1946627578.jpg"));
   }
 
   @override
   void dispose() {
     _connectivitySubscription.cancel();
     super.dispose();
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (pickedTime != null && pickedTime != selectedTime) {
+      setState(() {
+        selectedTime = pickedTime;
+      });
+    }
+  }
+
+  String formatTime(TimeOfDay time) {
+    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
   }
 
   Future<void> initConnectivity() async {
@@ -206,6 +245,42 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                                   style: const TextStyle(fontSize: 18)),
                             ])),
                           ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: kBtnGrayColor,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black
+                                    .withOpacity(0.1), // Shadow color
+                                spreadRadius: 3, // Spread radius
+                                blurRadius: 5, // Blur radius
+                                offset:
+                                    const Offset(0, 3), // Offset of the shadow
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                selectedTime == null
+                                    ? 'Select Time'
+                                    : selectedTime!.format(context),
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              GestureDetector(
+                                  onTap: () => _selectTime(context),
+                                  child: const Icon(Icons.timelapse_outlined))
+                            ],
+                          ),
                         )
                       ],
                     ),
@@ -213,7 +288,8 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                       height: 40,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 100),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.16),
                       child: Center(
                         child: CustomTextField(
                           hintText: "Enter Treatment Name",
@@ -226,7 +302,8 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                       height: 20,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 100),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.16),
                       child: Center(
                         child: CustomTextField(
                           hintText: "Enter Medical Information and dosage",
@@ -240,56 +317,101 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 200,
-                          child: CustomTextField(
-                            hintText: "Enter Cost",
-                            label: "Cost",
-                            keyboardType: TextInputType.number,
-                            controller: _costController,
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.2,
+                              child: CustomTextField(
+                                hintText: "Enter Cost (Ks)",
+                                label: "Cost (Ks)",
+                                keyboardType: TextInputType.number,
+                                controller: _costController,
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Text(
-                          "\$",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        )
-                      ],
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Expanded(
+                            child: SizedBox(
+                              child: CustomTextField(
+                                hintText: "Discount %",
+                                label: "Discount %",
+                                keyboardType: TextInputType.number,
+                                controller: _discountController,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 200,
-                          child: CustomTextField(
-                            hintText: "Enter discount",
-                            label: "Discount",
-                            keyboardType: TextInputType.number,
-                            controller: _discountController,
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.16),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: RadioListTile<String>(
+                              title: const Text('Paid'),
+                              value: 'Paid',
+                              groupValue: _paymentStatus,
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _paymentStatus = value;
+                                });
+                              },
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Text(
-                          "%",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        )
-                      ],
+                          Expanded(
+                            child: RadioListTile<String>(
+                              title: const Text('Un-paid'),
+                              value: 'un-paid',
+                              groupValue: _paymentStatus,
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _paymentStatus = value;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
                     ),
+                    _paymentStatus == "Paid"
+                        ? Obx(() => selectPaymentTile(context))
+                        : const SizedBox(),
+                    isDrop
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) =>
+                                    paymentTile(context, payments[index]),
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                itemCount: payments.length),
+                          )
+                        : const SizedBox(),
+                    _paymentStatus == "Paid" &&
+                            _treatmentController
+                                    .selectedPayment.value?.accountName !=
+                                "Cash"
+                        ? Obx(() => slipBox(context))
+                        : const SizedBox(),
                     Obx(
                       () => LoadingStateWidget(
                           loadingState: _treatmentController.getLoadingState,
@@ -299,6 +421,8 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                                 _dosageController,
                                 _costController,
                                 _discountController,
+                                selectedTime?.format(context) ?? "",
+                                _paymentStatus ?? "",
                                 context);
                           }),
                           loadingInitWidget: AddBtn(function: () {
@@ -307,6 +431,8 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                                 _dosageController,
                                 _costController,
                                 _discountController,
+                                selectedTime?.format(context) ?? "",
+                                _paymentStatus ?? "",
                                 context);
                           }),
                           paddingTop: 0),
@@ -321,6 +447,159 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
           : const NoConnectionDesktopWidget(),
     );
   }
+
+  Widget slipBox(BuildContext context) {
+    return Container(
+        margin: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.16, vertical: 20),
+        height: 250,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(width: 1)),
+        child: _treatmentController.selectFile.value == null
+            ? GestureDetector(
+                onTap: () async {
+                  _treatmentController.selectFile.value =
+                      await _filePicker.getImage();
+                },
+                child: const Center(
+                  child: Icon(
+                    Icons.add_a_photo_outlined,
+                    size: 40,
+                  ),
+                ),
+              )
+            : GestureDetector(
+                onTap: () async {
+                  _treatmentController.selectFile.value =
+                      await _filePicker.getImage();
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.memory(
+                    _treatmentController.selectFile.value!,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ));
+  }
+
+  Widget selectPaymentTile(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(
+          left: MediaQuery.of(context).size.width * 0.16,
+          right: MediaQuery.of(context).size.width * 0.16,
+          bottom: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      height: 50,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(width: 1)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _treatmentController.selectedPayment.value == null
+              ? const Text(
+                  "Select Payment",
+                  style: TextStyle(color: kThirdColor),
+                )
+              : SizedBox(
+                  width: 200,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 35,
+                          height: 35,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(width: 0.3),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Image.network(
+                              _treatmentController.selectedPayment.value!.url,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Text(_treatmentController
+                            .selectedPayment.value!.accountName),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Text(
+                            "/ ${_treatmentController.selectedPayment.value!.accountNumber}"),
+                      ],
+                    ),
+                  ),
+                ),
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  isDrop = !isDrop;
+                });
+              },
+              icon: isDrop
+                  ? const Icon(Icons.arrow_drop_up)
+                  : const Icon(Icons.arrow_drop_down))
+        ],
+      ),
+    );
+  }
+
+  Widget paymentTile(BuildContext context, PaymentVO payment) {
+    return GestureDetector(
+      onTap: () {
+        _treatmentController.selectedPayment.value = payment;
+        setState(() {
+          isDrop = !isDrop;
+        });
+      },
+      child: Container(
+        margin: EdgeInsets.only(
+          left: MediaQuery.of(context).size.width * 0.16,
+          right: MediaQuery.of(context).size.width * 0.16,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        height: 50,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(width: 1)),
+        child: Row(
+          children: [
+            Container(
+              width: 35,
+              height: 35,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(width: 0.3),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(
+                  payment.url,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 15,
+            ),
+            Text(payment.accountName),
+            const SizedBox(
+              width: 15,
+            ),
+            Text("/ ${payment.accountNumber}"),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class AddBtn extends StatelessWidget {
@@ -333,7 +612,8 @@ class AddBtn extends StatelessWidget {
     return GestureDetector(
       onTap: function,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 100),
+        margin: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.16),
         height: 40,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15), color: kSecondaryColor),

@@ -197,6 +197,9 @@ class _MobileEmergencySavingScreenState
                               },
                             ),
                           )),
+                    ),
+                    const SizedBox(
+                      height: 30,
                     )
                   ],
                 ),

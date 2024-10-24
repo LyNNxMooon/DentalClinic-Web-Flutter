@@ -44,10 +44,14 @@ class PaymentController extends BaseController {
     update();
   }
 
-  Future addPayment(TextEditingController accountName,
-      TextEditingController accountNumber, BuildContext context) async {
+  Future addPayment(
+      TextEditingController accountName,
+      TextEditingController accountNumber,
+      TextEditingController type,
+      BuildContext context) async {
     if (accountName.text.isEmpty ||
         accountNumber.text.isEmpty ||
+        type.text.isEmpty ||
         selectFile.value == null) {
       setLoadingState = LoadingState.error;
 
@@ -71,6 +75,7 @@ class PaymentController extends BaseController {
           id: id,
           accountName: accountName.text,
           accountNumber: accountNumber.text,
+          type: type.text,
           url: fileURL);
       return _firebaseService.savePayment(paymentVO).then(
         (value) {
@@ -85,7 +90,7 @@ class PaymentController extends BaseController {
           selectFile.value = null;
           accountName.clear();
           accountNumber.clear();
-
+          type.clear();
           callPayments();
         },
       ).catchError((error) {
@@ -107,9 +112,9 @@ class PaymentController extends BaseController {
     update();
   }
 
-  Future updatePayment(int id, String name, String number, String url,
-      BuildContext context) async {
-    if (name.isEmpty || number.isEmpty) {
+  Future updatePayment(int id, String name, String number, String type,
+      String url, BuildContext context) async {
+    if (name.isEmpty || number.isEmpty || type.isEmpty) {
       setLoadingState = LoadingState.error;
       showDialog(
         barrierDismissible: false,
@@ -126,8 +131,12 @@ class PaymentController extends BaseController {
     } else {
       setLoadingState = LoadingState.loading;
 
-      final paymentVO =
-          PaymentVO(id: id, accountName: name, accountNumber: number, url: url);
+      final paymentVO = PaymentVO(
+          id: id,
+          accountName: name,
+          accountNumber: number,
+          url: url,
+          type: type);
       return _firebaseService.savePayment(paymentVO).then(
         (value) {
           setLoadingState = LoadingState.complete;
