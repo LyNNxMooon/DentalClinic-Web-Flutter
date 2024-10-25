@@ -430,52 +430,54 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                         : const SizedBox(),
                     Obx(
                       () => LoadingStateWidget(
-                          loadingState: _treatmentController.getLoadingState,
-                          loadingSuccessWidget: AddBtn(function: () {
-                            _treatmentController
-                                .addTreatment(
-                                    _treatmentNameController,
-                                    _dosageController,
-                                    _costController,
-                                    _discountController,
-                                    selectedTime?.format(context) ?? "",
-                                    _paymentStatus ?? "",
-                                    context)
-                                .then(
-                              (value) {
-                                payments.remove(PaymentVO(
-                                    id: 0,
-                                    accountName: "Cash",
-                                    accountNumber: "",
-                                    type: "Cash",
-                                    url:
-                                        "https://www.shutterstock.com/image-vector/transparent-money-icon-png-vector-600nw-1946627578.jpg"));
-                              },
-                            );
-                          }),
-                          loadingInitWidget: AddBtn(function: () {
-                            _treatmentController
-                                .addTreatment(
-                                    _treatmentNameController,
-                                    _dosageController,
-                                    _costController,
-                                    _discountController,
-                                    selectedTime?.format(context) ?? "",
-                                    _paymentStatus ?? "",
-                                    context)
-                                .then(
-                              (value) {
-                                payments.remove(PaymentVO(
-                                    id: 0,
-                                    accountName: "Cash",
-                                    accountNumber: "",
-                                    type: "Cash",
-                                    url:
-                                        "https://www.shutterstock.com/image-vector/transparent-money-icon-png-vector-600nw-1946627578.jpg"));
-                              },
-                            );
-                          }),
-                          paddingTop: 0),
+                        loadingState: _treatmentController.getLoadingState,
+                        loadingSuccessWidget: AddBtn(function: () {
+                          _treatmentController
+                              .addTreatment(
+                                  _treatmentNameController,
+                                  _dosageController,
+                                  _costController,
+                                  _discountController,
+                                  selectedTime?.format(context) ?? "",
+                                  _paymentStatus ?? "",
+                                  context)
+                              .then(
+                            (value) {
+                              payments.remove(PaymentVO(
+                                  id: 0,
+                                  accountName: "Cash",
+                                  accountNumber: "",
+                                  type: "Cash",
+                                  url:
+                                      "https://www.shutterstock.com/image-vector/transparent-money-icon-png-vector-600nw-1946627578.jpg"));
+                            },
+                          );
+                        }),
+                        loadingInitWidget: AddBtn(function: () {
+                          _treatmentController
+                              .addTreatment(
+                                  _treatmentNameController,
+                                  _dosageController,
+                                  _costController,
+                                  _discountController,
+                                  selectedTime?.format(context) ?? "",
+                                  _paymentStatus ?? "",
+                                  context)
+                              .then(
+                            (value) {
+                              payments.remove(PaymentVO(
+                                  id: 0,
+                                  accountName: "Cash",
+                                  accountNumber: "",
+                                  type: "Cash",
+                                  url:
+                                      "https://www.shutterstock.com/image-vector/transparent-money-icon-png-vector-600nw-1946627578.jpg"));
+                            },
+                          );
+                        }),
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                      ),
                     ),
                     const SizedBox(
                       height: 40,

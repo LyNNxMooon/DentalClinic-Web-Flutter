@@ -45,6 +45,8 @@ late TextEditingController _specialistController;
 
 late TextEditingController _experienceController;
 
+late TextEditingController _doctorIdController;
+
 class DoctorDetailDesktopScreen extends StatefulWidget {
   const DoctorDetailDesktopScreen(
       {super.key, required this.doctor, required this.initialAvailability});
@@ -66,6 +68,7 @@ class _DoctorDetailDesktopScreenState extends State<DoctorDetailDesktopScreen> {
         TextEditingController(text: widget.doctor.specialist);
     _experienceController =
         TextEditingController(text: widget.doctor.experience);
+    _doctorIdController = TextEditingController(text: widget.doctor.doctorID);
     populateInitialData();
 
     initConnectivity();
@@ -161,21 +164,22 @@ class _DoctorDetailDesktopScreenState extends State<DoctorDetailDesktopScreen> {
                           icon: const Icon(Icons.arrow_back)),
                       Obx(
                         () => LoadingStateWidget(
-                            loadingState:
-                                _doctorDetailController.getLoadingState,
-                            loadingSuccessWidget: DeleteBtn(
-                              function: () {
-                                _doctorDetailController
-                                    .deleteDoctor(widget.doctor.id);
-                              },
-                            ),
-                            loadingInitWidget: DeleteBtn(
-                              function: () {
-                                _doctorDetailController
-                                    .deleteDoctor(widget.doctor.id);
-                              },
-                            ),
-                            paddingTop: 0),
+                          loadingState: _doctorDetailController.getLoadingState,
+                          loadingSuccessWidget: DeleteBtn(
+                            function: () {
+                              _doctorDetailController
+                                  .deleteDoctor(widget.doctor.id);
+                            },
+                          ),
+                          loadingInitWidget: DeleteBtn(
+                            function: () {
+                              _doctorDetailController
+                                  .deleteDoctor(widget.doctor.id);
+                            },
+                          ),
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                        ),
                       )
                     ],
                   ),
@@ -209,61 +213,70 @@ class _DoctorDetailDesktopScreenState extends State<DoctorDetailDesktopScreen> {
                   const SizedBox(
                     height: 30,
                   ),
-                  Center(
-                    child: SizedBox(
-                      width: 400,
-                      child: CustomTextField(
-                        hintText: "Enter doctor Name",
-                        label: "Name",
-                        controller: _nameController,
-                      ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.16),
+                    child: CustomTextField(
+                      hintText: "Enter doctor Name",
+                      label: "Name",
+                      controller: _nameController,
                     ),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-                  Center(
-                    child: SizedBox(
-                      width: 400,
-                      child: CustomTextField(
-                        hintText: "Enter doctor Bio",
-                        label: "Bio",
-                        controller: _bioController,
-                      ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.16),
+                    child: CustomTextField(
+                      hintText: "Enter doctor ID (MMR/12345)",
+                      label: "Doctor ID (MMR/12345)",
+                      controller: _doctorIdController,
                     ),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-                  Center(
-                    child: SizedBox(
-                      width: 400,
-                      child: CustomTextField(
-                        hintText: "Enter doctor Specialist",
-                        label: "Specialist",
-                        controller: _specialistController,
-                      ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.16),
+                    child: CustomTextField(
+                      hintText: "Enter doctor Bio",
+                      label: "Bio",
+                      controller: _bioController,
                     ),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-                  Center(
-                    child: SizedBox(
-                      width: 400,
-                      child: CustomTextField(
-                        hintText: "Enter doctor experience",
-                        label: "Experience",
-                        controller: _experienceController,
-                      ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.16),
+                    child: CustomTextField(
+                      hintText: "Enter doctor Specialist",
+                      label: "Specialist",
+                      controller: _specialistController,
                     ),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-                  Center(
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.16),
+                    child: CustomTextField(
+                      hintText: "Enter doctor experience",
+                      label: "Experience",
+                      controller: _experienceController,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.16),
                     child: SizedBox(
-                      width: 400,
                       height: 500,
                       child: ListView(
                         shrinkWrap: true,
@@ -296,6 +309,7 @@ class _DoctorDetailDesktopScreenState extends State<DoctorDetailDesktopScreen> {
                   ),
                   Obx(
                     () => LoadingStateWidget(
+                        paddingBottom: 0,
                         loadingState: _doctorDetailController.getLoadingState,
                         loadingSuccessWidget: UpdateBtn(
                             id: widget.doctor.id, url: widget.doctor.url),
@@ -400,6 +414,7 @@ class UpdateBtn extends StatelessWidget {
               id,
               url,
               _nameController.text,
+              _doctorIdController.text,
               _bioController.text,
               _specialistController.text,
               _experienceController.text,

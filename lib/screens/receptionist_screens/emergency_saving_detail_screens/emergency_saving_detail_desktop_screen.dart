@@ -99,6 +99,7 @@ class _EmergencySavingDesktopScreenState
                           icon: const Icon(Icons.arrow_back)),
                       Obx(
                         () => LoadingStateWidget(
+                            paddingBottom: 0,
                             loadingState: _emergencySavingDetailController
                                 .getLoadingState,
                             loadingSuccessWidget: DeleteBtn(
@@ -147,29 +148,27 @@ class _EmergencySavingDesktopScreenState
                   const SizedBox(
                     height: 30,
                   ),
-                  Center(
-                    child: SizedBox(
-                      width: 400,
-                      child: CustomTextField(
-                        hintText: "Enter title",
-                        label: "Title",
-                        controller: _tileController,
-                      ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.16),
+                    child: CustomTextField(
+                      hintText: "Enter title",
+                      label: "Title",
+                      controller: _tileController,
                     ),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-                  Center(
-                    child: SizedBox(
-                      width: 400,
-                      child: CustomTextField(
-                        hintText: "Enter saving methods",
-                        label: "Methods",
-                        minLines: 5,
-                        maxLines: 10,
-                        controller: _bodyController,
-                      ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.16),
+                    child: CustomTextField(
+                      hintText: "Enter saving methods",
+                      label: "Methods",
+                      minLines: 5,
+                      maxLines: 10,
+                      controller: _bodyController,
                     ),
                   ),
                   const SizedBox(
@@ -177,6 +176,7 @@ class _EmergencySavingDesktopScreenState
                   ),
                   Obx(
                     () => LoadingStateWidget(
+                        paddingBottom: 0,
                         loadingState:
                             _emergencySavingDetailController.getLoadingState,
                         loadingSuccessWidget: UpdateBtn(

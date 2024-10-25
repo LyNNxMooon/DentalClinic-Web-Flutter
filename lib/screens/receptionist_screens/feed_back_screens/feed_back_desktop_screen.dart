@@ -97,14 +97,16 @@ class _DesktopFeedbackScreenState extends State<DesktopFeedbackScreen> {
                   ),
                   Obx(
                     () => LoadingStateWidget(
-                        paddingTop: 100,
+                        paddingTop: MediaQuery.of(context).size.height * 0.1,
+                        paddingBottom: MediaQuery.of(context).size.height * 0.1,
                         loadingState: _feedbackController.getLoadingState,
                         loadingSuccessWidget: FeedbackList(
                           feedbacks: _feedbackController.feedbackList,
                         ),
                         loadingInitWidget: Padding(
                           padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.height * 0.1),
+                              top: MediaQuery.of(context).size.height * 0.1,
+                              bottom: MediaQuery.of(context).size.height * 0.1),
                           child: LoadFailWidget(
                             function: () {
                               _feedbackController.callFeedBacks();

@@ -20,6 +20,7 @@ class AddDoctorController extends BaseController {
 
   Future addDoctor(
       TextEditingController name,
+      TextEditingController doctorId,
       TextEditingController bio,
       TextEditingController specialist,
       TextEditingController experience,
@@ -28,6 +29,7 @@ class AddDoctorController extends BaseController {
     print(availability);
     bool hasWorkingHours = availability.values.any((times) => times.isNotEmpty);
     if (name.text.isEmpty ||
+        doctorId.text.isEmpty ||
         bio.text.isEmpty ||
         specialist.text.isEmpty ||
         experience.text.isEmpty ||
@@ -52,6 +54,7 @@ class AddDoctorController extends BaseController {
       String fileURL = await _uploadFileToFirebaseStorage();
 
       final doctor = DoctorVO(
+          doctorID: doctorId.text,
           id: id,
           url: fileURL,
           name: name.text,
@@ -74,6 +77,7 @@ class AddDoctorController extends BaseController {
           bio.clear();
           specialist.clear();
           experience.clear();
+          doctorId.clear();
 
           _receptionistHomeController.callDoctors();
         },

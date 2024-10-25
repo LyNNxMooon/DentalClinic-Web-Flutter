@@ -88,34 +88,36 @@ class _DesktopLoginScreenState extends State<DesktopLoginScreen> {
                 ),
                 Obx(
                   () => LoadingStateWidget(
-                      loadingState: _loginController.getLoadingState,
-                      loadingSuccessWidget: LoginBtn(
-                        function: () {
-                          _loginController
-                              .login(_emailController.text,
-                                  _passwordController.text, context)
-                              .then(
-                            (value) {
-                              _emailController.clear();
-                              _passwordController.clear();
-                            },
-                          );
-                        },
-                      ),
-                      loadingInitWidget: LoginBtn(
-                        function: () {
-                          _loginController
-                              .login(_emailController.text,
-                                  _passwordController.text, context)
-                              .then(
-                            (value) {
-                              _emailController.clear();
-                              _passwordController.clear();
-                            },
-                          );
-                        },
-                      ),
-                      paddingTop: 0),
+                    loadingState: _loginController.getLoadingState,
+                    loadingSuccessWidget: LoginBtn(
+                      function: () {
+                        _loginController
+                            .login(_emailController.text,
+                                _passwordController.text, context)
+                            .then(
+                          (value) {
+                            _emailController.clear();
+                            _passwordController.clear();
+                          },
+                        );
+                      },
+                    ),
+                    loadingInitWidget: LoginBtn(
+                      function: () {
+                        _loginController
+                            .login(_emailController.text,
+                                _passwordController.text, context)
+                            .then(
+                          (value) {
+                            _emailController.clear();
+                            _passwordController.clear();
+                          },
+                        );
+                      },
+                    ),
+                    paddingTop: 0,
+                    paddingBottom: 0,
+                  ),
                 )
               ],
             ),

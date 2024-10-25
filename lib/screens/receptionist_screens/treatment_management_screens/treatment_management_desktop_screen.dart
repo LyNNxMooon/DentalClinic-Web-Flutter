@@ -180,14 +180,18 @@ class _DesktopTreatmentManagementScreenState
                     ),
                     Obx(
                       () => LoadingStateWidget(
-                          paddingTop: 100,
+                          paddingTop: MediaQuery.of(context).size.height * 0.1,
+                          paddingBottom:
+                              MediaQuery.of(context).size.height * 0.1,
                           loadingState: _paymentController.getLoadingState,
                           loadingSuccessWidget: PaymentList(
                             payments: _paymentController.payments,
                           ),
                           loadingInitWidget: Padding(
                             padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.1),
+                                top: MediaQuery.of(context).size.height * 0.1,
+                                bottom:
+                                    MediaQuery.of(context).size.height * 0.1),
                             child: LoadFailWidget(
                               function: () {
                                 _paymentController.callPayments();
@@ -228,14 +232,18 @@ class _DesktopTreatmentManagementScreenState
                     ),
                     Obx(
                       () => LoadingStateWidget(
-                          paddingTop: 100,
+                          paddingTop: MediaQuery.of(context).size.height * 0.1,
+                          paddingBottom:
+                              MediaQuery.of(context).size.height * 0.1,
                           loadingState: _treatmentController.getLoadingState,
                           loadingSuccessWidget: TreatmentList(
                             treatments: _treatmentController.treatmentList,
                           ),
                           loadingInitWidget: Padding(
                             padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.16),
+                                top: MediaQuery.of(context).size.height * 0.1,
+                                bottom:
+                                    MediaQuery.of(context).size.height * 0.1),
                             child: LoadFailWidget(
                               function: () {
                                 _treatmentController.callTreatments();
@@ -463,6 +471,7 @@ class _UpdatePaymentDialogState extends State<UpdatePaymentDialog> {
       actions: [
         Obx(
           () => LoadingStateWidget(
+              paddingBottom: 0,
               paddingTop: 0,
               loadingState: _paymentController.getLoadingState,
               loadingSuccessWidget: Center(
@@ -568,6 +577,7 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
       actions: [
         Obx(
           () => LoadingStateWidget(
+              paddingBottom: 0,
               paddingTop: 0,
               loadingState: _paymentController.getLoadingState,
               loadingSuccessWidget: Center(
@@ -864,78 +874,80 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
       actions: [
         Obx(
           () => LoadingStateWidget(
-              loadingState: _treatmentController.getLoadingState,
-              loadingSuccessWidget: Center(
-                child: TextButton(
-                  onPressed: () {
-                    RegExp letterRegExp = RegExp(r'[a-zA-Z]');
-                    if (treatmentNameController.text.isNotEmpty ||
-                        dosageController.text.isNotEmpty ||
-                        costController.text.isNotEmpty ||
-                        discountController.text.isNotEmpty ||
-                        letterRegExp.hasMatch(costController.text) ||
-                        letterRegExp.hasMatch(discountController.text)) {
-                      _treatmentController.updateTreatment(
-                          widget.treatment.id,
-                          widget.treatment.patientID,
-                          widget.treatment.patientName,
-                          widget.treatment.doctorID,
-                          widget.treatment.doctorName,
-                          widget.treatment.date,
-                          treatmentNameController.text,
-                          dosageController.text,
-                          double.parse(costController.text),
-                          double.parse(discountController.text),
-                          widget.treatment.time,
-                          _paymentStatus!,
-                          widget.treatment.slip,
-                          widget.treatment.paymentType);
-                    }
-                  },
-                  style: const ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(kSecondaryColor)),
-                  child: const Text(
-                    "Update",
-                    style: TextStyle(color: kPrimaryColor),
-                  ),
+            loadingState: _treatmentController.getLoadingState,
+            loadingSuccessWidget: Center(
+              child: TextButton(
+                onPressed: () {
+                  RegExp letterRegExp = RegExp(r'[a-zA-Z]');
+                  if (treatmentNameController.text.isNotEmpty ||
+                      dosageController.text.isNotEmpty ||
+                      costController.text.isNotEmpty ||
+                      discountController.text.isNotEmpty ||
+                      letterRegExp.hasMatch(costController.text) ||
+                      letterRegExp.hasMatch(discountController.text)) {
+                    _treatmentController.updateTreatment(
+                        widget.treatment.id,
+                        widget.treatment.patientID,
+                        widget.treatment.patientName,
+                        widget.treatment.doctorID,
+                        widget.treatment.doctorName,
+                        widget.treatment.date,
+                        treatmentNameController.text,
+                        dosageController.text,
+                        double.parse(costController.text),
+                        double.parse(discountController.text),
+                        widget.treatment.time,
+                        _paymentStatus!,
+                        widget.treatment.slip,
+                        widget.treatment.paymentType);
+                  }
+                },
+                style: const ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(kSecondaryColor)),
+                child: const Text(
+                  "Update",
+                  style: TextStyle(color: kPrimaryColor),
                 ),
               ),
-              loadingInitWidget: Center(
-                child: TextButton(
-                  onPressed: () {
-                    RegExp letterRegExp = RegExp(r'[a-zA-Z]');
-                    if (treatmentNameController.text.isNotEmpty ||
-                        dosageController.text.isNotEmpty ||
-                        costController.text.isNotEmpty ||
-                        discountController.text.isNotEmpty ||
-                        letterRegExp.hasMatch(costController.text) ||
-                        letterRegExp.hasMatch(discountController.text)) {
-                      _treatmentController.updateTreatment(
-                          widget.treatment.id,
-                          widget.treatment.patientID,
-                          widget.treatment.patientName,
-                          widget.treatment.doctorID,
-                          widget.treatment.doctorName,
-                          widget.treatment.date,
-                          treatmentNameController.text,
-                          dosageController.text,
-                          double.parse(costController.text),
-                          double.parse(discountController.text),
-                          widget.treatment.time,
-                          _paymentStatus!,
-                          widget.treatment.slip,
-                          widget.treatment.paymentType);
-                    }
-                  },
-                  style: const ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(kSecondaryColor)),
-                  child: const Text(
-                    "Update",
-                    style: TextStyle(color: kPrimaryColor),
-                  ),
+            ),
+            loadingInitWidget: Center(
+              child: TextButton(
+                onPressed: () {
+                  RegExp letterRegExp = RegExp(r'[a-zA-Z]');
+                  if (treatmentNameController.text.isNotEmpty ||
+                      dosageController.text.isNotEmpty ||
+                      costController.text.isNotEmpty ||
+                      discountController.text.isNotEmpty ||
+                      letterRegExp.hasMatch(costController.text) ||
+                      letterRegExp.hasMatch(discountController.text)) {
+                    _treatmentController.updateTreatment(
+                        widget.treatment.id,
+                        widget.treatment.patientID,
+                        widget.treatment.patientName,
+                        widget.treatment.doctorID,
+                        widget.treatment.doctorName,
+                        widget.treatment.date,
+                        treatmentNameController.text,
+                        dosageController.text,
+                        double.parse(costController.text),
+                        double.parse(discountController.text),
+                        widget.treatment.time,
+                        _paymentStatus!,
+                        widget.treatment.slip,
+                        widget.treatment.paymentType);
+                  }
+                },
+                style: const ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(kSecondaryColor)),
+                child: const Text(
+                  "Update",
+                  style: TextStyle(color: kPrimaryColor),
                 ),
               ),
-              paddingTop: 0),
+            ),
+            paddingTop: 0,
+            paddingBottom: 0,
+          ),
         )
       ],
       content: SizedBox(

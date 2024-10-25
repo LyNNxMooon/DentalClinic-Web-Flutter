@@ -134,20 +134,22 @@ class _FeedBackDetailScreenState extends State<FeedBackDetailScreen> {
                     ),
                     Obx(
                       () => LoadingStateWidget(
-                          loadingState: _feedbackController.getLoadingState,
-                          loadingSuccessWidget: DeleteBtn(
-                            function: () {
-                              _feedbackController
-                                  .deleteFeedback(widget.feedback.id);
-                            },
-                          ),
-                          loadingInitWidget: DeleteBtn(
-                            function: () {
-                              _feedbackController
-                                  .deleteFeedback(widget.feedback.id);
-                            },
-                          ),
-                          paddingTop: 0),
+                        loadingState: _feedbackController.getLoadingState,
+                        loadingSuccessWidget: DeleteBtn(
+                          function: () {
+                            _feedbackController
+                                .deleteFeedback(widget.feedback.id);
+                          },
+                        ),
+                        loadingInitWidget: DeleteBtn(
+                          function: () {
+                            _feedbackController
+                                .deleteFeedback(widget.feedback.id);
+                          },
+                        ),
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                      ),
                     )
                   ],
                 ),

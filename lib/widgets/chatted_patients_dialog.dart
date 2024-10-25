@@ -34,63 +34,65 @@ class ChattedPatientsDialog extends StatelessWidget {
             ),
             Obx(
               () => LoadingStateWidget(
-                  loadingState: _chatController.getLoadingState,
-                  loadingSuccessWidget: SizedBox(
-                    width: 300,
-                    height: 400,
-                    child: ListView.separated(
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) => GestureDetector(
-                              onTap: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) => LayoutBuilder(
-                                          builder: (context, constraints) {
-                                            if (constraints.maxWidth < 600) {
-                                              return MobileChatDialog(
-                                                patientId: _chatController
-                                                    .chattedUsers[index]
-                                                    .chattedUserID,
-                                                patientName: _chatController
-                                                    .chattedUsers[index]
-                                                    .chattedUserName,
-                                                url: _chatController
-                                                    .chattedUsers[index]
-                                                    .profileURL,
-                                              );
-                                            } else {
-                                              return ChatDialog(
-                                                patientId: _chatController
-                                                    .chattedUsers[index]
-                                                    .chattedUserID,
-                                                patientName: _chatController
-                                                    .chattedUsers[index]
-                                                    .chattedUserName,
-                                                url: _chatController
-                                                    .chattedUsers[index]
-                                                    .profileURL,
-                                              );
-                                            }
-                                          },
-                                        ));
-                              },
-                              child: ChatTile(
-                                  patient: _chatController.chattedUsers[index]),
-                            ),
-                        separatorBuilder: (context, index) => const SizedBox(
-                              height: 15,
-                            ),
-                        itemCount: _chatController.chattedUsers.length),
+                loadingState: _chatController.getLoadingState,
+                loadingSuccessWidget: SizedBox(
+                  width: 300,
+                  height: 400,
+                  child: ListView.separated(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) => GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => LayoutBuilder(
+                                        builder: (context, constraints) {
+                                          if (constraints.maxWidth < 600) {
+                                            return MobileChatDialog(
+                                              patientId: _chatController
+                                                  .chattedUsers[index]
+                                                  .chattedUserID,
+                                              patientName: _chatController
+                                                  .chattedUsers[index]
+                                                  .chattedUserName,
+                                              url: _chatController
+                                                  .chattedUsers[index]
+                                                  .profileURL,
+                                            );
+                                          } else {
+                                            return ChatDialog(
+                                              patientId: _chatController
+                                                  .chattedUsers[index]
+                                                  .chattedUserID,
+                                              patientName: _chatController
+                                                  .chattedUsers[index]
+                                                  .chattedUserName,
+                                              url: _chatController
+                                                  .chattedUsers[index]
+                                                  .profileURL,
+                                            );
+                                          }
+                                        },
+                                      ));
+                            },
+                            child: ChatTile(
+                                patient: _chatController.chattedUsers[index]),
+                          ),
+                      separatorBuilder: (context, index) => const SizedBox(
+                            height: 15,
+                          ),
+                      itemCount: _chatController.chattedUsers.length),
+                ),
+                loadingInitWidget: const Center(
+                  child: Text(
+                    "No Chats History",
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  loadingInitWidget: const Center(
-                    child: Text(
-                      "No Chats History",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  paddingTop: 0),
+                ),
+                paddingTop: 0,
+                paddingBottom: 0,
+              ),
             )
           ],
         ),

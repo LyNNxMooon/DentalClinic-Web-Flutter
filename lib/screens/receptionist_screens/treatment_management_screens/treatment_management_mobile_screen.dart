@@ -193,14 +193,18 @@ class _MobileTreatmentManagementScreenState
                     ),
                     Obx(
                       () => LoadingStateWidget(
-                          paddingTop: 100,
+                          paddingTop: MediaQuery.of(context).size.height * 0.07,
+                          paddingBottom:
+                              MediaQuery.of(context).size.height * 0.07,
                           loadingState: _paymentController.getLoadingState,
                           loadingSuccessWidget: PaymentList(
                             payments: _paymentController.payments,
                           ),
                           loadingInitWidget: Padding(
                             padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.1),
+                                top: MediaQuery.of(context).size.height * 0.07,
+                                bottom:
+                                    MediaQuery.of(context).size.height * 0.07),
                             child: LoadFailWidget(
                               function: () {
                                 _paymentController.callPayments();
@@ -242,14 +246,18 @@ class _MobileTreatmentManagementScreenState
                     ),
                     Obx(
                       () => LoadingStateWidget(
-                          paddingTop: 50,
+                          paddingTop: MediaQuery.of(context).size.height * 0.07,
+                          paddingBottom:
+                              MediaQuery.of(context).size.height * 0.07,
                           loadingState: _treatmentController.getLoadingState,
                           loadingSuccessWidget: TreatmentList(
                             treatments: _treatmentController.treatmentList,
                           ),
                           loadingInitWidget: Padding(
                             padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.16),
+                                top: MediaQuery.of(context).size.height * 0.07,
+                                bottom:
+                                    MediaQuery.of(context).size.height * 0.07),
                             child: LoadFailWidget(
                               function: () {
                                 _treatmentController.callTreatments();
@@ -477,6 +485,7 @@ class _UpdatePaymentDialogState extends State<UpdatePaymentDialog> {
       actions: [
         Obx(
           () => LoadingStateWidget(
+              paddingBottom: 0,
               paddingTop: 0,
               loadingState: _paymentController.getLoadingState,
               loadingSuccessWidget: Center(
@@ -582,6 +591,7 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
       actions: [
         Obx(
           () => LoadingStateWidget(
+              paddingBottom: 0,
               paddingTop: 0,
               loadingState: _paymentController.getLoadingState,
               loadingSuccessWidget: Center(
@@ -880,6 +890,7 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
       actions: [
         Obx(
           () => LoadingStateWidget(
+              paddingBottom: 0,
               loadingState: _treatmentController.getLoadingState,
               loadingSuccessWidget: Center(
                 child: TextButton(

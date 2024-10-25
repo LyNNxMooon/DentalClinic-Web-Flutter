@@ -165,7 +165,9 @@ class _DesktopEmergencySavingScreenState
                     ),
                     Obx(
                       () => LoadingStateWidget(
-                          paddingTop: 100,
+                          paddingTop: MediaQuery.of(context).size.height * 0.1,
+                          paddingBottom:
+                              MediaQuery.of(context).size.height * 0.1,
                           loadingState:
                               _emergencySavingController.getLoadingState,
                           loadingSuccessWidget: EmergencySavingList(
@@ -174,7 +176,9 @@ class _DesktopEmergencySavingScreenState
                           ),
                           loadingInitWidget: Padding(
                             padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.22),
+                                top: MediaQuery.of(context).size.height * 0.1,
+                                bottom:
+                                    MediaQuery.of(context).size.height * 0.1),
                             child: LoadFailWidget(
                               function: () {
                                 _emergencySavingController
@@ -307,6 +311,7 @@ class _AddEmergencySavingDialogState extends State<AddEmergencySavingDialog> {
       actions: [
         Obx(
           () => LoadingStateWidget(
+              paddingBottom: 0,
               paddingTop: 0,
               loadingState: _addEmergencySavingController.getLoadingState,
               loadingSuccessWidget: Center(
@@ -333,80 +338,83 @@ class _AddEmergencySavingDialogState extends State<AddEmergencySavingDialog> {
               )),
         )
       ],
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "New Emergency Saving",
-              style: TextStyle(fontSize: 25),
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            Obx(
-              () => Center(
-                child: Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(width: 2, color: kSecondaryColor)),
-                    child: _addEmergencySavingController.selectFile.value ==
-                            null
-                        ? GestureDetector(
-                            onTap: () async {
-                              _addEmergencySavingController.selectFile.value =
-                                  await _filePicker.getImage();
-                            },
-                            child: const Center(
-                              child: Icon(
-                                Icons.add_a_photo_outlined,
-                                size: 40,
-                              ),
-                            ),
-                          )
-                        : GestureDetector(
-                            onTap: () async {
-                              _addEmergencySavingController.selectFile.value =
-                                  await _filePicker.getImage();
-                            },
-                            child: Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50)),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(50),
-                                child: Image.memory(
-                                  _addEmergencySavingController
-                                      .selectFile.value!,
-                                  fit: BoxFit.cover,
+      content: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.6,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "New Emergency Saving",
+                style: TextStyle(fontSize: 25),
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              Obx(
+                () => Center(
+                  child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(width: 2, color: kSecondaryColor)),
+                      child: _addEmergencySavingController.selectFile.value ==
+                              null
+                          ? GestureDetector(
+                              onTap: () async {
+                                _addEmergencySavingController.selectFile.value =
+                                    await _filePicker.getImage();
+                              },
+                              child: const Center(
+                                child: Icon(
+                                  Icons.add_a_photo_outlined,
+                                  size: 40,
                                 ),
                               ),
-                            ),
-                          )),
+                            )
+                          : GestureDetector(
+                              onTap: () async {
+                                _addEmergencySavingController.selectFile.value =
+                                    await _filePicker.getImage();
+                              },
+                              child: Container(
+                                width: 100,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50)),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: Image.memory(
+                                    _addEmergencySavingController
+                                        .selectFile.value!,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            )),
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            CustomTextField(
-              hintText: "Enter title",
-              label: "Title",
-              controller: widget.titleController,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            CustomTextField(
-              hintText: "Enter saving methods",
-              label: "Methods",
-              minLines: 5,
-              maxLines: 10,
-              controller: widget.bodyController,
-            ),
-          ],
+              const SizedBox(
+                height: 30,
+              ),
+              CustomTextField(
+                hintText: "Enter title",
+                label: "Title",
+                controller: widget.titleController,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              CustomTextField(
+                hintText: "Enter saving methods",
+                label: "Methods",
+                minLines: 5,
+                maxLines: 10,
+                controller: widget.bodyController,
+              ),
+            ],
+          ),
         ),
       ),
     );

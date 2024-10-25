@@ -436,42 +436,44 @@ class _AddAppointmentDesktopScreenState
                     ),
                     Obx(
                       () => LoadingStateWidget(
-                          loadingState: _appointmentController.getLoadingState,
-                          loadingSuccessWidget: AddBtn(function: () {
-                            if (selectedDate == null || selectedTime == null) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => CustomErrorWidget(
-                                    errorMessage: "Pick date and time",
-                                    function: () {
-                                      Get.back();
-                                    }),
-                              );
-                            } else {
-                              _appointmentController.addAppointment(
-                                  DateFormat('yMMMMd').format(selectedDate!),
-                                  selectedTime!.format(context),
-                                  context);
-                            }
-                          }),
-                          loadingInitWidget: AddBtn(function: () {
-                            if (selectedDate == null || selectedTime == null) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => CustomErrorWidget(
-                                    errorMessage: "Pick date and time",
-                                    function: () {
-                                      Get.back();
-                                    }),
-                              );
-                            } else {
-                              _appointmentController.addAppointment(
-                                  DateFormat('yMMMMd').format(selectedDate!),
-                                  selectedTime!.format(context),
-                                  context);
-                            }
-                          }),
-                          paddingTop: 0),
+                        loadingState: _appointmentController.getLoadingState,
+                        loadingSuccessWidget: AddBtn(function: () {
+                          if (selectedDate == null || selectedTime == null) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => CustomErrorWidget(
+                                  errorMessage: "Pick date and time",
+                                  function: () {
+                                    Get.back();
+                                  }),
+                            );
+                          } else {
+                            _appointmentController.addAppointment(
+                                DateFormat('yMMMMd').format(selectedDate!),
+                                selectedTime!.format(context),
+                                context);
+                          }
+                        }),
+                        loadingInitWidget: AddBtn(function: () {
+                          if (selectedDate == null || selectedTime == null) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => CustomErrorWidget(
+                                  errorMessage: "Pick date and time",
+                                  function: () {
+                                    Get.back();
+                                  }),
+                            );
+                          } else {
+                            _appointmentController.addAppointment(
+                                DateFormat('yMMMMd').format(selectedDate!),
+                                selectedTime!.format(context),
+                                context);
+                          }
+                        }),
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                      ),
                     ),
                     const SizedBox(
                       height: 50,

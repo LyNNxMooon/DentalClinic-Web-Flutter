@@ -17,6 +17,7 @@ class DoctorDetailController extends BaseController {
     int id,
     String url,
     String name,
+    String doctorId,
     String bio,
     String specialist,
     String experience,
@@ -24,6 +25,7 @@ class DoctorDetailController extends BaseController {
   ) async {
     bool hasWorkingHours = availability.values.any((times) => times.isNotEmpty);
     if (name.isEmpty ||
+        doctorId.isEmpty ||
         bio.isEmpty ||
         specialist.isEmpty ||
         experience.isEmpty ||
@@ -41,6 +43,7 @@ class DoctorDetailController extends BaseController {
       setLoadingState = LoadingState.loading;
 
       final doctor = DoctorVO(
+          doctorID: doctorId,
           id: id,
           url: url,
           name: name,

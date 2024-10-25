@@ -428,6 +428,7 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                         : const SizedBox(),
                     Obx(
                       () => LoadingStateWidget(
+                          paddingBottom: 0,
                           loadingState: _treatmentController.getLoadingState,
                           loadingSuccessWidget: AddBtn(function: () {
                             _treatmentController.addTreatment(

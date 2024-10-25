@@ -97,14 +97,18 @@ class _MobileFeedbackScreenState extends State<MobileFeedbackScreen> {
                   ),
                   Obx(
                     () => LoadingStateWidget(
-                        paddingTop: 70,
+                        paddingTop: MediaQuery.of(context).size.height * 0.07,
+                        paddingBottom:
+                            MediaQuery.of(context).size.height * 0.07,
                         loadingState: _feedbackController.getLoadingState,
                         loadingSuccessWidget: FeedbackList(
                           feedbacks: _feedbackController.feedbackList,
                         ),
                         loadingInitWidget: Padding(
                           padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.height * 0.1),
+                              top: MediaQuery.of(context).size.height * 0.07,
+                              bottom:
+                                  MediaQuery.of(context).size.height * 0.07),
                           child: LoadFailWidget(
                             function: () {
                               _feedbackController.callFeedBacks();

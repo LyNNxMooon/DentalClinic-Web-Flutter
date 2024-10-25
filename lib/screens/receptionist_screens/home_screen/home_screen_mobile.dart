@@ -66,8 +66,8 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
   final _doctorNameController = TextEditingController();
   final _doctorSpecialistController = TextEditingController();
   final _doctorExperienceController = TextEditingController();
-
   final _doctorBiosController = TextEditingController();
+  final _doctorIdController = TextEditingController();
 
   List<ConnectivityResult> _connectionStatus = [ConnectivityResult.none];
   final Connectivity _connectivity = Connectivity();
@@ -180,6 +180,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
                                   if (connection == "online") {
                                     _addDoctorController.addDoctor(
                                         _doctorNameController,
+                                        _doctorIdController,
                                         _doctorBiosController,
                                         _doctorSpecialistController,
                                         _doctorExperienceController,
@@ -193,6 +194,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
                                 bioController: _doctorBiosController,
                                 specController: _doctorSpecialistController,
                                 expController: _doctorExperienceController,
+                                doctorIdController: _doctorIdController,
                               ),
                             );
                           },
@@ -214,7 +216,9 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
                     ),
                     Obx(
                       () => LoadingStateWidget(
-                          paddingTop: 50,
+                          paddingTop: MediaQuery.of(context).size.height * 0.07,
+                          paddingBottom:
+                              MediaQuery.of(context).size.height * 0.07,
                           loadingState:
                               _receptionistHomeController.getLoadingState,
                           loadingSuccessWidget: DoctorList(
@@ -222,7 +226,9 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
                           ),
                           loadingInitWidget: Padding(
                             padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.22),
+                                top: MediaQuery.of(context).size.height * 0.07,
+                                bottom:
+                                    MediaQuery.of(context).size.height * 0.07),
                             child: LoadFailWidget(
                               function: () {
                                 _receptionistHomeController.callDoctors();
@@ -264,7 +270,9 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
                     ),
                     Obx(
                       () => LoadingStateWidget(
-                          paddingTop: 100,
+                          paddingTop: MediaQuery.of(context).size.height * 0.07,
+                          paddingBottom:
+                              MediaQuery.of(context).size.height * 0.07,
                           loadingState: _appointmentController.getLoadingState,
                           loadingSuccessWidget: AppointmentList(
                             appointments:
@@ -272,7 +280,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
                           ),
                           loadingInitWidget: Padding(
                             padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.1),
+                                top: MediaQuery.of(context).size.height * 0.07),
                             child: LoadFailWidget(
                               function: () {
                                 _appointmentController.callAppointments();
@@ -281,7 +289,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
                           )),
                     ),
                     const SizedBox(
-                      height: 30,
+                      height: 20,
                     ),
                   ],
                 ),
@@ -602,6 +610,7 @@ class AddDoctorDialog extends StatefulWidget {
     required this.bioController,
     required this.specController,
     required this.expController,
+    required this.doctorIdController,
   });
 
   final VoidCallback function;
@@ -609,6 +618,7 @@ class AddDoctorDialog extends StatefulWidget {
   final TextEditingController bioController;
   final TextEditingController specController;
   final TextEditingController expController;
+  final TextEditingController doctorIdController;
 
   @override
   State<AddDoctorDialog> createState() => _AddDoctorDialogState();
@@ -644,6 +654,7 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
       actions: [
         Obx(
           () => LoadingStateWidget(
+              paddingBottom: 0,
               paddingTop: 0,
               loadingState: _addDoctorController.getLoadingState,
               loadingSuccessWidget: Center(
@@ -670,124 +681,134 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
               )),
         )
       ],
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "New Doctor",
-              style: TextStyle(fontSize: 20),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Obx(
-              () => Center(
-                child: Container(
-                    width: 150,
-                    height: 120,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(width: 2, color: kSecondaryColor)),
-                    child: _addDoctorController.selectFile.value == null
-                        ? GestureDetector(
-                            onTap: () async {
-                              _addDoctorController.selectFile.value =
-                                  await _filePicker.getImage();
-                            },
-                            child: const Center(
-                              child: Icon(
-                                Icons.add_a_photo_outlined,
-                                size: 30,
-                              ),
-                            ),
-                          )
-                        : GestureDetector(
-                            onTap: () async {
-                              _addDoctorController.selectFile.value =
-                                  await _filePicker.getImage();
-                            },
-                            child: Container(
-                              width: 150,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.memory(
-                                  _addDoctorController.selectFile.value!,
-                                  fit: BoxFit.cover,
+      content: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "New Doctor",
+                style: TextStyle(fontSize: 20),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Obx(
+                () => Center(
+                  child: Container(
+                      width: 150,
+                      height: 120,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(width: 2, color: kSecondaryColor)),
+                      child: _addDoctorController.selectFile.value == null
+                          ? GestureDetector(
+                              onTap: () async {
+                                _addDoctorController.selectFile.value =
+                                    await _filePicker.getImage();
+                              },
+                              child: const Center(
+                                child: Icon(
+                                  Icons.add_a_photo_outlined,
+                                  size: 30,
                                 ),
                               ),
-                            ),
-                          )),
+                            )
+                          : GestureDetector(
+                              onTap: () async {
+                                _addDoctorController.selectFile.value =
+                                    await _filePicker.getImage();
+                              },
+                              child: Container(
+                                width: 150,
+                                height: 120,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.memory(
+                                    _addDoctorController.selectFile.value!,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            )),
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            CustomTextField(
-              hintText: "Enter doctor name",
-              label: "Name",
-              controller: widget.nameController,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            CustomTextField(
-              hintText: "Enter doctor biography",
-              label: "Biography",
-              controller: widget.bioController,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            CustomTextField(
-              hintText: "Enter doctor specialist",
-              label: "Specialist",
-              controller: widget.specController,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            CustomTextField(
-              hintText: "Enter doctor experience",
-              label: "Experience",
-              controller: widget.expController,
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: 200,
-              height: 500,
-              child: ListView(
-                shrinkWrap: true,
-                children: selectedDays.keys.map((String day) {
-                  return CheckboxListTile(
-                    title: Text(day),
-                    value: selectedDays[day],
-                    onChanged: (bool? value) {
-                      setState(() {
-                        selectedDays[day] = value ?? false;
-                        if (!value!) {
-                          availability[day] =
-                              []; // Clear time slots if unchecked
-                        }
-                      });
-                    },
-                    secondary: IconButton(
-                      icon: const Icon(Icons.access_time),
-                      onPressed: selectedDays[day]!
-                          ? () => _selectTime(context, day)
-                          : null, // Only allow time picking if the day is selected
-                    ),
-                    subtitle: Text(availability[day]!.isNotEmpty
-                        ? "Selected times: ${availability[day]?.join(', ')}"
-                        : "No times selected"),
-                  );
-                }).toList(),
+              const SizedBox(
+                height: 20,
               ),
-            ),
-          ],
+              CustomTextField(
+                hintText: "Enter doctor name",
+                label: "Name",
+                controller: widget.nameController,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              CustomTextField(
+                hintText: "Enter doctor Id (MMR/12345)",
+                label: "Doctor Id (MMR/12345)",
+                controller: widget.doctorIdController,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              CustomTextField(
+                hintText: "Enter doctor biography",
+                label: "Biography",
+                controller: widget.bioController,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              CustomTextField(
+                hintText: "Enter doctor specialist",
+                label: "Specialist",
+                controller: widget.specController,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              CustomTextField(
+                hintText: "Enter doctor experience",
+                label: "Experience",
+                controller: widget.expController,
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 500,
+                child: ListView(
+                  shrinkWrap: true,
+                  children: selectedDays.keys.map((String day) {
+                    return CheckboxListTile(
+                      title: Text(day),
+                      value: selectedDays[day],
+                      onChanged: (bool? value) {
+                        setState(() {
+                          selectedDays[day] = value ?? false;
+                          if (!value!) {
+                            availability[day] =
+                                []; // Clear time slots if unchecked
+                          }
+                        });
+                      },
+                      secondary: IconButton(
+                        icon: const Icon(Icons.access_time),
+                        onPressed: selectedDays[day]!
+                            ? () => _selectTime(context, day)
+                            : null, // Only allow time picking if the day is selected
+                      ),
+                      subtitle: Text(availability[day]!.isNotEmpty
+                          ? "Selected times: ${availability[day]?.join(', ')}"
+                          : "No times selected"),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -8,12 +8,14 @@ class LoadingStateWidget extends StatefulWidget {
       required this.loadingState,
       required this.loadingSuccessWidget,
       required this.loadingInitWidget,
-      required this.paddingTop});
+      required this.paddingTop,
+      required this.paddingBottom});
 
   final LoadingState loadingState;
   final Widget loadingSuccessWidget;
   final Widget loadingInitWidget;
   final double paddingTop;
+  final double paddingBottom;
 
   @override
   State<LoadingStateWidget> createState() => _LoadingStateWidgetState();
@@ -25,7 +27,8 @@ class _LoadingStateWidgetState extends State<LoadingStateWidget> {
     return switch (widget.loadingState) {
       LoadingState.init => widget.loadingInitWidget,
       LoadingState.loading => Padding(
-          padding: EdgeInsets.only(top: widget.paddingTop),
+          padding: EdgeInsets.only(
+              top: widget.paddingTop, bottom: widget.paddingBottom),
           child: const LoadingWidget(),
         ),
       LoadingState.error => widget.loadingInitWidget,

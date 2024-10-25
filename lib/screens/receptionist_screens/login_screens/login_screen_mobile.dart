@@ -88,20 +88,22 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
                 ),
                 Obx(
                   () => LoadingStateWidget(
-                      loadingState: _loginController.getLoadingState,
-                      loadingSuccessWidget: LoginBtn(
-                        function: () {
-                          _loginController.login(_emailController.text,
-                              _passwordController.text, context);
-                        },
-                      ),
-                      loadingInitWidget: LoginBtn(
-                        function: () {
-                          _loginController.login(_emailController.text,
-                              _passwordController.text, context);
-                        },
-                      ),
-                      paddingTop: 0),
+                    loadingState: _loginController.getLoadingState,
+                    loadingSuccessWidget: LoginBtn(
+                      function: () {
+                        _loginController.login(_emailController.text,
+                            _passwordController.text, context);
+                      },
+                    ),
+                    loadingInitWidget: LoginBtn(
+                      function: () {
+                        _loginController.login(_emailController.text,
+                            _passwordController.text, context);
+                      },
+                    ),
+                    paddingTop: 0,
+                    paddingBottom: 0,
+                  ),
                 )
               ],
             ),

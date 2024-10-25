@@ -294,7 +294,9 @@ class _MobilePatientManagementScreenState
                     ),
                     Obx(
                       () => LoadingStateWidget(
-                          paddingTop: 100,
+                          paddingTop: MediaQuery.of(context).size.height * 0.07,
+                          paddingBottom:
+                              MediaQuery.of(context).size.height * 0.07,
                           loadingState:
                               _patientManagementController.getLoadingState,
                           loadingSuccessWidget: PatientList(
@@ -302,7 +304,9 @@ class _MobilePatientManagementScreenState
                           ),
                           loadingInitWidget: Padding(
                             padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.22),
+                                top: MediaQuery.of(context).size.height * 0.07,
+                                bottom:
+                                    MediaQuery.of(context).size.height * 0.07),
                             child: LoadFailWidget(
                               function: () {
                                 _patientManagementController.callPatients();
@@ -638,59 +642,63 @@ class _PatientTileState extends State<PatientTile> {
               widget.patient.isBanned
                   ? Obx(
                       () => LoadingStateWidget(
-                          loadingState:
-                              _patientManagementController.getLoadingState,
-                          loadingSuccessWidget: UnbanBtn(
-                            function: () {
-                              _patientManagementController.banOrUnbanPatient(
-                                  widget.patient.id,
-                                  widget.patient.name,
-                                  false,
-                                  widget.patient.url,
-                                  widget.patient.age,
-                                  widget.patient.gender);
-                            },
-                          ),
-                          loadingInitWidget: UnbanBtn(
-                            function: () {
-                              _patientManagementController.banOrUnbanPatient(
-                                  widget.patient.id,
-                                  widget.patient.name,
-                                  false,
-                                  widget.patient.url,
-                                  widget.patient.age,
-                                  widget.patient.gender);
-                            },
-                          ),
-                          paddingTop: 0),
+                        loadingState:
+                            _patientManagementController.getLoadingState,
+                        loadingSuccessWidget: UnbanBtn(
+                          function: () {
+                            _patientManagementController.banOrUnbanPatient(
+                                widget.patient.id,
+                                widget.patient.name,
+                                false,
+                                widget.patient.url,
+                                widget.patient.age,
+                                widget.patient.gender);
+                          },
+                        ),
+                        loadingInitWidget: UnbanBtn(
+                          function: () {
+                            _patientManagementController.banOrUnbanPatient(
+                                widget.patient.id,
+                                widget.patient.name,
+                                false,
+                                widget.patient.url,
+                                widget.patient.age,
+                                widget.patient.gender);
+                          },
+                        ),
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                      ),
                     )
                   : Obx(
                       () => LoadingStateWidget(
-                          loadingState:
-                              _patientManagementController.getLoadingState,
-                          loadingSuccessWidget: BanBtn(
-                            function: () {
-                              _patientManagementController.banOrUnbanPatient(
-                                  widget.patient.id,
-                                  widget.patient.name,
-                                  true,
-                                  widget.patient.url,
-                                  widget.patient.age,
-                                  widget.patient.gender);
-                            },
-                          ),
-                          loadingInitWidget: BanBtn(
-                            function: () {
-                              _patientManagementController.banOrUnbanPatient(
-                                  widget.patient.id,
-                                  widget.patient.name,
-                                  true,
-                                  widget.patient.url,
-                                  widget.patient.age,
-                                  widget.patient.gender);
-                            },
-                          ),
-                          paddingTop: 0),
+                        loadingState:
+                            _patientManagementController.getLoadingState,
+                        loadingSuccessWidget: BanBtn(
+                          function: () {
+                            _patientManagementController.banOrUnbanPatient(
+                                widget.patient.id,
+                                widget.patient.name,
+                                true,
+                                widget.patient.url,
+                                widget.patient.age,
+                                widget.patient.gender);
+                          },
+                        ),
+                        loadingInitWidget: BanBtn(
+                          function: () {
+                            _patientManagementController.banOrUnbanPatient(
+                                widget.patient.id,
+                                widget.patient.name,
+                                true,
+                                widget.patient.url,
+                                widget.patient.age,
+                                widget.patient.gender);
+                          },
+                        ),
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                      ),
                     ),
               const SizedBox(
                 width: 10,
@@ -801,6 +809,7 @@ class _AddPatientDialogState extends State<AddPatientDialog> {
       actions: [
         Obx(
           () => LoadingStateWidget(
+              paddingBottom: 0,
               paddingTop: 0,
               loadingState: _addPatientController.getLoadingState,
               loadingSuccessWidget: Center(

@@ -6,6 +6,8 @@ class DoctorVO {
   final int id;
   final String url;
   final String name;
+  @JsonKey(name: 'doctor_id')
+  final String doctorID;
   final String bio;
   final String specialist;
   final String experience;
@@ -15,6 +17,7 @@ class DoctorVO {
       {required this.id,
       required this.url,
       required this.name,
+      required this.doctorID,
       required this.bio,
       required this.specialist,
       required this.experience,

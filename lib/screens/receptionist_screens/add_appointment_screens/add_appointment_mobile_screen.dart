@@ -437,6 +437,7 @@ class _AddAppointmentMobileScreenState
                     ),
                     Obx(
                       () => LoadingStateWidget(
+                          paddingBottom: 0,
                           loadingState: _appointmentController.getLoadingState,
                           loadingSuccessWidget: AddBtn(function: () {
                             if (selectedDate == null || selectedTime == null) {
