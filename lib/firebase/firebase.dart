@@ -10,6 +10,7 @@ import 'package:dental_clinic/data/vos/feed_back_vo.dart';
 import 'package:dental_clinic/data/vos/message_vo.dart';
 import 'package:dental_clinic/data/vos/patient_vo.dart';
 import 'package:dental_clinic/data/vos/payment_vo.dart';
+import 'package:dental_clinic/data/vos/pharmacy_vo.dart';
 import 'package:dental_clinic/data/vos/treatment_vo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -264,6 +265,36 @@ class FirebaseServices {
         return PatientVO.fromJson(Map<String, dynamic>.from(rawData as Map));
       }
     });
+  }
+
+  Future savePharmacy(PharmacyVO pharmacyVo) async {
+    try {
+      return databaseRef
+          .child("pharmacy")
+          .child(pharmacyVo.id.toString())
+          .set(pharmacyVo.toJson());
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error);
+    }
+  }
+
+  Stream<List<PharmacyVO>?> getPharmacyListStream() {
+    return databaseRef.child("pharmacy").onValue.map((event) {
+      return event.snapshot.children.map<PharmacyVO>((snapshot) {
+        return PharmacyVO.fromJson(
+            Map<String, dynamic>.from(snapshot.value as Map));
+      }).toList();
+    });
+  }
+
+  Future deletePharmacy(int id) async {
+    try {
+      return databaseRef.child("pharmacy").child(id.toString()).remove();
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error);
+    }
   }
 
   //firebase file storage
