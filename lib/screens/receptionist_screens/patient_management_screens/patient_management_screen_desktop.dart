@@ -56,6 +56,9 @@ class _DesktopPatientManagementScreenState
   final _ageController = TextEditingController();
   final _adminEmailController = TextEditingController();
   final _adminPasswordController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _allergicMedicineController = TextEditingController();
 
   @override
   void initState() {
@@ -228,6 +231,9 @@ class _DesktopPatientManagementScreenState
                                                         _passwordController,
                                                         _nameController,
                                                         _ageController,
+                                                        _phoneController,
+                                                        _addressController,
+                                                        _allergicMedicineController,
                                                         _selectedGender ?? '',
                                                         context);
                                               },
@@ -236,6 +242,11 @@ class _DesktopPatientManagementScreenState
                                                   _passwordController,
                                               ageController: _ageController,
                                               nameController: _nameController,
+                                              addressController:
+                                                  _addressController,
+                                              allergicMedicineController:
+                                                  _allergicMedicineController,
+                                              phoneController: _phoneController,
                                             ),
                                           );
                                           _adminEmailController.clear();
@@ -457,13 +468,11 @@ class PatientTile extends StatefulWidget {
 }
 
 class _PatientTileState extends State<PatientTile> {
-  double tileHeight = 50;
   bool isDrop = false;
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-      height: tileHeight,
       decoration: BoxDecoration(
         color: kBtnGrayColor,
         borderRadius: BorderRadius.circular(8),
@@ -495,7 +504,10 @@ class _PatientTileState extends State<PatientTile> {
                                 false,
                                 widget.patient.url,
                                 widget.patient.age,
-                                widget.patient.gender);
+                                widget.patient.gender,
+                                widget.patient.phone,
+                                widget.patient.address,
+                                widget.patient.allergicMedicine);
                           },
                         ),
                         loadingInitWidget: UnbanBtn(
@@ -506,7 +518,10 @@ class _PatientTileState extends State<PatientTile> {
                                 false,
                                 widget.patient.url,
                                 widget.patient.age,
-                                widget.patient.gender);
+                                widget.patient.gender,
+                                widget.patient.phone,
+                                widget.patient.address,
+                                widget.patient.allergicMedicine);
                           },
                         ),
                         paddingTop: 0,
@@ -525,7 +540,10 @@ class _PatientTileState extends State<PatientTile> {
                                 true,
                                 widget.patient.url,
                                 widget.patient.age,
-                                widget.patient.gender);
+                                widget.patient.gender,
+                                widget.patient.phone,
+                                widget.patient.address,
+                                widget.patient.allergicMedicine);
                           },
                         ),
                         loadingInitWidget: BanBtn(
@@ -536,7 +554,10 @@ class _PatientTileState extends State<PatientTile> {
                                 true,
                                 widget.patient.url,
                                 widget.patient.age,
-                                widget.patient.gender);
+                                widget.patient.gender,
+                                widget.patient.phone,
+                                widget.patient.address,
+                                widget.patient.allergicMedicine);
                           },
                         ),
                         paddingTop: 0,
@@ -568,7 +589,17 @@ class _PatientTileState extends State<PatientTile> {
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.patient.name),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                Text(widget.patient.name),
+                              ],
+                            ),
+                          ),
+                        ),
                         const SizedBox(
                           height: 15,
                         ),
@@ -577,9 +608,52 @@ class _PatientTileState extends State<PatientTile> {
                           height: 15,
                         ),
                         Text("Gender : ${widget.patient.gender}"),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Text("Phone : ${widget.patient.phone}"),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                Text("Address : ${widget.patient.address}"),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                Text(
+                                    "Allergic to : ${widget.patient.allergicMedicine}"),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     )
-                  : Text(widget.patient.name)
+                  : SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.35,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            Text(widget.patient.name),
+                          ],
+                        ),
+                      ),
+                    )
             ],
           ),
           Row(
@@ -606,7 +680,6 @@ class _PatientTileState extends State<PatientTile> {
                   onTap: () {
                     setState(() {
                       isDrop = !isDrop;
-                      tileHeight = isDrop ? 110 : 50;
                     });
                   },
                   child: Icon(
@@ -767,6 +840,9 @@ class AddPatientDialog extends StatefulWidget {
     required this.passwordController,
     required this.nameController,
     required this.ageController,
+    required this.phoneController,
+    required this.addressController,
+    required this.allergicMedicineController,
   });
 
   final VoidCallback function;
@@ -774,6 +850,9 @@ class AddPatientDialog extends StatefulWidget {
   final TextEditingController passwordController;
   final TextEditingController nameController;
   final TextEditingController ageController;
+  final TextEditingController phoneController;
+  final TextEditingController addressController;
+  final TextEditingController allergicMedicineController;
 
   @override
   State<AddPatientDialog> createState() => _AddPatientDialogState();
@@ -813,119 +892,151 @@ class _AddPatientDialogState extends State<AddPatientDialog> {
               )),
         )
       ],
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "New Patient",
-              style: TextStyle(fontSize: 25),
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            Obx(
-              () => Center(
-                child: Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(width: 2, color: kSecondaryColor)),
-                    child: _addPatientController.selectFile.value == null
-                        ? GestureDetector(
-                            onTap: () async {
-                              _addPatientController.selectFile.value =
-                                  await _filePicker.getImage();
-                            },
-                            child: const Center(
-                              child: Icon(
-                                Icons.add_a_photo_outlined,
-                                size: 40,
-                              ),
-                            ),
-                          )
-                        : GestureDetector(
-                            onTap: () async {
-                              _addPatientController.selectFile.value =
-                                  await _filePicker.getImage();
-                            },
-                            child: Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50)),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(50),
-                                child: Image.memory(
-                                  _addPatientController.selectFile.value!,
-                                  fit: BoxFit.cover,
+      content: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.6,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "New Patient",
+                style: TextStyle(fontSize: 25),
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              Obx(
+                () => Center(
+                  child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(width: 2, color: kSecondaryColor)),
+                      child: _addPatientController.selectFile.value == null
+                          ? GestureDetector(
+                              onTap: () async {
+                                _addPatientController.selectFile.value =
+                                    await _filePicker.getImage();
+                              },
+                              child: const Center(
+                                child: Icon(
+                                  Icons.add_a_photo_outlined,
+                                  size: 40,
                                 ),
                               ),
-                            ),
-                          )),
+                            )
+                          : GestureDetector(
+                              onTap: () async {
+                                _addPatientController.selectFile.value =
+                                    await _filePicker.getImage();
+                              },
+                              child: Container(
+                                width: 100,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50)),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: Image.memory(
+                                    _addPatientController.selectFile.value!,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            )),
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            CustomTextField(
-              hintText: "Enter patient email",
-              label: "Email",
-              controller: widget.emailController,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            CustomTextField(
-              hintText: "Enter patient password",
-              label: "Password",
-              controller: widget.passwordController,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            CustomTextField(
-              hintText: "Enter patient name",
-              label: "Name",
-              controller: widget.nameController,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            CustomTextField(
-              hintText: "Enter patient age",
-              label: "Age",
-              keyboardType: TextInputType.number,
-              controller: widget.ageController,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            RadioListTile<String>(
-              title: const Text('Male'),
-              value: 'Male',
-              groupValue: _selectedGender,
-              onChanged: (String? value) {
-                setState(() {
-                  _selectedGender = value; // Update the selected gender
-                });
-              },
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            RadioListTile<String>(
-              title: const Text('Female'),
-              value: 'Female',
-              groupValue: _selectedGender,
-              onChanged: (String? value) {
-                setState(() {
-                  _selectedGender = value; // Update the selected gender
-                });
-              },
-            ),
-          ],
+              const SizedBox(
+                height: 30,
+              ),
+              CustomTextField(
+                hintText: "Enter patient email",
+                label: "Email",
+                controller: widget.emailController,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              CustomTextField(
+                hintText: "Enter patient password",
+                label: "Password",
+                controller: widget.passwordController,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              CustomTextField(
+                hintText: "Enter patient name",
+                label: "Name",
+                controller: widget.nameController,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              CustomTextField(
+                hintText: "Enter patient age",
+                label: "Age",
+                keyboardType: TextInputType.number,
+                controller: widget.ageController,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              CustomTextField(
+                hintText: "Enter patient phone",
+                label: "Phone",
+                keyboardType: TextInputType.number,
+                controller: widget.phoneController,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              CustomTextField(
+                hintText: "Enter patient address",
+                label: "Address",
+                controller: widget.addressController,
+                minLines: 2,
+                maxLines: 4,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              CustomTextField(
+                hintText: "Enter patient allergic Medicine",
+                label: "Allergic Medicine",
+                controller: widget.allergicMedicineController,
+                minLines: 3,
+                maxLines: 6,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              RadioListTile<String>(
+                title: const Text('Male'),
+                value: 'Male',
+                groupValue: _selectedGender,
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedGender = value; // Update the selected gender
+                  });
+                },
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              RadioListTile<String>(
+                title: const Text('Female'),
+                value: 'Female',
+                groupValue: _selectedGender,
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedGender = value; // Update the selected gender
+                  });
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

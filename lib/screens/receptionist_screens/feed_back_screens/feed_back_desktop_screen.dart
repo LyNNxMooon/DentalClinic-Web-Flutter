@@ -88,7 +88,7 @@ class _DesktopFeedbackScreenState extends State<DesktopFeedbackScreen> {
                         style: desktopTitleStyle,
                       ),
                       const SizedBox(
-                        height: 20,
+                        width: 30,
                       ),
                     ],
                   ),

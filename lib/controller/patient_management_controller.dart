@@ -38,16 +38,21 @@ class PatientManagementController extends BaseController {
   }
 
   Future banOrUnbanPatient(
-    String id,
-    String name,
-    bool isBanned,
-    String url,
-    int age,
-    String gender,
-  ) async {
+      String id,
+      String name,
+      bool isBanned,
+      String url,
+      int age,
+      String gender,
+      int phone,
+      String address,
+      String allergicMedicine) async {
     setLoadingState = LoadingState.loading;
 
     final patient = PatientVO(
+        address: address,
+        allergicMedicine: allergicMedicine,
+        phone: phone,
         id: id,
         url: url,
         name: name,

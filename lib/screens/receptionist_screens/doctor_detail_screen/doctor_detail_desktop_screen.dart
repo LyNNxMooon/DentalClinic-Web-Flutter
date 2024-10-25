@@ -114,7 +114,25 @@ class _DoctorDetailDesktopScreenState extends State<DoctorDetailDesktopScreen> {
   }
 
   void populateInitialData() {
-    // Iterate through the initialAvailability map to update the selectedDays and availability maps
+    availability = {
+      "Monday": [],
+      "Tuesday": [],
+      "Wednesday": [],
+      "Thursday": [],
+      "Friday": [],
+      "Saturday": [],
+      "Sunday": [],
+    };
+
+    selectedDays = {
+      "Monday": false,
+      "Tuesday": false,
+      "Wednesday": false,
+      "Thursday": false,
+      "Friday": false,
+      "Saturday": false,
+      "Sunday": false,
+    };
     widget.initialAvailability.forEach((day, times) {
       if (selectedDays.containsKey(day)) {
         selectedDays[day] = true; // Set the day as selected

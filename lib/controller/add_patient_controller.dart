@@ -26,6 +26,9 @@ class AddPatientController extends BaseController {
       TextEditingController password,
       TextEditingController name,
       TextEditingController age,
+      TextEditingController phone,
+      TextEditingController address,
+      TextEditingController allergicMedicine,
       String gender,
       BuildContext context) async {
     RegExp letterRegExp = RegExp(r'[a-zA-Z]');
@@ -34,6 +37,10 @@ class AddPatientController extends BaseController {
         password.text.isEmpty ||
         age.text.isEmpty ||
         letterRegExp.hasMatch(age.text) ||
+        phone.text.isEmpty ||
+        letterRegExp.hasMatch(phone.text) ||
+        address.text.isEmpty ||
+        allergicMedicine.text.isEmpty ||
         gender.isEmpty ||
         selectFile.value == null) {
       setLoadingState = LoadingState.error;
@@ -55,6 +62,9 @@ class AddPatientController extends BaseController {
         (value) {
           String id = FirebaseAuth.instance.currentUser?.uid ?? '';
           final patientVo = PatientVO(
+              address: address.text,
+              allergicMedicine: allergicMedicine.text,
+              phone: int.parse(phone.text),
               id: id,
               name: name.text,
               isBanned: false,
@@ -88,6 +98,14 @@ class AddPatientController extends BaseController {
               _loginController.adminPassword.value);
         },
       ).catchError((error) {
+        _firebaseService.firebaseSignIn(email.text, password.text);
+        FirebaseAuth.instance.currentUser?.delete().then(
+          (value) {
+            _firebaseService.firebaseSignIn(_loginController.adminEmail.value,
+                _loginController.adminPassword.value);
+          },
+        );
+
         setLoadingState = LoadingState.error;
         setErrorMessage = error.message;
 
