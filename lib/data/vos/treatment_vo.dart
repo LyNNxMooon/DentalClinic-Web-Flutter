@@ -4,9 +4,13 @@ part 'treatment_vo.g.dart';
 @JsonSerializable()
 class TreatmentVO {
   final int id;
+  @JsonKey(name: 'doctor_id')
   final int doctorID;
+  @JsonKey(name: 'doctor_name')
   final String doctorName;
+  @JsonKey(name: 'patient_id')
   final String patientID;
+  @JsonKey(name: 'patient_name')
   final String patientName;
   final String treatment;
   final String dosage;

@@ -13,6 +13,7 @@ import 'package:dental_clinic/data/vos/pharmacy_vo.dart';
 import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_detail_screens/emergency_saving_detail_screen.dart';
 
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/order_screens/order_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/treatment_management_screens/treatment_managament_screen.dart';
@@ -146,11 +147,30 @@ class _MobileEmergencySavingScreenState
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          textAlign: TextAlign.start,
-                          "Manage pharmacy",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                        Row(
+                          children: [
+                            const Text(
+                              textAlign: TextAlign.start,
+                              "Manage pharmacy",
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              width: 15,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: TextButton(
+                                  style: const ButtonStyle(
+                                      backgroundColor:
+                                          WidgetStatePropertyAll(kBtnGrayColor),
+                                      foregroundColor:
+                                          WidgetStatePropertyAll(kFourthColor)),
+                                  onPressed: () =>
+                                      Get.to(() => const OrderScreen()),
+                                  child: const Text("Orders")),
+                            ),
+                          ],
                         ),
                         GestureDetector(
                           onTap: () {
