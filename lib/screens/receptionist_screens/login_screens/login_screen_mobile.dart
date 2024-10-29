@@ -31,18 +31,21 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AppLogo(),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      "Dental Clinic Admin Login",
-                      style: mobileTitleStyle,
-                    ),
-                  ],
+                const SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AppLogo(),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        "Dental Clinic Admin Login",
+                        style: mobileTitleStyle,
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(
                   height: 40,
@@ -84,7 +87,25 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
                   ),
                 ),
                 const SizedBox(
-                  height: 25,
+                  height: 10,
+                ),
+                SizedBox(
+                  width: 250,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                        onPressed: () {
+                          _loginController.resetPassword(
+                              _emailController.text, context);
+                        },
+                        child: const Text(
+                          "Forgot Password?",
+                          style: TextStyle(color: kSecondaryColor),
+                        )),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
                 ),
                 Obx(
                   () => LoadingStateWidget(

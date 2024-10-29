@@ -6,6 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/constants/text.dart';
 import 'package:dental_clinic/controller/add_emergency_saving_controller.dart';
+import 'package:dental_clinic/controller/appointment_controller.dart';
 import 'package:dental_clinic/controller/emergency_saving_controller.dart';
 import 'package:dental_clinic/controller/pharmacy_controller.dart';
 import 'package:dental_clinic/data/vos/emergency_saving_vo.dart';
@@ -56,6 +57,15 @@ class _MobileEmergencySavingScreenState
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   String connection = "online";
 
+  final _appointmentController = Get.put(AppointmentController());
+  Timer? _timer;
+
+  void startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 50), (timer) {
+      _appointmentController.alertAppointment(context);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -63,11 +73,14 @@ class _MobileEmergencySavingScreenState
 
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+
+    startTimer();
   }
 
   @override
   void dispose() {
     _connectivitySubscription.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -133,7 +146,7 @@ class _MobileEmergencySavingScreenState
           )),
       body: connection == "online"
           ? Padding(
-              padding: const EdgeInsets.only(top: 25, left: 25, right: 25),
+              padding: const EdgeInsets.only(top: 25, left: 20, right: 20),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +169,7 @@ class _MobileEmergencySavingScreenState
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(
-                              width: 15,
+                              width: 10,
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 10),

@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/constants/text.dart';
+import 'package:dental_clinic/controller/appointment_controller.dart';
 import 'package:dental_clinic/controller/payment_controller.dart';
 
 import 'package:dental_clinic/controller/treatment_controller.dart';
@@ -55,6 +56,15 @@ class _MobileTreatmentManagementScreenState
   final _accountNumberController = TextEditingController();
   final _accountTypeController = TextEditingController();
 
+  final _appointmentController = Get.put(AppointmentController());
+  Timer? _timer;
+
+  void startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 50), (timer) {
+      _appointmentController.alertAppointment(context);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -62,11 +72,14 @@ class _MobileTreatmentManagementScreenState
 
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+
+    startTimer();
   }
 
   @override
   void dispose() {
     _connectivitySubscription.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -996,44 +1009,50 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
               const SizedBox(
                 height: 20,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Doctor : ${widget.treatment.doctorName}",
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    " , Patient : ${widget.treatment.patientName}",
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ],
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Doctor : ${widget.treatment.doctorName}",
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      " , Patient : ${widget.treatment.patientName}",
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(
                 height: 20,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Final Cost : ${widget.treatment.cost}",
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    " , Payment : ${widget.treatment.paymentType}",
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ],
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Final Cost : ${widget.treatment.cost}",
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      " , Payment : ${widget.treatment.paymentType}",
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(
                 height: 30,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: CustomTextField(
                   hintText: "Enter Treatment Name",
                   label: "Treatment Name",
@@ -1044,7 +1063,7 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
                 height: 20,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: CustomTextField(
                   hintText: "Enter Medical information and dosage",
                   label: "Medical information",
@@ -1057,7 +1076,7 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
                 height: 20,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -1072,7 +1091,7 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
                       ),
                     ),
                     const SizedBox(
-                      width: 20,
+                      width: 10,
                     ),
                     Expanded(
                       child: SizedBox(
@@ -1090,36 +1109,28 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
               const SizedBox(
                 height: 20,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: RadioListTile<String>(
-                        title: const Text('Paid'),
-                        value: 'Paid',
-                        groupValue: _paymentStatus,
-                        onChanged: (String? value) {
-                          setState(() {
-                            _paymentStatus = value;
-                          });
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: RadioListTile<String>(
-                        title: const Text('Un-paid'),
-                        value: 'Un-paid',
-                        groupValue: _paymentStatus,
-                        onChanged: (String? value) {
-                          setState(() {
-                            _paymentStatus = value;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+              RadioListTile<String>(
+                title: const Text('Paid'),
+                value: 'Paid',
+                groupValue: _paymentStatus,
+                onChanged: (String? value) {
+                  setState(() {
+                    _paymentStatus = value;
+                  });
+                },
+              ),
+              RadioListTile<String>(
+                title: const Text('Un-paid'),
+                value: 'Un-paid',
+                groupValue: _paymentStatus,
+                onChanged: (String? value) {
+                  setState(() {
+                    _paymentStatus = value;
+                  });
+                },
+              ),
+              const SizedBox(
+                height: 20,
               ),
               _paymentStatus == "Paid"
                   ? Obx(() => selectPaymentTile(context))
@@ -1163,7 +1174,7 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
 
   Widget slipBox(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
         height: 250,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
@@ -1201,8 +1212,8 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
 
   Widget selectPaymentTile(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(left: 30, right: 30, bottom: 20),
-      padding: const EdgeInsets.symmetric(horizontal: 30),
+      margin: const EdgeInsets.only(left: 10, right: 10, bottom: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       height: 50,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
@@ -1212,8 +1223,8 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
         children: [
           _treatmentController.selectedPayment.value == null
               ? const Text(
-                  "Select Payment to update",
-                  style: TextStyle(color: kThirdColor),
+                  "Update Payment",
+                  style: TextStyle(color: kThirdColor, fontSize: 12),
                 )
               : SizedBox(
                   width: 180,
@@ -1274,8 +1285,8 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
       },
       child: Container(
         margin: const EdgeInsets.only(
-          left: 30,
-          right: 30,
+          left: 10,
+          right: 10,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 30),
         height: 50,

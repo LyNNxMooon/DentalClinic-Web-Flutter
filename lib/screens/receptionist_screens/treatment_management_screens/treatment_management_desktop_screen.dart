@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/constants/text.dart';
+import 'package:dental_clinic/controller/appointment_controller.dart';
 import 'package:dental_clinic/controller/payment_controller.dart';
 
 import 'package:dental_clinic/controller/treatment_controller.dart';
@@ -53,6 +54,15 @@ class _DesktopTreatmentManagementScreenState
   final _accountNumberController = TextEditingController();
   final _accountTypeController = TextEditingController();
 
+  final _appointmentController = Get.put(AppointmentController());
+  Timer? _timer;
+
+  void startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 50), (timer) {
+      _appointmentController.alertAppointment(context);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -60,11 +70,14 @@ class _DesktopTreatmentManagementScreenState
 
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+
+    startTimer();
   }
 
   @override
   void dispose() {
     _connectivitySubscription.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 

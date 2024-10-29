@@ -84,7 +84,25 @@ class _DesktopLoginScreenState extends State<DesktopLoginScreen> {
                   ),
                 ),
                 const SizedBox(
-                  height: 40,
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 400,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                        onPressed: () {
+                          _loginController.resetPassword(
+                              _emailController.text, context);
+                        },
+                        child: const Text(
+                          "Forgot Password?",
+                          style: TextStyle(color: kSecondaryColor),
+                        )),
+                  ),
+                ),
+                const SizedBox(
+                  height: 30,
                 ),
                 Obx(
                   () => LoadingStateWidget(

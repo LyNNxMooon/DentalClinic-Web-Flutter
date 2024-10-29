@@ -71,6 +71,15 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   String connection = "online";
 
+  final _appointmentController = Get.put(AppointmentController());
+  Timer? _timer;
+
+  void startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 50), (timer) {
+      _appointmentController.alertAppointment(context);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -78,11 +87,14 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
 
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+
+    startTimer();
   }
 
   @override
   void dispose() {
     _connectivitySubscription.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 

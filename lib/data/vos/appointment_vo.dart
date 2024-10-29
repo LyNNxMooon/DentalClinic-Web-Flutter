@@ -13,7 +13,8 @@ class AppointmentVO {
   final String patientId;
   @JsonKey(name: 'patient_name')
   final String patientName;
-
+  @JsonKey(name: 'patient_phone')
+  final int patientPhone;
   final String date;
   final String time;
 
@@ -25,6 +26,7 @@ class AppointmentVO {
       required this.doctorName,
       required this.patientId,
       required this.patientName,
+      required this.patientPhone,
       required this.date,
       required this.time});
 

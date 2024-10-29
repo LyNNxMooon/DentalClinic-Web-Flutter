@@ -40,7 +40,6 @@ class AddPatientController extends BaseController {
         phone.text.isEmpty ||
         letterRegExp.hasMatch(phone.text) ||
         address.text.isEmpty ||
-        allergicMedicine.text.isEmpty ||
         gender.isEmpty ||
         selectFile.value == null) {
       setLoadingState = LoadingState.error;
@@ -63,7 +62,8 @@ class AddPatientController extends BaseController {
           String id = FirebaseAuth.instance.currentUser?.uid ?? '';
           final patientVo = PatientVO(
               address: address.text,
-              allergicMedicine: allergicMedicine.text,
+              allergicMedicine:
+                  allergicMedicine.text.isEmpty ? "Non" : allergicMedicine.text,
               phone: int.parse(phone.text),
               id: id,
               name: name.text,

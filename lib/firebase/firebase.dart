@@ -2,6 +2,7 @@
 
 import 'dart:typed_data';
 
+import 'package:dental_clinic/data/vos/admin_vo.dart';
 import 'package:dental_clinic/data/vos/appointment_vo.dart';
 import 'package:dental_clinic/data/vos/cart_item_vo.dart';
 import 'package:dental_clinic/data/vos/chatted_user_vo.dart';
@@ -186,6 +187,27 @@ class FirebaseServices {
     } on FirebaseException catch (error) {
       print(error);
       return Future.error(error);
+    }
+  }
+
+  Future saveAdmin(AdminVO adminVo) async {
+    try {
+      return databaseRef
+          .child("admin_uid")
+          .child(adminVo.id.toString())
+          .set(adminVo.toJson());
+    } on FirebaseException catch (error) {
+      print(error);
+      return Future.error(error);
+    }
+  }
+
+  Future<void> deleteFormerAdmin() async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref("admin_uid");
+    try {
+      await ref.remove();
+    } catch (e) {
+      print("Error deleting collection: $e");
     }
   }
 

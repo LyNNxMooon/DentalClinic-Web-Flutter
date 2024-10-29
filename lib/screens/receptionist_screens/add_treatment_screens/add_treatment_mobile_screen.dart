@@ -154,7 +154,7 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                     Obx(
                       () => _treatmentController.todayAppointments.isEmpty
                           ? const Padding(
-                              padding: EdgeInsets.only(top: 30),
+                              padding: EdgeInsets.only(top: 10),
                               child: Center(
                                 child: Text(
                                   "No Appointments for today",
@@ -296,7 +296,7 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                       height: 30,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Center(
                         child: CustomTextField(
                           hintText: "Enter Treatment Name",
@@ -309,7 +309,7 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                       height: 20,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Center(
                         child: CustomTextField(
                           hintText: "Enter Medical Information and dosage",
@@ -324,31 +324,27 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                       height: 20,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            child: SizedBox(
-                              child: CustomTextField(
-                                hintText: "Enter Cost (Ks)",
-                                label: "Cost (Ks)",
-                                keyboardType: TextInputType.number,
-                                controller: _costController,
-                              ),
+                            child: CustomTextField(
+                              hintText: "Cost (Ks)",
+                              label: "Cost (Ks)",
+                              keyboardType: TextInputType.number,
+                              controller: _costController,
                             ),
                           ),
                           const SizedBox(
-                            width: 20,
+                            width: 15,
                           ),
                           Expanded(
-                            child: SizedBox(
-                              child: CustomTextField(
-                                hintText: "Discount %",
-                                label: "Discount %",
-                                keyboardType: TextInputType.number,
-                                controller: _discountController,
-                              ),
+                            child: CustomTextField(
+                              hintText: "Discount %",
+                              label: "Discount %",
+                              keyboardType: TextInputType.number,
+                              controller: _discountController,
                             ),
                           ),
                         ],
@@ -357,36 +353,25 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: RadioListTile<String>(
-                              title: const Text('Paid'),
-                              value: 'Paid',
-                              groupValue: _paymentStatus,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _paymentStatus = value;
-                                });
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: RadioListTile<String>(
-                              title: const Text('Un-paid'),
-                              value: 'Un-paid',
-                              groupValue: _paymentStatus,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _paymentStatus = value;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+                    RadioListTile<String>(
+                      title: const Text('Paid'),
+                      value: 'Paid',
+                      groupValue: _paymentStatus,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _paymentStatus = value;
+                        });
+                      },
+                    ),
+                    RadioListTile<String>(
+                      title: const Text('Un-paid'),
+                      value: 'Un-paid',
+                      groupValue: _paymentStatus,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _paymentStatus = value;
+                        });
+                      },
                     ),
                     const SizedBox(
                       height: 20,
@@ -465,7 +450,7 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
 
   Widget slipBox(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
         height: 200,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
@@ -499,7 +484,7 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
 
   Widget selectPaymentTile(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(left: 30, right: 30, bottom: 20),
+      margin: const EdgeInsets.only(left: 10, right: 10, bottom: 20),
       padding: const EdgeInsets.symmetric(horizontal: 15),
       height: 50,
       decoration: BoxDecoration(
@@ -572,8 +557,8 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
       },
       child: Container(
         margin: const EdgeInsets.only(
-          left: 30,
-          right: 30,
+          left: 10,
+          right: 10,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 15),
         height: 50,
