@@ -18,12 +18,9 @@ class LoginController extends BaseController {
   RxString adminEmail = "".obs;
   RxString adminPassword = "".obs;
 
-  Future<bool> checkAdmin(
-      String email, String password, BuildContext context) async {
-    if (FirebaseAuth.instance.currentUser?.email != email) {
-      return false;
-    }
-    return _firebaseService.firebaseSignIn(email, password).then(
+  Future<bool> checkAdmin(String password, BuildContext context) async {
+    String adminEmail = FirebaseAuth.instance.currentUser?.email ?? "";
+    return _firebaseService.firebaseSignIn(adminEmail, password).then(
       (value) {
         return true;
       },

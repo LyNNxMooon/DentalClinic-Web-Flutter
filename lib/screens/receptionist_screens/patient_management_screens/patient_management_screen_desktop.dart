@@ -17,6 +17,7 @@ import 'package:dental_clinic/screens/receptionist_screens/feed_back_screens/fee
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/treatment_management_screens/treatment_managament_screen.dart';
+import 'package:dental_clinic/utils/enums.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
 import 'package:dental_clinic/widgets/chatted_patients_dialog.dart';
 import 'package:dental_clinic/widgets/error_widget.dart';
@@ -25,6 +26,7 @@ import 'package:dental_clinic/widgets/loading_state_widget.dart';
 import 'package:dental_clinic/widgets/navigation_bar_desktop.dart';
 import 'package:dental_clinic/widgets/no_connection_desktop_widget.dart';
 import 'package:dental_clinic/widgets/textfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -55,7 +57,7 @@ class _DesktopPatientManagementScreenState
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
   final _ageController = TextEditingController();
-  final _adminEmailController = TextEditingController();
+
   final _adminPasswordController = TextEditingController();
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
@@ -222,7 +224,6 @@ class _DesktopPatientManagementScreenState
                                   function: () {
                                     _loginController
                                         .checkAdmin(
-                                            _adminEmailController.text,
                                             _adminPasswordController.text,
                                             context)
                                         .then(
@@ -230,7 +231,9 @@ class _DesktopPatientManagementScreenState
                                         if (value) {
                                           Get.back();
                                           _loginController.adminEmail.value =
-                                              _adminEmailController.text;
+                                              FirebaseAuth.instance.currentUser
+                                                      ?.email ??
+                                                  "";
                                           _loginController.adminPassword.value =
                                               _adminPasswordController.text;
                                           showDialog(
@@ -262,7 +265,7 @@ class _DesktopPatientManagementScreenState
                                               phoneController: _phoneController,
                                             ),
                                           );
-                                          _adminEmailController.clear();
+
                                           _adminPasswordController.clear();
                                         } else {
                                           showDialog(
@@ -279,7 +282,6 @@ class _DesktopPatientManagementScreenState
                                       },
                                     );
                                   },
-                                  emailController: _adminEmailController,
                                   passwordController: _adminPasswordController),
                             );
                           },
@@ -335,13 +337,10 @@ class _DesktopPatientManagementScreenState
 
 class CheckAdminDialog extends StatelessWidget {
   const CheckAdminDialog(
-      {super.key,
-      required this.function,
-      required this.emailController,
-      required this.passwordController});
+      {super.key, required this.function, required this.passwordController});
 
   final VoidCallback function;
-  final TextEditingController emailController;
+
   final TextEditingController passwordController;
 
   @override
@@ -367,14 +366,6 @@ class CheckAdminDialog extends StatelessWidget {
               "Admin Credentials",
               style: TextStyle(
                   color: kSecondaryColor, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            CustomTextField(
-              hintText: "Enter admin email",
-              label: "Email",
-              controller: emailController,
             ),
             const SizedBox(
               height: 15,
@@ -966,6 +957,7 @@ class _AddPatientDialogState extends State<AddPatientDialog> {
               CustomTextField(
                 hintText: "Enter patient email",
                 label: "Email",
+                validator: Validator.email,
                 controller: widget.emailController,
               ),
               const SizedBox(

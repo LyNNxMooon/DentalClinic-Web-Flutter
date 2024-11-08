@@ -87,6 +87,7 @@ class AddPatientController extends BaseController {
               age.clear();
               email.clear();
               password.clear();
+              phone.clear();
 
               _patientManagementController.callPatients();
             },

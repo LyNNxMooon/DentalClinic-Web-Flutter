@@ -1,6 +1,7 @@
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/constants/text.dart';
 import 'package:dental_clinic/controller/login_controller.dart';
+import 'package:dental_clinic/utils/enums.dart';
 import 'package:dental_clinic/widgets/loading_state_widget.dart';
 import 'package:dental_clinic/widgets/logo.dart';
 import 'package:dental_clinic/widgets/textfield.dart';
@@ -55,6 +56,7 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
                   child: CustomTextField(
                     hintText: "Enter admin email",
                     label: "Email",
+                    validator: Validator.email,
                     controller: _emailController,
                   ),
                 ),
