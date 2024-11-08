@@ -131,25 +131,28 @@ class _DesktopTreatmentManagementScreenState
                     size: 40,
                   ),
                 ),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Container(
-                    width: 15,
-                    height: 15,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: kErrorColor),
-                    child: Center(
-                      child: Text(
-                        _chatController.replyNumber.value > 9
-                            ? "9+"
-                            : _chatController.replyNumber.value.toString(),
-                        style:
-                            const TextStyle(color: kPrimaryColor, fontSize: 9),
-                      ),
-                    ),
-                  ),
-                )
+                _chatController.replyNumber.value == 0
+                    ? const SizedBox()
+                    : Align(
+                        alignment: Alignment.topRight,
+                        child: Container(
+                          width: 15,
+                          height: 15,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: kErrorColor),
+                          child: Center(
+                            child: Text(
+                              _chatController.replyNumber.value > 9
+                                  ? "9+"
+                                  : _chatController.replyNumber.value
+                                      .toString(),
+                              style: const TextStyle(
+                                  color: kPrimaryColor, fontSize: 9),
+                            ),
+                          ),
+                        ),
+                      )
               ],
             ),
           )),

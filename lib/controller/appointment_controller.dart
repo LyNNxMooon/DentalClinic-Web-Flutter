@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/base_controller.dart';
@@ -23,6 +23,8 @@ class AppointmentController extends BaseController {
   Rxn<DoctorVO> doctor = Rxn<DoctorVO>();
 
   RxList<AppointmentVO> appointmentList = <AppointmentVO>[].obs;
+
+  RxList<AppointmentVO> alertAppointmentList = <AppointmentVO>[].obs;
 
   @override
   void onInit() {
@@ -146,16 +148,132 @@ class AppointmentController extends BaseController {
   }
 
   alertAppointment(BuildContext context) {
+    alertAppointmentList.clear();
     DateTime now = DateTime.now();
 
-    for (var appointment in appointmentList) {
+    for (AppointmentVO appointment in appointmentList) {
       DateTime appointmentDateTime = DateFormat('MMMM d, yyyy h:mm a')
           .parse('${appointment.date} ${appointment.time}');
 
       Duration difference = appointmentDateTime.difference(now);
 
       if (difference.inMinutes == 15) {
-        showDialog(
+        alertAppointmentList.add(appointment);
+      }
+    }
+
+    if (alertAppointmentList.isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          actions: [
+            Center(
+                child: TextButton(
+                    style: const ButtonStyle(
+                        backgroundColor:
+                            WidgetStatePropertyAll(kSecondaryColor),
+                        foregroundColor: WidgetStatePropertyAll(kFourthColor)),
+                    onPressed: () => Get.back(),
+                    child: const Text("OK")))
+          ],
+          content: SizedBox(
+            width: 350,
+            height: 300,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.error_outline,
+                    color: kErrorColor,
+                  ),
+                  const Gap(20),
+                  Text(
+                    "Appointments in 15 minutes : ${alertAppointmentList.length}",
+                    style: const TextStyle(
+                        color: kSecondaryColor, fontWeight: FontWeight.bold),
+                  ),
+                  const Gap(20),
+                  ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) => Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: kMessageBubbleColor,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black
+                                      .withOpacity(0.1), // Shadow color
+                                  spreadRadius: 3, // Spread radius
+                                  blurRadius: 5, // Blur radius
+                                  offset: const Offset(
+                                      0, 3), // Offset of the shadow
+                                ),
+                              ], //border corner radius
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                RichText(
+                                    text: TextSpan(children: [
+                                  const TextSpan(
+                                      text: "Patient : ",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: kSecondaryColor)),
+                                  TextSpan(
+                                    text:
+                                        alertAppointmentList[index].patientName,
+                                  ),
+                                ])),
+                                const Gap(15),
+                                RichText(
+                                    text: TextSpan(children: [
+                                  const TextSpan(
+                                      text: "Doctor : ",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: kSecondaryColor)),
+                                  TextSpan(
+                                    text:
+                                        alertAppointmentList[index].doctorName,
+                                  ),
+                                ])),
+                                const Gap(15),
+                                RichText(
+                                    text: TextSpan(children: [
+                                  const TextSpan(
+                                      text: "Patient Contact : ",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: kSecondaryColor)),
+                                  TextSpan(
+                                    text: alertAppointmentList[index]
+                                        .patientPhone
+                                        .toString(),
+                                  ),
+                                ])),
+                              ],
+                            ),
+                          ),
+                      separatorBuilder: (context, index) => const Gap(15),
+                      itemCount: alertAppointmentList.length)
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+  }
+}
+
+/*
+showDialog(
           context: context,
           builder: (context) => AlertDialog(
             actions: [
@@ -236,7 +354,4 @@ class AppointmentController extends BaseController {
             ),
           ),
         );
-      }
-    }
-  }
-}
+*/
