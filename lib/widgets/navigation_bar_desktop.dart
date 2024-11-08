@@ -1,10 +1,12 @@
+import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/constants/text.dart';
+import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/utils/hover_extensions.dart';
 import 'package:dental_clinic/widgets/logo.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class DesktopNavigationBar extends StatelessWidget {
+class DesktopNavigationBar extends StatefulWidget {
   const DesktopNavigationBar(
       {super.key,
       required this.title1,
@@ -26,63 +28,102 @@ class DesktopNavigationBar extends StatelessWidget {
   final Widget widget4;
 
   @override
+  State<DesktopNavigationBar> createState() => _DesktopNavigationBarState();
+}
+
+class _DesktopNavigationBarState extends State<DesktopNavigationBar> {
+  bool _isHoverItem = false;
+  bool _isHoverItem2 = false;
+
+  @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Row(
-          children: [
-            AppLogo(),
-            SizedBox(
-              width: 20,
-            ),
-            Text(
-              "Dental Clinic",
-              style: mobileTitleStyle,
-            ),
-          ],
+        GestureDetector(
+          onTap: () => Get.offAll(() => const HomeScreen()),
+          child: const Row(
+            children: [
+              AppLogo(),
+              SizedBox(
+                width: 20,
+              ),
+              Text(
+                "Dental Clinic",
+                style: mobileTitleStyle,
+              ),
+            ],
+          ).showCursorOnHover,
         ),
         Row(
           children: [
-            GestureDetector(
-              onTap: () {
-                Get.offAll(() => widget1);
-              },
-              child: Text(
-                title1,
-                style: const TextStyle(fontSize: 16),
-              ),
-            ).showCursorOnHover.moveUpOnHover,
+            MouseRegion(
+              onEnter: (_) => setState(() => _isHoverItem = true),
+              onExit: (_) => setState(() => _isHoverItem = false),
+              child: GestureDetector(
+                onTap: () {
+                  Get.offAll(() => widget.widget1);
+                },
+                child: Column(
+                  children: [
+                    Text(
+                      widget.title1,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      height: 2,
+                      width: _isHoverItem ? 60 : 0, // Underline width on hover
+                      color: kFourthColor, // Underline color
+                    ),
+                  ],
+                ),
+              ).showCursorOnHover,
+            ),
             const SizedBox(
               width: 23,
             ),
-            GestureDetector(
-              onTap: () {
-                Get.offAll(() => widget2);
-              },
-              child: Text(
-                title2,
-                style: const TextStyle(fontSize: 16),
-              ),
-            ).showCursorOnHover.moveUpOnHover,
+            MouseRegion(
+              onEnter: (_) => setState(() => _isHoverItem2 = true),
+              onExit: (_) => setState(() => _isHoverItem2 = false),
+              child: GestureDetector(
+                onTap: () {
+                  Get.offAll(() => widget.widget2);
+                },
+                child: Column(
+                  children: [
+                    Text(
+                      widget.title2,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      height: 2,
+                      width: _isHoverItem2 ? 60 : 0, // Underline width on hover
+                      color: kFourthColor, // Underline color
+                    ),
+                  ],
+                ),
+              ).showCursorOnHover,
+            ),
             const SizedBox(
               width: 10,
             ),
             IconButton(
                     onPressed: () {
-                      Get.offAll(() => widget3);
+                      Get.offAll(() => widget.widget3);
                     },
-                    icon: Icon(icon))
+                    icon: Icon(widget.icon))
                 .showCursorOnHover,
             const SizedBox(
               width: 10,
             ),
             IconButton(
                     onPressed: () {
-                      Get.offAll(() => widget4);
+                      Get.offAll(() => widget.widget4);
                     },
-                    icon: Icon(icon2))
+                    icon: Icon(widget.icon2))
                 .showCursorOnHover
           ],
         )
