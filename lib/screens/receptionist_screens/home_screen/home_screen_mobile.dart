@@ -6,6 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/add_doctor_controller.dart';
 import 'package:dental_clinic/controller/appointment_controller.dart';
+import 'package:dental_clinic/controller/chat_controller.dart';
 import 'package:dental_clinic/controller/receptionist_home_controller.dart';
 import 'package:dental_clinic/data/vos/appointment_vo.dart';
 import 'package:dental_clinic/data/vos/doctor_vo.dart';
@@ -75,6 +76,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
   String connection = "online";
 
   final _appointmentController = Get.put(AppointmentController());
+  final _chatController = Get.put(ChatController());
   Timer? _timer;
 
   void startTimer() {
@@ -129,21 +131,48 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (connection == "online") {
-            showDialog(
-              context: context,
-              builder: (context) => const ChattedPatientsDialog(),
-            );
-          }
-        },
-        backgroundColor: kPrimaryColor,
-        child: const Icon(
-          Icons.message,
-          color: kSecondaryColor,
-          size: 40,
-        ),
-      ),
+          onPressed: () {
+            if (connection == "online") {
+              showDialog(
+                context: context,
+                builder: (context) => const ChattedPatientsDialog(),
+              );
+            }
+          },
+          backgroundColor: kPrimaryColor,
+          child: Obx(
+            () => Stack(
+              children: [
+                const Align(
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.message,
+                    color: kSecondaryColor,
+                    size: 40,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                    width: 15,
+                    height: 15,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: kErrorColor),
+                    child: Center(
+                      child: Text(
+                        _chatController.replyNumber.value > 9
+                            ? "9+"
+                            : _chatController.replyNumber.value.toString(),
+                        style:
+                            const TextStyle(color: kPrimaryColor, fontSize: 9),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )),
       key: _scaffoldKey,
       endDrawer: const Drawer(
           backgroundColor: kPrimaryColor,
