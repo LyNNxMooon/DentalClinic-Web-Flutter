@@ -24,8 +24,6 @@ final _treatmentController = Get.put(TreatmentController());
 final _paymentController = Get.put(PaymentController());
 final _filePicker = FilePickerUtils();
 
-String? _paymentStatus;
-
 class MobileAddTreatmentScreen extends StatefulWidget {
   const MobileAddTreatmentScreen({super.key});
 
@@ -353,64 +351,6 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    RadioListTile<String>(
-                      title: const Text('Paid'),
-                      value: 'Paid',
-                      groupValue: _paymentStatus,
-                      onChanged: (String? value) {
-                        setState(() {
-                          _paymentStatus = value;
-                        });
-                      },
-                    ),
-                    RadioListTile<String>(
-                      title: const Text('Un-paid'),
-                      value: 'Un-paid',
-                      groupValue: _paymentStatus,
-                      onChanged: (String? value) {
-                        setState(() {
-                          _paymentStatus = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    _paymentStatus == "Paid"
-                        ? Obx(() => selectPaymentTile(context))
-                        : const SizedBox(),
-                    isDrop
-                        ? Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: ListView.separated(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) =>
-                                    paymentTile(context, payments[index]),
-                                separatorBuilder: (context, index) =>
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                itemCount: payments.length),
-                          )
-                        : const SizedBox(),
-                    isDrop
-                        ? paymentTile(
-                            context,
-                            PaymentVO(
-                                id: 0,
-                                accountName: "Cash",
-                                accountNumber: "",
-                                type: "Cash",
-                                url:
-                                    "https://www.shutterstock.com/image-vector/transparent-money-icon-png-vector-600nw-1946627578.jpg"))
-                        : const SizedBox(),
-                    _paymentStatus == "Paid" &&
-                            _treatmentController
-                                    .selectedPayment.value?.accountName !=
-                                "Cash"
-                        ? Obx(() => slipBox(context))
-                        : const SizedBox(),
                     Obx(
                       () => LoadingStateWidget(
                           paddingBottom: 0,
@@ -422,7 +362,7 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                                 _costController,
                                 _discountController,
                                 selectedTime?.format(context) ?? "",
-                                _paymentStatus ?? "",
+                                "Un-paid",
                                 context);
                           }),
                           loadingInitWidget: AddBtn(function: () {
@@ -432,7 +372,7 @@ class _MobileAddTreatmentScreenState extends State<MobileAddTreatmentScreen> {
                                 _costController,
                                 _discountController,
                                 selectedTime?.format(context) ?? "",
-                                _paymentStatus ?? "",
+                                "Un-paid",
                                 context);
                           }),
                           paddingTop: 0),

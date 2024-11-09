@@ -217,16 +217,8 @@ class TreatmentController extends BaseController {
     final treatmentVO = TreatmentVO(
         time: time,
         paymentStatus: paymentStatus,
-        paymentType: paymentStatus == "Un-paid"
-            ? ""
-            : selectedPayment.value == null
-                ? type
-                : selectedPayment.value!.type,
-        slip: paymentStatus == "Un-paid"
-            ? ""
-            : (selectedPayment.value?.accountName == "Cash")
-                ? ""
-                : url,
+        paymentType: type,
+        slip: url,
         cost: finalCost,
         discount: discount,
         id: id,

@@ -312,13 +312,14 @@ class UpdatePharmacyDialog extends StatefulWidget {
 class _UpdatePharmacyDialogState extends State<UpdatePharmacyDialog> {
   late TextEditingController _nameController;
   late TextEditingController _priceController;
+  String? isOutOfStock = "InStock";
 
   @override
   void initState() {
     _nameController = TextEditingController(text: widget.pharmacy.name);
     _priceController =
         TextEditingController(text: widget.pharmacy.price.toString());
-
+    isOutOfStock = widget.pharmacy.isOutOfStock;
     super.initState();
   }
 
@@ -339,6 +340,7 @@ class _UpdatePharmacyDialogState extends State<UpdatePharmacyDialog> {
                         _nameController.text,
                         _priceController.text,
                         widget.pharmacy.url,
+                        isOutOfStock!,
                         context);
                   },
                   style: const ButtonStyle(
@@ -357,6 +359,7 @@ class _UpdatePharmacyDialogState extends State<UpdatePharmacyDialog> {
                         _nameController.text,
                         _priceController.text,
                         widget.pharmacy.url,
+                        isOutOfStock!,
                         context);
                   },
                   style: const ButtonStyle(
@@ -394,6 +397,32 @@ class _UpdatePharmacyDialogState extends State<UpdatePharmacyDialog> {
                 label: "Price (Ks)",
                 controller: _priceController,
                 keyboardType: TextInputType.number,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              RadioListTile<String>(
+                title: const Text('InStock'),
+                value: 'InStock',
+                groupValue: isOutOfStock,
+                onChanged: (String? value) {
+                  setState(() {
+                    isOutOfStock = value; // Update the selected gender
+                  });
+                },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              RadioListTile<String>(
+                title: const Text('OutOfStock'),
+                value: 'OutOfStock',
+                groupValue: isOutOfStock,
+                onChanged: (String? value) {
+                  setState(() {
+                    isOutOfStock = value; // Update the selected gender
+                  });
+                },
               ),
             ],
           ),

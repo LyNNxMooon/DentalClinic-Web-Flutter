@@ -1053,7 +1053,7 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    " , Payment : ${widget.treatment.paymentType}",
+                    " , Payment : ${widget.treatment.paymentType.isEmpty && widget.treatment.paymentStatus == "Paid" ? "Cash" : widget.treatment.paymentType.isEmpty && widget.treatment.paymentStatus == "Un-paid" ? "Un-paid" : widget.treatment.paymentType}",
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
@@ -1155,39 +1155,7 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
                   ],
                 ),
               ),
-              _paymentStatus == "Paid"
-                  ? Obx(() => selectPaymentTile(context))
-                  : const SizedBox(),
-              isDrop
-                  ? Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) =>
-                              paymentTile(context, payments[index]),
-                          separatorBuilder: (context, index) => const SizedBox(
-                                height: 10,
-                              ),
-                          itemCount: payments.length),
-                    )
-                  : const SizedBox(),
-              isDrop
-                  ? paymentTile(
-                      context,
-                      PaymentVO(
-                          id: 0,
-                          accountName: "Cash",
-                          accountNumber: "",
-                          type: "Cash",
-                          url:
-                              "https://www.shutterstock.com/image-vector/transparent-money-icon-png-vector-600nw-1946627578.jpg"))
-                  : const SizedBox(),
-              _paymentStatus == "Paid" &&
-                      _treatmentController.selectedPayment.value?.accountName !=
-                          "Cash"
-                  ? Obx(() => slipBox(context))
-                  : const SizedBox(),
+              slipBox(context)
             ],
           ),
         ),
@@ -1203,35 +1171,15 @@ class _TreatmentDialogState extends State<TreatmentDialog> {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
             border: Border.all(width: 1)),
-        child: _treatmentController.selectFile.value == null
-            ? GestureDetector(
-                onTap: () async {
-                  _treatmentController.selectFile.value =
-                      await _filePicker.getImage();
-                },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.network(
-                    widget.treatment.slip.isEmpty
-                        ? "https://cdn.pixabay.com/photo/2017/11/10/05/24/add-2935429_960_720.png"
-                        : widget.treatment.slip,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              )
-            : GestureDetector(
-                onTap: () async {
-                  _treatmentController.selectFile.value =
-                      await _filePicker.getImage();
-                },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.memory(
-                    _treatmentController.selectFile.value!,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ));
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15),
+          child: Image.network(
+            widget.treatment.slip.isEmpty
+                ? "https://thumbs.dreamstime.com/b/sad-document-no-data-file-icon-white-334021734.jpg"
+                : widget.treatment.slip,
+            fit: BoxFit.contain,
+          ),
+        ));
   }
 
   Widget selectPaymentTile(BuildContext context) {

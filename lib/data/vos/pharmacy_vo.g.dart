@@ -11,6 +11,7 @@ PharmacyVO _$PharmacyVOFromJson(Map<String, dynamic> json) => PharmacyVO(
       url: json['url'] as String,
       name: json['name'] as String,
       price: (json['price'] as num).toDouble(),
+      isOutOfStock: json['is_out_of_stocks'] as String,
     );
 
 Map<String, dynamic> _$PharmacyVOToJson(PharmacyVO instance) =>
@@ -19,4 +20,5 @@ Map<String, dynamic> _$PharmacyVOToJson(PharmacyVO instance) =>
       'url': instance.url,
       'name': instance.name,
       'price': instance.price,
+      'is_out_of_stocks': instance.isOutOfStock,
     };

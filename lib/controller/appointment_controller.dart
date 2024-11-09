@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
+import 'dart:async';
+
 import 'package:dental_clinic/constants/colors.dart';
 import 'package:dental_clinic/controller/base_controller.dart';
 
@@ -272,7 +274,12 @@ class AppointmentController extends BaseController {
           ),
         ),
       );
+
+      Timer.periodic(const Duration(seconds: 49), (timer) {
+        alertAppointmentList.clear();
+      });
     }
+    update();
   }
 }
 

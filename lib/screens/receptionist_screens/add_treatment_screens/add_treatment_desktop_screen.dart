@@ -24,8 +24,6 @@ final _treatmentController = Get.put(TreatmentController());
 final _paymentController = Get.put(PaymentController());
 final _filePicker = FilePickerUtils();
 
-String? _paymentStatus;
-
 class DesktopAddTreatmentScreen extends StatefulWidget {
   const DesktopAddTreatmentScreen({super.key});
 
@@ -358,76 +356,6 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.16),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: RadioListTile<String>(
-                              title: const Text('Paid'),
-                              value: 'Paid',
-                              groupValue: _paymentStatus,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _paymentStatus = value;
-                                });
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: RadioListTile<String>(
-                              title: const Text('Un-paid'),
-                              value: 'Un-paid',
-                              groupValue: _paymentStatus,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _paymentStatus = value;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    _paymentStatus == "Paid"
-                        ? Obx(() => selectPaymentTile(context))
-                        : const SizedBox(),
-                    isDrop
-                        ? Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: ListView.separated(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) =>
-                                    paymentTile(context, payments[index]),
-                                separatorBuilder: (context, index) =>
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                itemCount: payments.length),
-                          )
-                        : const SizedBox(),
-                    isDrop
-                        ? paymentTile(
-                            context,
-                            PaymentVO(
-                                id: 0,
-                                accountName: "Cash",
-                                accountNumber: "",
-                                type: "Cash",
-                                url:
-                                    "https://www.shutterstock.com/image-vector/transparent-money-icon-png-vector-600nw-1946627578.jpg"))
-                        : const SizedBox(),
-                    _paymentStatus == "Paid" &&
-                            _treatmentController
-                                    .selectedPayment.value?.accountName !=
-                                "Cash"
-                        ? Obx(() => slipBox(context))
-                        : const SizedBox(),
                     Obx(
                       () => LoadingStateWidget(
                         loadingState: _treatmentController.getLoadingState,
@@ -439,7 +367,7 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                                   _costController,
                                   _discountController,
                                   selectedTime?.format(context) ?? "",
-                                  _paymentStatus ?? "",
+                                  "Un-paid",
                                   context)
                               .then(
                             (value) {
@@ -461,7 +389,7 @@ class _DesktopAddTreatmentScreenState extends State<DesktopAddTreatmentScreen> {
                                   _costController,
                                   _discountController,
                                   selectedTime?.format(context) ?? "",
-                                  _paymentStatus ?? "",
+                                  "Un-paid",
                                   context)
                               .then(
                             (value) {

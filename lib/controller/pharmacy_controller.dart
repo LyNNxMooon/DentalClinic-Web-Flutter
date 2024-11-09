@@ -44,8 +44,11 @@ class PharmacyController extends BaseController {
     update();
   }
 
-  Future addPharmacy(TextEditingController nameController,
-      TextEditingController priceController, BuildContext context) async {
+  Future addPharmacy(
+      TextEditingController nameController,
+      TextEditingController priceController,
+      String isOutOfStock,
+      BuildContext context) async {
     RegExp letterRegExp = RegExp(r'[a-zA-Z]');
     if (nameController.text.isEmpty ||
         priceController.text.isEmpty ||
@@ -71,6 +74,7 @@ class PharmacyController extends BaseController {
 
       final pharmacyVO = PharmacyVO(
           id: id,
+          isOutOfStock: isOutOfStock,
           name: nameController.text,
           price: double.parse(priceController.text),
           url: fileURL);
@@ -109,7 +113,7 @@ class PharmacyController extends BaseController {
   }
 
   Future updatePharmacy(int id, String name, String price, String url,
-      BuildContext context) async {
+      String isOutOfStock, BuildContext context) async {
     RegExp letterRegExp = RegExp(r'[a-zA-Z]');
     if (name.isEmpty || price.isEmpty || letterRegExp.hasMatch(price)) {
       setLoadingState = LoadingState.error;
@@ -127,6 +131,7 @@ class PharmacyController extends BaseController {
       setLoadingState = LoadingState.loading;
 
       final pharmacyVo = PharmacyVO(
+        isOutOfStock: isOutOfStock,
         id: id,
         name: name,
         price: double.parse(price),
