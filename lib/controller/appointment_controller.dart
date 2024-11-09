@@ -77,6 +77,8 @@ class AppointmentController extends BaseController {
           );
 
           callAppointments();
+          patient.value = null;
+          doctor.value = null;
         },
       ).catchError((error) {
         setLoadingState = LoadingState.error;
@@ -148,7 +150,6 @@ class AppointmentController extends BaseController {
   }
 
   alertAppointment(BuildContext context) {
-    alertAppointmentList.clear();
     DateTime now = DateTime.now();
 
     for (AppointmentVO appointment in appointmentList) {
@@ -173,7 +174,10 @@ class AppointmentController extends BaseController {
                         backgroundColor:
                             WidgetStatePropertyAll(kSecondaryColor),
                         foregroundColor: WidgetStatePropertyAll(kFourthColor)),
-                    onPressed: () => Get.back(),
+                    onPressed: () {
+                      alertAppointmentList.clear();
+                      Get.back();
+                    },
                     child: const Text("OK")))
           ],
           content: SizedBox(
