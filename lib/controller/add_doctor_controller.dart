@@ -28,20 +28,111 @@ class AddDoctorController extends BaseController {
       BuildContext context) async {
     print(availability);
     bool hasWorkingHours = availability.values.any((times) => times.isNotEmpty);
-    if (name.text.isEmpty ||
-        doctorId.text.isEmpty ||
-        bio.text.isEmpty ||
-        specialist.text.isEmpty ||
-        experience.text.isEmpty ||
-        !hasWorkingHours ||
+    if (name.text.isEmpty &&
+        doctorId.text.isEmpty &&
+        bio.text.isEmpty &&
+        specialist.text.isEmpty &&
+        experience.text.isEmpty &&
+        !hasWorkingHours &&
         selectFile.value == null) {
       setLoadingState = LoadingState.error;
-
+      setErrorMessage = "Please fill all the doctor's information!";
       showDialog(
         barrierDismissible: false,
         context: context,
         builder: (context) => CustomErrorWidget(
-          errorMessage: "Fill all the fields!",
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (selectFile.value == null) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please upload the doctor photo!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (name.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter doctor name!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (doctorId.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter doctor ID!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (bio.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter doctor's biography!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (specialist.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter doctor's specialist!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (experience.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter doctor's experience!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (!hasWorkingHours) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please select doctor's working hours!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
           function: () {
             Get.back();
           },

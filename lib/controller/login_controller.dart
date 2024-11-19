@@ -32,44 +32,76 @@ class LoginController extends BaseController {
   Future login(String email, String password, BuildContext context) async {
     setLoadingState = LoadingState.loading;
 
-    _firebaseService.firebaseSignIn(email, password).then(
-      (value) {
-        String id = FirebaseAuth.instance.currentUser?.uid ?? '';
-
-        _firebaseService.getPatient(id).then(
-          (value) {
-            if (value == null) {
-              setLoadingState = LoadingState.complete;
-              _firebaseService.deleteFormerAdmin().then(
-                (value) {
-                  final adminVo = AdminVO(id: id);
-                  _firebaseService.saveAdmin(adminVo);
-                },
-              );
-
-              print("admin authenticated!");
-            } else {
-              setLoadingState = LoadingState.error;
-              FirebaseAuth.instance.signOut();
-              Get.offAll(() => const AccessDeniedPage());
-            }
-          },
-        );
-      },
-    ).catchError((error) {
+    if (email.isEmpty && password.isEmpty) {
       setLoadingState = LoadingState.error;
-      setErrorMessage = error.message;
-
+      setErrorMessage = "Please fill both email and password!";
       showDialog(
         context: context,
         builder: (context) => CustomErrorWidget(
           errorMessage: getErrorMessage,
-          function: () {
-            Get.back();
-          },
+          function: () => Get.back(),
         ),
       );
-    });
+    } else if (email.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter email!";
+      showDialog(
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () => Get.back(),
+        ),
+      );
+    } else if (password.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter password!";
+      showDialog(
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () => Get.back(),
+        ),
+      );
+    } else {
+      _firebaseService.firebaseSignIn(email, password).then(
+        (value) {
+          String id = FirebaseAuth.instance.currentUser?.uid ?? '';
+
+          _firebaseService.getPatient(id).then(
+            (value) {
+              if (value == null) {
+                setLoadingState = LoadingState.complete;
+                _firebaseService.deleteFormerAdmin().then(
+                  (value) {
+                    final adminVo = AdminVO(id: id);
+                    _firebaseService.saveAdmin(adminVo);
+                  },
+                );
+
+                print("admin authenticated!");
+              } else {
+                setLoadingState = LoadingState.error;
+                FirebaseAuth.instance.signOut();
+                Get.offAll(() => const AccessDeniedPage());
+              }
+            },
+          );
+        },
+      ).catchError((error) {
+        setLoadingState = LoadingState.error;
+        setErrorMessage = error.message;
+
+        showDialog(
+          context: context,
+          builder: (context) => CustomErrorWidget(
+            errorMessage: getErrorMessage,
+            function: () {
+              Get.back();
+            },
+          ),
+        );
+      });
+    }
 
     update();
   }

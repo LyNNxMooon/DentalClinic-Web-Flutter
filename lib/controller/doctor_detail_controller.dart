@@ -24,15 +24,81 @@ class DoctorDetailController extends BaseController {
     Map<String, List> availability,
   ) async {
     bool hasWorkingHours = availability.values.any((times) => times.isNotEmpty);
-    if (name.isEmpty ||
-        doctorId.isEmpty ||
-        bio.isEmpty ||
-        specialist.isEmpty ||
-        experience.isEmpty ||
+    if (name.isEmpty &&
+        doctorId.isEmpty &&
+        bio.isEmpty &&
+        specialist.isEmpty &&
+        experience.isEmpty &&
         !hasWorkingHours) {
       setLoadingState = LoadingState.error;
       Fluttertoast.showToast(
           msg: "Fill all the fields!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: kErrorColor,
+          textColor: kPrimaryColor,
+          fontSize: 20);
+    } else if (name.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter doctor name!";
+      Fluttertoast.showToast(
+          msg: getErrorMessage,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: kErrorColor,
+          textColor: kPrimaryColor,
+          fontSize: 20);
+    } else if (doctorId.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter doctor ID!";
+      Fluttertoast.showToast(
+          msg: getErrorMessage,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: kErrorColor,
+          textColor: kPrimaryColor,
+          fontSize: 20);
+    } else if (bio.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter doctor's biography!";
+      Fluttertoast.showToast(
+          msg: getErrorMessage,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: kErrorColor,
+          textColor: kPrimaryColor,
+          fontSize: 20);
+    } else if (specialist.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter doctor's specialist!";
+      Fluttertoast.showToast(
+          msg: getErrorMessage,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: kErrorColor,
+          textColor: kPrimaryColor,
+          fontSize: 20);
+    } else if (experience.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter doctor's experience!";
+      Fluttertoast.showToast(
+          msg: getErrorMessage,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: kErrorColor,
+          textColor: kPrimaryColor,
+          fontSize: 20);
+    } else if (!hasWorkingHours) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please select doctor's working hours!";
+      Fluttertoast.showToast(
+          msg: getErrorMessage,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 2,
