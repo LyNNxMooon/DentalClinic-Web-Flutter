@@ -50,9 +50,8 @@ class PharmacyController extends BaseController {
       String isOutOfStock,
       BuildContext context) async {
     RegExp letterRegExp = RegExp(r'[a-zA-Z]');
-    if (nameController.text.isEmpty ||
-        priceController.text.isEmpty ||
-        letterRegExp.hasMatch(priceController.text) ||
+    if (nameController.text.isEmpty &&
+        priceController.text.isEmpty &&
         selectFile.value == null) {
       setLoadingState = LoadingState.error;
 
@@ -60,7 +59,59 @@ class PharmacyController extends BaseController {
         barrierDismissible: false,
         context: context,
         builder: (context) => CustomErrorWidget(
-          errorMessage: "Fill all the fields!",
+          errorMessage: "Fill all the medicine information!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (selectFile.value == null) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please upload medicine photo!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (nameController.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter medicine name!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (priceController.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter medicine price!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (letterRegExp.hasMatch(priceController.text)) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Medicine price must be numbers!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
           function: () {
             Get.back();
           },
@@ -115,13 +166,50 @@ class PharmacyController extends BaseController {
   Future updatePharmacy(int id, String name, String price, String url,
       String isOutOfStock, BuildContext context) async {
     RegExp letterRegExp = RegExp(r'[a-zA-Z]');
-    if (name.isEmpty || price.isEmpty || letterRegExp.hasMatch(price)) {
+    if (name.isEmpty && price.isEmpty) {
       setLoadingState = LoadingState.error;
       showDialog(
         barrierDismissible: false,
         context: context,
         builder: (context) => CustomErrorWidget(
-          errorMessage: "Fill all the fields!",
+          errorMessage: "Fill all the medicine information!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (name.isEmpty) {
+      setLoadingState = LoadingState.error;
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Please enter medicine name!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (price.isEmpty) {
+      setLoadingState = LoadingState.error;
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Please enter medicine price!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (letterRegExp.hasMatch(price)) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Medicine price must be numbers!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
           function: () {
             Get.back();
           },

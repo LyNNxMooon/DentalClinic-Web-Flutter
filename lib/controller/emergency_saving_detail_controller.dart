@@ -20,10 +20,30 @@ class EmergencySavingDetailController extends BaseController {
     String title,
     String body,
   ) async {
-    if (title.isEmpty || body.isEmpty) {
+    if (title.isEmpty && body.isEmpty) {
       setLoadingState = LoadingState.error;
       Fluttertoast.showToast(
-          msg: "Fill all the fields!",
+          msg: "Please enter both saving title and body!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: kErrorColor,
+          textColor: kPrimaryColor,
+          fontSize: 20);
+    } else if (title.isEmpty) {
+      setLoadingState = LoadingState.error;
+      Fluttertoast.showToast(
+          msg: "Please enter saving title!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: kErrorColor,
+          textColor: kPrimaryColor,
+          fontSize: 20);
+    } else if (body.isEmpty) {
+      setLoadingState = LoadingState.error;
+      Fluttertoast.showToast(
+          msg: "Please enter saving body!",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 2,

@@ -49,9 +49,9 @@ class PaymentController extends BaseController {
       TextEditingController accountNumber,
       TextEditingController type,
       BuildContext context) async {
-    if (accountName.text.isEmpty ||
-        accountNumber.text.isEmpty ||
-        type.text.isEmpty ||
+    if (accountName.text.isEmpty &&
+        accountNumber.text.isEmpty &&
+        type.text.isEmpty &&
         selectFile.value == null) {
       setLoadingState = LoadingState.error;
 
@@ -59,7 +59,59 @@ class PaymentController extends BaseController {
         barrierDismissible: false,
         context: context,
         builder: (context) => CustomErrorWidget(
-          errorMessage: "Fill all the fields!",
+          errorMessage: "Please fill all the payment information!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (selectFile.value == null) {
+      setLoadingState = LoadingState.error;
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Please upload payment photo!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (accountName.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Please enter account name!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (accountNumber.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Please enter account number!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (type.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Please enter payment type!",
           function: () {
             Get.back();
           },
@@ -114,13 +166,49 @@ class PaymentController extends BaseController {
 
   Future updatePayment(int id, String name, String number, String type,
       String url, BuildContext context) async {
-    if (name.isEmpty || number.isEmpty || type.isEmpty) {
+    if (name.isEmpty && number.isEmpty && type.isEmpty) {
       setLoadingState = LoadingState.error;
       showDialog(
         barrierDismissible: false,
         context: context,
         builder: (context) => CustomErrorWidget(
-          errorMessage: "Fill all the fields!",
+          errorMessage: "Please enter all the payment information!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (name.isEmpty) {
+      setLoadingState = LoadingState.error;
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Please enter account name!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (number.isEmpty) {
+      setLoadingState = LoadingState.error;
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Please enter account number!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (type.isEmpty) {
+      setLoadingState = LoadingState.error;
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Please enter payment type!",
           function: () {
             Get.back();
           },

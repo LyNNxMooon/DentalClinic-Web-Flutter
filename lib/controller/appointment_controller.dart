@@ -37,17 +37,27 @@ class AppointmentController extends BaseController {
 
   Future addAppointment(
       String? date, String? time, BuildContext context) async {
-    if (date == null ||
-        time == null ||
-        patient.value == null ||
-        doctor.value == null) {
+    if (doctor.value == null) {
       setLoadingState = LoadingState.error;
 
       showDialog(
         barrierDismissible: false,
         context: context,
         builder: (context) => CustomErrorWidget(
-          errorMessage: "Fill all the fields!",
+          errorMessage: "Select doctor to make an appointment!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (patient.value == null) {
+      setLoadingState = LoadingState.error;
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Select patient to make an appointment!",
           function: () {
             Get.back();
           },
@@ -64,8 +74,8 @@ class AppointmentController extends BaseController {
           patientId: patient.value!.id,
           patientName: patient.value!.name,
           patientPhone: patient.value!.phone,
-          date: date,
-          time: time);
+          date: date!,
+          time: time!);
       return _firebaseService.saveAppointment(appointment).then(
         (value) {
           setLoadingState = LoadingState.complete;

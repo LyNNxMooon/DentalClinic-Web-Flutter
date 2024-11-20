@@ -1040,8 +1040,8 @@ class _AddPatientDialogState extends State<AddPatientDialog> {
                 height: 20,
               ),
               CustomTextField(
-                hintText: "Enter patient allergic Medicine",
-                label: "Allergic Medicine",
+                hintText: "Enter patient allergic Medicine (Optional)",
+                label: "Allergic Medicine (Optional)",
                 controller: widget.allergicMedicineController,
                 minLines: 3,
                 maxLines: 6,

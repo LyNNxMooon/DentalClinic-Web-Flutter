@@ -32,23 +32,151 @@ class AddPatientController extends BaseController {
       String gender,
       BuildContext context) async {
     RegExp letterRegExp = RegExp(r'[a-zA-Z]');
-    if (name.text.isEmpty ||
-        email.text.isEmpty ||
-        password.text.isEmpty ||
-        age.text.isEmpty ||
-        letterRegExp.hasMatch(age.text) ||
-        phone.text.isEmpty ||
-        letterRegExp.hasMatch(phone.text) ||
-        address.text.isEmpty ||
-        gender.isEmpty ||
+    if (name.text.isEmpty &&
+        email.text.isEmpty &&
+        password.text.isEmpty &&
+        age.text.isEmpty &&
+        phone.text.isEmpty &&
+        address.text.isEmpty &&
+        gender.isEmpty &&
         selectFile.value == null) {
       setLoadingState = LoadingState.error;
-
+      setErrorMessage = "Please fill all the patient's information!";
       showDialog(
         barrierDismissible: false,
         context: context,
         builder: (context) => CustomErrorWidget(
-          errorMessage: "Invalid Inputs!",
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (selectFile.value == null) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please upload patient's photo!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (name.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter patient's name!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (email.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter patient's email!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (password.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter patient's default password!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (age.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter patient's age!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (letterRegExp.hasMatch(age.text)) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Patient age must be numbers!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (phone.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter patient's phone!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (letterRegExp.hasMatch(phone.text)) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Patient's phone must be numbers!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (address.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter patient's address!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (gender.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please select patient's gender!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
           function: () {
             Get.back();
           },

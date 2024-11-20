@@ -77,22 +77,105 @@ class TreatmentController extends BaseController {
       String paymentStatus,
       BuildContext context) async {
     RegExp letterRegExp = RegExp(r'[a-zA-Z]');
-    if (treatmentController.text.isEmpty ||
-        dosageController.text.isEmpty ||
-        cost.text.isEmpty ||
-        discount.text.isEmpty ||
-        letterRegExp.hasMatch(cost.text) ||
-        letterRegExp.hasMatch(discount.text) ||
-        selectedAppointment.value == null ||
-        time.isEmpty ||
-        paymentStatus.isEmpty) {
+    if (selectedAppointment.value == null) {
       setLoadingState = LoadingState.error;
-
+      setErrorMessage = "Please select one of today's appointments!";
       showDialog(
         barrierDismissible: false,
         context: context,
         builder: (context) => CustomErrorWidget(
-          errorMessage: "Invalid inputs!",
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (time.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please select time!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (treatmentController.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter treatment name!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (dosageController.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Pleases enter medical information and dosage!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (cost.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter treatment's cost!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (letterRegExp.hasMatch(cost.text)) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Treatment cost must be numbers!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (discount.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please enter discount!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (letterRegExp.hasMatch(discount.text)) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Discount must be numbers!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
           function: () {
             Get.back();
           },
@@ -150,15 +233,14 @@ class TreatmentController extends BaseController {
         (value) {
           setLoadingState = LoadingState.complete;
 
-          callTreatments();
-
           showDialog(
             context: context,
             builder: (context) =>
                 const SuccessWidget(message: "New Treatment Added!"),
-          ).then(
-            (value) => Get.back(),
-          );
+          ).then((value) {
+            callTreatments();
+            Get.back();
+          });
 
           selectedAppointment.value = null;
           selectedPayment.value = null;

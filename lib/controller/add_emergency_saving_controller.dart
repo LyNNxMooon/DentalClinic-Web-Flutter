@@ -21,14 +21,53 @@ class AddEmergencySavingController extends BaseController {
 
   Future addEmergencySaving(TextEditingController title,
       TextEditingController body, BuildContext context) async {
-    if (title.text.isEmpty || body.text.isEmpty || selectFile.value == null) {
+    if (title.text.isEmpty && body.text.isEmpty && selectFile.value == null) {
       setLoadingState = LoadingState.error;
 
       showDialog(
         barrierDismissible: false,
         context: context,
         builder: (context) => CustomErrorWidget(
-          errorMessage: "Fill all the fields!",
+          errorMessage: "Please enter all the emergency saving information!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (selectFile.value == null) {
+      setLoadingState = LoadingState.error;
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Please upload saving photo!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (title.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Please enter emergency saving title!",
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (body.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: "Please write the saving body!",
           function: () {
             Get.back();
           },
