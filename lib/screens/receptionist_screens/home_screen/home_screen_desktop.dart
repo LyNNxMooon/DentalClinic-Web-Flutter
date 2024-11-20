@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dental_clinic/constants/colors.dart';
+import 'package:dental_clinic/constants/text.dart';
 import 'package:dental_clinic/controller/add_doctor_controller.dart';
 import 'package:dental_clinic/controller/appointment_controller.dart';
 import 'package:dental_clinic/controller/chat_controller.dart';
@@ -12,6 +13,7 @@ import 'package:dental_clinic/data/vos/doctor_vo.dart';
 import 'package:dental_clinic/screens/receptionist_screens/add_appointment_screens/add_appointment_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/doctor_detail_screen/doctor_detail_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_screens/emergency_saving_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/home_screen/all_appointment_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/treatment_management_screens/treatment_managament_screen.dart';
@@ -24,6 +26,7 @@ import 'package:dental_clinic/widgets/navigation_bar_desktop.dart';
 import 'package:dental_clinic/widgets/no_connection_desktop_widget.dart';
 import 'package:dental_clinic/widgets/textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 final _filePicker = FilePickerUtils();
@@ -272,10 +275,27 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "Manage Appointments",
-                            style: TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold),
+                          Row(
+                            children: [
+                              const Text(
+                                "Today's Appointments",
+                                style: TextStyle(
+                                    fontSize: 30, fontWeight: FontWeight.bold),
+                              ),
+                              const Gap(15),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: TextButton(
+                                    style: const ButtonStyle(
+                                        backgroundColor: WidgetStatePropertyAll(
+                                            kBtnGrayColor),
+                                        foregroundColor: WidgetStatePropertyAll(
+                                            kFourthColor)),
+                                    onPressed: () => Get.to(
+                                        () => const AllAppointmentScreen()),
+                                    child: const Text("View All")),
+                              )
+                            ],
                           ),
                           GestureDetector(
                             onTap: () {
@@ -298,28 +318,41 @@ class _DesktopHomeScreenState extends State<DesktopHomeScreen> {
                         height: 40,
                       ),
                       Obx(
-                        () => LoadingStateWidget(
-                            paddingTop:
-                                MediaQuery.of(context).size.height * 0.1,
-                            paddingBottom:
-                                MediaQuery.of(context).size.height * 0.1,
-                            loadingState:
-                                _appointmentController.getLoadingState,
-                            loadingSuccessWidget: AppointmentList(
-                              appointments:
-                                  _appointmentController.appointmentList,
-                            ),
-                            loadingInitWidget: Padding(
-                              padding: EdgeInsets.only(
-                                  top: MediaQuery.of(context).size.height * 0.1,
-                                  bottom:
-                                      MediaQuery.of(context).size.height * 0.1),
-                              child: LoadFailWidget(
-                                function: () {
-                                  _appointmentController.callAppointments();
-                                },
-                              ),
-                            )),
+                        () => _appointmentController
+                                .todayAppointmentList.isEmpty
+                            ? const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 80),
+                                child: Center(
+                                  child: Text(
+                                    "No Appointments on this date!",
+                                    style: mobileTitleStyle,
+                                  ),
+                                ),
+                              )
+                            : LoadingStateWidget(
+                                paddingTop:
+                                    MediaQuery.of(context).size.height * 0.1,
+                                paddingBottom:
+                                    MediaQuery.of(context).size.height * 0.1,
+                                loadingState:
+                                    _appointmentController.getLoadingState,
+                                loadingSuccessWidget: AppointmentList(
+                                  appointments: _appointmentController
+                                      .todayAppointmentList,
+                                ),
+                                loadingInitWidget: Padding(
+                                  padding: EdgeInsets.only(
+                                      top: MediaQuery.of(context).size.height *
+                                          0.1,
+                                      bottom:
+                                          MediaQuery.of(context).size.height *
+                                              0.1),
+                                  child: LoadFailWidget(
+                                    function: () {
+                                      _appointmentController.callAppointments();
+                                    },
+                                  ),
+                                )),
                       ),
                       const SizedBox(
                         height: 40,
@@ -388,7 +421,7 @@ class DeleteBtn extends StatelessWidget {
                     height: 20,
                   ),
                   Text(
-                    "Are you sure to delete?",
+                    "Are you sure to cancel this appointment?",
                     textAlign: TextAlign.center,
                     style: TextStyle(color: kErrorColor),
                   ),
@@ -397,7 +430,7 @@ class DeleteBtn extends StatelessWidget {
         );
       },
       child: const Text(
-        "Delete",
+        "Cancel",
         style: TextStyle(color: kErrorColor),
       ),
     );
@@ -420,7 +453,7 @@ class AppointmentList extends StatelessWidget {
         crossAxisSpacing: 5,
         mainAxisExtent: 265,
       ),
-      itemCount: _appointmentController.appointmentList.length,
+      itemCount: appointments.length,
       itemBuilder: (context, index) => AppointmentCard(
         appointment: appointments[index],
       ).showCursorOnHover.moveUpOnHover,

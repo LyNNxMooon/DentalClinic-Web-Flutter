@@ -28,6 +28,10 @@ class AppointmentController extends BaseController {
 
   RxList<AppointmentVO> alertAppointmentList = <AppointmentVO>[].obs;
 
+  RxList<AppointmentVO> todayAppointmentList = <AppointmentVO>[].obs;
+
+  RxString date = "".obs;
+
   @override
   void onInit() {
     callAppointments();
@@ -112,6 +116,8 @@ class AppointmentController extends BaseController {
   }
 
   callAppointments() async {
+    String today = DateFormat('yMMMMd').format(DateTime.now());
+    todayAppointmentList.clear();
     setLoadingState = LoadingState.loading;
     _firebaseService.getAppointmentListStream().listen(
       (event) {
@@ -119,6 +125,12 @@ class AppointmentController extends BaseController {
           setLoadingState = LoadingState.error;
         } else {
           appointmentList.value = event;
+
+          for (AppointmentVO appointment in event) {
+            if (appointment.date == today) {
+              todayAppointmentList.add(appointment);
+            }
+          }
           setLoadingState = LoadingState.complete;
         }
       },
