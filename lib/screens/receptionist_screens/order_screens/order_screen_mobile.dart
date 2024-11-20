@@ -173,6 +173,8 @@ class _OrderTileState extends State<OrderTile> {
 
   late TextEditingController _feeController;
 
+  late TextEditingController _reasonController;
+
   @override
   void initState() {
     super.initState();
@@ -185,6 +187,8 @@ class _OrderTileState extends State<OrderTile> {
         _orderStatus = widget.order.orderStatus;
         _feeController =
             TextEditingController(text: widget.order.deliveryFees.toString());
+        _reasonController =
+            TextEditingController(text: widget.order.orderRejectReason);
         isExpanded = !isExpanded;
       }),
       child: Container(
@@ -284,6 +288,16 @@ class _OrderTileState extends State<OrderTile> {
                           ),
                         ],
                       ),
+                      _orderStatus == "Rejected"
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 15),
+                              child: CustomTextField(
+                                  hintText:
+                                      "Enter a reason to reject this order",
+                                  label: "Order Reject Reason",
+                                  controller: _reasonController),
+                            )
+                          : const SizedBox(),
                       const Gap(15),
                       RichText(
                           text: TextSpan(children: [
@@ -496,7 +510,8 @@ class _OrderTileState extends State<OrderTile> {
                                 widget.order.patientPhone,
                                 widget.order.patientAddress,
                                 _feeController.text,
-                                widget.order.date);
+                                widget.order.date,
+                                _reasonController.text);
                           },
                           child: const Text("Update"))
                     ],

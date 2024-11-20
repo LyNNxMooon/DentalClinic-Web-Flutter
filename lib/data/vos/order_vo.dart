@@ -23,6 +23,8 @@ class OrderVO {
   final String date;
   @JsonKey(name: 'delivery_fees')
   final num deliveryFees;
+  @JsonKey(name: 'order_reject_reason')
+  final String orderRejectReason;
 
   OrderVO(
       {required this.id,
@@ -36,7 +38,8 @@ class OrderVO {
       required this.patientPhone,
       required this.patientAddress,
       required this.date,
-      required this.deliveryFees});
+      required this.deliveryFees,
+      required this.orderRejectReason});
 
   factory OrderVO.fromJson(Map<String, dynamic> json) =>
       _$OrderVOFromJson(json);

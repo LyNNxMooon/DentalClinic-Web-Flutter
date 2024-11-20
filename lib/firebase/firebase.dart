@@ -351,23 +351,23 @@ class FirebaseServices {
 
                   // Create the OrderVO instance
                   final order = OrderVO(
-                    id: orderData['id'],
-                    items: items,
-                    totalPrice: (orderData['total_price'] is int)
-                        ? (orderData['total_price'] as int).toDouble()
-                        : orderData['total_price'], // Handle potential double
-                    orderStatus: orderData['order_status'],
-                    payment: orderData['payment'],
-                    slip: orderData['slip'] ?? "",
-                    patientID: orderData['patient_id'],
-                    patientName: orderData['patient_name'],
-                    patientPhone: orderData['patient_phone'],
-                    patientAddress: orderData['patient_address'],
-                    date: orderData['date'],
-                    deliveryFees: (orderData['delivery_fees'] is int)
-                        ? (orderData['delivery_fees'] as int).toDouble()
-                        : orderData['delivery_fees'],
-                  );
+                      id: orderData['id'],
+                      items: items,
+                      totalPrice: (orderData['total_price'] is int)
+                          ? (orderData['total_price'] as int).toDouble()
+                          : orderData['total_price'], // Handle potential double
+                      orderStatus: orderData['order_status'],
+                      payment: orderData['payment'],
+                      slip: orderData['slip'] ?? "",
+                      patientID: orderData['patient_id'],
+                      patientName: orderData['patient_name'],
+                      patientPhone: orderData['patient_phone'],
+                      patientAddress: orderData['patient_address'],
+                      date: orderData['date'],
+                      deliveryFees: (orderData['delivery_fees'] is int)
+                          ? (orderData['delivery_fees'] as int).toDouble()
+                          : orderData['delivery_fees'],
+                      orderRejectReason: orderData['order_reject_reason']);
 
                   return order;
                 } else {

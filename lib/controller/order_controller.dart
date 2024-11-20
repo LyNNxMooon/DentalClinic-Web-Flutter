@@ -53,11 +53,25 @@ class OrderController extends BaseController {
       int patientPhone,
       String patientAddress,
       String fees,
-      String date) async {
+      String date,
+      String rejectReason) async {
     RegExp letterRegExp = RegExp(r'[a-zA-Z]');
     if (letterRegExp.hasMatch(fees)) {
       setLoadingState = LoadingState.error;
-      setErrorMessage = "Invalid Inputs!";
+      setErrorMessage = "Delivery fees must be numbers!";
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () {
+            Get.back();
+          },
+        ),
+      );
+    } else if (status == "Rejected" && rejectReason.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Enter reason to reject this order!";
       showDialog(
         barrierDismissible: false,
         context: context,
@@ -72,6 +86,7 @@ class OrderController extends BaseController {
       setLoadingState = LoadingState.loading;
 
       final orderVo = OrderVO(
+          orderRejectReason: status == "Rejected" ? rejectReason : "",
           deliveryFees: fees.isEmpty ? 0.0 : double.parse(fees),
           date: date,
           id: id,
