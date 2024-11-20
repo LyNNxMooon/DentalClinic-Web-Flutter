@@ -117,7 +117,7 @@ class AppointmentController extends BaseController {
 
   callAppointments() async {
     String today = DateFormat('yMMMMd').format(DateTime.now());
-    todayAppointmentList.clear();
+    todayAppointmentList.value = <AppointmentVO>[];
     setLoadingState = LoadingState.loading;
     _firebaseService.getAppointmentListStream().listen(
       (event) {

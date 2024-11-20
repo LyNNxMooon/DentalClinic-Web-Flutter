@@ -34,6 +34,10 @@ class TreatmentController extends BaseController {
 
   Rxn<Uint8List> selectFile = Rxn<Uint8List>();
 
+  RxList<TreatmentVO> todayTreatmentList = <TreatmentVO>[].obs;
+
+  RxString date = "".obs;
+
   @override
   void onInit() {
     callTreatments();
@@ -52,6 +56,8 @@ class TreatmentController extends BaseController {
   }
 
   callTreatments() async {
+    String today = DateFormat('yMMMMd').format(DateTime.now());
+    todayTreatmentList.value = <TreatmentVO>[];
     setLoadingState = LoadingState.loading;
     _firebaseService.getTreatmentListStream().listen(
       (event) {
@@ -59,6 +65,11 @@ class TreatmentController extends BaseController {
           setLoadingState = LoadingState.error;
         } else {
           treatmentList.value = event;
+          for (TreatmentVO treatment in event) {
+            if (treatment.date == today) {
+              todayTreatmentList.add(treatment);
+            }
+          }
           setLoadingState = LoadingState.complete;
         }
       },

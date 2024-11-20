@@ -19,6 +19,7 @@ import 'package:dental_clinic/screens/receptionist_screens/emergency_saving_scre
 import 'package:dental_clinic/screens/receptionist_screens/home_screen/home_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/patient_management_screens/patient_management_screen.dart';
 import 'package:dental_clinic/screens/receptionist_screens/profile_screens/profile_screen.dart';
+import 'package:dental_clinic/screens/receptionist_screens/treatment_management_screens/all_treatment_screen.dart';
 import 'package:dental_clinic/utils/file_picker_utils.dart';
 import 'package:dental_clinic/utils/hover_extensions.dart';
 
@@ -30,6 +31,7 @@ import 'package:dental_clinic/widgets/no_connection_desktop_widget.dart';
 import 'package:dental_clinic/widgets/textfield.dart';
 
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 final _filePicker = FilePickerUtils();
@@ -250,10 +252,27 @@ class _DesktopTreatmentManagementScreenState
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Management Treatments",
-                          style: TextStyle(
-                              fontSize: 30, fontWeight: FontWeight.bold),
+                        Row(
+                          children: [
+                            const Text(
+                              "Today's Treatments",
+                              style: TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.bold),
+                            ),
+                            const Gap(15),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: TextButton(
+                                  style: const ButtonStyle(
+                                      backgroundColor:
+                                          WidgetStatePropertyAll(kBtnGrayColor),
+                                      foregroundColor:
+                                          WidgetStatePropertyAll(kFourthColor)),
+                                  onPressed: () =>
+                                      Get.to(() => const AllTreatmentScreen()),
+                                  child: const Text("View All")),
+                            )
+                          ],
                         ),
                         GestureDetector(
                           onTap: () {
@@ -276,25 +295,39 @@ class _DesktopTreatmentManagementScreenState
                       height: 40,
                     ),
                     Obx(
-                      () => LoadingStateWidget(
-                          paddingTop: MediaQuery.of(context).size.height * 0.1,
-                          paddingBottom:
-                              MediaQuery.of(context).size.height * 0.1,
-                          loadingState: _treatmentController.getLoadingState,
-                          loadingSuccessWidget: TreatmentList(
-                            treatments: _treatmentController.treatmentList,
-                          ),
-                          loadingInitWidget: Padding(
-                            padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.1,
-                                bottom:
-                                    MediaQuery.of(context).size.height * 0.1),
-                            child: LoadFailWidget(
-                              function: () {
-                                _treatmentController.callTreatments();
-                              },
-                            ),
-                          )),
+                      () => _treatmentController.todayTreatmentList.isEmpty
+                          ? const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 80),
+                              child: Center(
+                                child: Text(
+                                  "No Treatments on this date!",
+                                  style: mobileTitleStyle,
+                                ),
+                              ),
+                            )
+                          : LoadingStateWidget(
+                              paddingTop:
+                                  MediaQuery.of(context).size.height * 0.1,
+                              paddingBottom:
+                                  MediaQuery.of(context).size.height * 0.1,
+                              loadingState:
+                                  _treatmentController.getLoadingState,
+                              loadingSuccessWidget: TreatmentList(
+                                treatments:
+                                    _treatmentController.todayTreatmentList,
+                              ),
+                              loadingInitWidget: Padding(
+                                padding: EdgeInsets.only(
+                                    top: MediaQuery.of(context).size.height *
+                                        0.1,
+                                    bottom: MediaQuery.of(context).size.height *
+                                        0.1),
+                                child: LoadFailWidget(
+                                  function: () {
+                                    _treatmentController.callTreatments();
+                                  },
+                                ),
+                              )),
                     ),
                     const SizedBox(
                       height: 50,
