@@ -496,7 +496,7 @@ class _UpdatePharmacyDialogState extends State<UpdatePharmacyDialog> {
                 groupValue: isOutOfStock,
                 onChanged: (String? value) {
                   setState(() {
-                    _isOutOfStock = value; // Update the selected gender
+                    isOutOfStock = value; // Update the selected gender
                   });
                 },
               ),
@@ -509,7 +509,7 @@ class _UpdatePharmacyDialogState extends State<UpdatePharmacyDialog> {
                 groupValue: isOutOfStock,
                 onChanged: (String? value) {
                   setState(() {
-                    _isOutOfStock = value; // Update the selected gender
+                    isOutOfStock = value; // Update the selected gender
                   });
                 },
               ),

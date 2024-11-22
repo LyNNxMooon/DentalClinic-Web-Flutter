@@ -368,8 +368,8 @@ class UpdatePharmacyDialog extends StatefulWidget {
 class _UpdatePharmacyDialogState extends State<UpdatePharmacyDialog> {
   late TextEditingController _nameController;
   late TextEditingController _priceController;
-  String? isOutOfStock = "InStock";
 
+  String? isOutOfStock = "InStock";
   @override
   void initState() {
     _nameController = TextEditingController(text: widget.pharmacy.name);
@@ -465,7 +465,7 @@ class _UpdatePharmacyDialogState extends State<UpdatePharmacyDialog> {
                 groupValue: isOutOfStock,
                 onChanged: (String? value) {
                   setState(() {
-                    _isOutOfStock = value; // Update the selected gender
+                    isOutOfStock = value;
                   });
                 },
               ),
@@ -478,7 +478,7 @@ class _UpdatePharmacyDialogState extends State<UpdatePharmacyDialog> {
                 groupValue: isOutOfStock,
                 onChanged: (String? value) {
                   setState(() {
-                    _isOutOfStock = value; // Update the selected gender
+                    isOutOfStock = value; // Update the selected gender
                   });
                 },
               ),
