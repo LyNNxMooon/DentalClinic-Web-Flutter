@@ -39,6 +39,77 @@ class AppointmentController extends BaseController {
     super.onInit();
   }
 
+  Future changeAppointmentStatus(
+      BuildContext context,
+      int id,
+      int doctorId,
+      String doctorName,
+      String patientId,
+      String patientName,
+      int patientPhone,
+      String date,
+      String time,
+      String status,
+      String rejectReason) async {
+    if (status == "Cancelled" && rejectReason.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please write the reason to reject the appointment.";
+      Fluttertoast.showToast(
+          msg: getErrorMessage,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: kErrorColor,
+          textColor: kPrimaryColor,
+          fontSize: 20);
+    } else {
+      setLoadingState = LoadingState.loading;
+      final appointment = AppointmentVO(
+          rejectReason: rejectReason,
+          status: status,
+          id: id,
+          doctorId: doctorId,
+          doctorName: doctorName,
+          patientId: patientId,
+          patientName: patientName,
+          patientPhone: patientPhone,
+          date: date,
+          time: time);
+
+      return _firebaseService.saveAppointment(appointment).then(
+        (value) {
+          setLoadingState = LoadingState.complete;
+
+          callAppointments();
+
+          Get.back();
+
+          Fluttertoast.showToast(
+              msg: "Appointment Status Updated!",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 2,
+              backgroundColor: kSuccessColor,
+              textColor: kFourthColor,
+              fontSize: 20);
+        },
+      ).catchError((error) {
+        setLoadingState = LoadingState.error;
+        setErrorMessage = error;
+        Fluttertoast.showToast(
+            msg: getErrorMessage,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 2,
+            backgroundColor: kErrorColor,
+            textColor: kPrimaryColor,
+            fontSize: 20);
+      });
+    }
+
+    update();
+  }
+
   Future addAppointment(
       String? date, String? time, BuildContext context) async {
     if (doctor.value == null) {
@@ -72,6 +143,8 @@ class AppointmentController extends BaseController {
       int id = DateTime.now().millisecondsSinceEpoch;
 
       final appointment = AppointmentVO(
+          rejectReason: "",
+          status: "Pending",
           id: id,
           doctorId: doctor.value!.id,
           doctorName: doctor.value!.name,

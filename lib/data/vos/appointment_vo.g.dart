@@ -16,6 +16,8 @@ AppointmentVO _$AppointmentVOFromJson(Map<String, dynamic> json) =>
       patientPhone: (json['patient_phone'] as num).toInt(),
       date: json['date'] as String,
       time: json['time'] as String,
+      status: json['status'] as String,
+      rejectReason: json['reject_reason'] as String,
     );
 
 Map<String, dynamic> _$AppointmentVOToJson(AppointmentVO instance) =>
@@ -28,4 +30,6 @@ Map<String, dynamic> _$AppointmentVOToJson(AppointmentVO instance) =>
       'patient_phone': instance.patientPhone,
       'date': instance.date,
       'time': instance.time,
+      'status': instance.status,
+      'reject_reason': instance.rejectReason,
     };

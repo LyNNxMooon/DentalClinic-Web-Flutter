@@ -451,7 +451,7 @@ class AppointmentList extends StatelessWidget {
         crossAxisCount: 4,
         mainAxisSpacing: 5.0,
         crossAxisSpacing: 5,
-        mainAxisExtent: 265,
+        mainAxisExtent: 300,
       ),
       itemCount: appointments.length,
       itemBuilder: (context, index) => AppointmentCard(
@@ -461,89 +461,240 @@ class AppointmentList extends StatelessWidget {
   }
 }
 
-class AppointmentCard extends StatelessWidget {
+class AppointmentCard extends StatefulWidget {
   const AppointmentCard({super.key, required this.appointment});
 
   final AppointmentVO appointment;
 
   @override
+  State<AppointmentCard> createState() => _AppointmentCardState();
+}
+
+class _AppointmentCardState extends State<AppointmentCard> {
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(7),
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      decoration: BoxDecoration(
-        border: Border.all(width: 0.5),
-        borderRadius: BorderRadius.circular(8), //border corner radius
-      ),
-      child: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Icon(Icons.date_range),
-              const SizedBox(
-                height: 15,
-              ),
-              RichText(
-                  text: TextSpan(children: [
-                TextSpan(
-                    text: appointment.date,
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
-              ])),
-              const SizedBox(
-                height: 15,
-              ),
-              RichText(
-                  text: TextSpan(children: [
-                TextSpan(
-                    text: appointment.time,
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
-              ])),
-              const SizedBox(
-                height: 15,
-              ),
-              Center(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      RichText(
-                          text: TextSpan(children: [
-                        TextSpan(
-                          text: "Doctor : ${appointment.doctorName}",
-                        ),
-                      ])),
-                    ],
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => UpdateAppointmentDialog(
+            appointment: widget.appointment,
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.all(7),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        decoration: BoxDecoration(
+          border: Border.all(width: 0.5),
+          borderRadius: BorderRadius.circular(8), //border corner radius
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Icon(Icons.date_range),
+                const SizedBox(
+                  height: 15,
+                ),
+                RichText(
+                    text: TextSpan(children: [
+                  TextSpan(
+                      text: widget.appointment.date,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                ])),
+                const SizedBox(
+                  height: 15,
+                ),
+                RichText(
+                    text: TextSpan(children: [
+                  TextSpan(
+                      text: widget.appointment.time,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                ])),
+                const SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  widget.appointment.status,
+                  style: TextStyle(
+                      color: widget.appointment.status == "Pending"
+                          ? kThirdColor
+                          : widget.appointment.status == "Completed"
+                              ? kSuccessColor
+                              : kErrorColor),
+                ),
+                widget.appointment.status == "Cancelled"
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: TextButton(
+                            onPressed: () => showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    content:
+                                        Text(widget.appointment.rejectReason),
+                                  ),
+                                ),
+                            child: const Text(
+                              "View Reason",
+                              style: TextStyle(
+                                  color: kSecondaryColor,
+                                  fontWeight: FontWeight.bold),
+                            )),
+                      )
+                    : const SizedBox(),
+                const SizedBox(
+                  height: 15,
+                ),
+                Center(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        RichText(
+                            text: TextSpan(children: [
+                          TextSpan(
+                            text: "Doctor : ${widget.appointment.doctorName}",
+                          ),
+                        ])),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Center(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      RichText(
-                          text: TextSpan(children: [
-                        TextSpan(
-                          text: "Patient : ${appointment.patientName}",
-                        ),
-                      ])),
-                    ],
+                const SizedBox(
+                  height: 15,
+                ),
+                Center(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        RichText(
+                            text: TextSpan(children: [
+                          TextSpan(
+                            text: "Patient : ${widget.appointment.patientName}",
+                          ),
+                        ])),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              DeleteBtn(function: () {
-                _appointmentController.deleteAppointments(appointment.id);
-              })
-            ],
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class UpdateAppointmentDialog extends StatefulWidget {
+  const UpdateAppointmentDialog({super.key, required this.appointment});
+
+  final AppointmentVO appointment;
+  @override
+  State<UpdateAppointmentDialog> createState() =>
+      _UpdateAppointmentDialogState();
+}
+
+class _UpdateAppointmentDialogState extends State<UpdateAppointmentDialog> {
+  String? _status;
+
+  late TextEditingController _reasonController;
+
+  @override
+  void initState() {
+    _status = widget.appointment.status;
+    _reasonController =
+        TextEditingController(text: widget.appointment.rejectReason);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      actions: [
+        TextButton(
+            style: const ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(kSecondaryColor)),
+            onPressed: () {
+              _appointmentController.changeAppointmentStatus(
+                  context,
+                  widget.appointment.id,
+                  widget.appointment.doctorId,
+                  widget.appointment.doctorName,
+                  widget.appointment.patientId,
+                  widget.appointment.patientName,
+                  widget.appointment.patientPhone,
+                  widget.appointment.date,
+                  widget.appointment.time,
+                  _status ?? "Pending",
+                  _reasonController.text);
+            },
+            child: const Text(
+              "Update",
+              style: TextStyle(color: kPrimaryColor),
+            ))
+      ],
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            "Change appointment Status",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const Gap(20),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: RadioListTile<String>(
+                  title: const Text('Pending'),
+                  value: 'Pending',
+                  groupValue: _status,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _status = value;
+                    });
+                  },
+                ),
+              ),
+              Expanded(
+                child: RadioListTile<String>(
+                  title: const Text('Completed'),
+                  value: 'Completed',
+                  groupValue: _status,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _status = value;
+                    });
+                  },
+                ),
+              ),
+              Expanded(
+                child: RadioListTile<String>(
+                  title: const Text('Cancelled'),
+                  value: 'Cancelled',
+                  groupValue: _status,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _status = value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          _status == "Cancelled"
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: CustomTextField(
+                      hintText: "Enter reason to cancel this appointment",
+                      label: "Cancel Reason",
+                      controller: _reasonController),
+                )
+              : const SizedBox()
+        ],
       ),
     );
   }

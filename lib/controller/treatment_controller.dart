@@ -48,7 +48,8 @@ class TreatmentController extends BaseController {
   getTodayAppointments() {
     todayAppointments.value = [];
     for (AppointmentVO appointment in _appointmentController.appointmentList) {
-      if (appointment.date == DateFormat('yMMMMd').format(todayDate)) {
+      if (appointment.date == DateFormat('yMMMMd').format(todayDate) &&
+          appointment.status == "Pending") {
         todayAppointments.add(appointment);
       }
     }
@@ -250,8 +251,15 @@ class TreatmentController extends BaseController {
                 const SuccessWidget(message: "New Treatment Added!"),
           ).then((value) {
             callTreatments();
+
             Get.back();
           });
+
+          selectedAppointment.value?.status = "Completed";
+
+          _firebaseService.saveAppointment(selectedAppointment.value!);
+
+          _appointmentController.callAppointments();
 
           selectedAppointment.value = null;
           selectedPayment.value = null;

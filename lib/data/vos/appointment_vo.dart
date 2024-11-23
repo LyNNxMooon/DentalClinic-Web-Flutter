@@ -17,6 +17,9 @@ class AppointmentVO {
   final int patientPhone;
   final String date;
   final String time;
+  String status;
+  @JsonKey(name: 'reject_reason')
+  final String rejectReason;
 
   // Updated fromJson to handle nested deserialization
 
@@ -28,7 +31,9 @@ class AppointmentVO {
       required this.patientName,
       required this.patientPhone,
       required this.date,
-      required this.time});
+      required this.time,
+      required this.status,
+      required this.rejectReason});
 
   factory AppointmentVO.fromJson(Map<String, dynamic> json) =>
       _$AppointmentVOFromJson(json);
