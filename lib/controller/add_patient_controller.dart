@@ -189,6 +189,7 @@ class AddPatientController extends BaseController {
         (value) {
           String id = FirebaseAuth.instance.currentUser?.uid ?? '';
           final patientVo = PatientVO(
+              banReason: '',
               address: address.text,
               allergicMedicine:
                   allergicMedicine.text.isEmpty ? "Non" : allergicMedicine.text,

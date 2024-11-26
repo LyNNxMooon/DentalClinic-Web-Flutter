@@ -5,6 +5,8 @@ import 'package:dental_clinic/controller/base_controller.dart';
 import 'package:dental_clinic/data/vos/patient_vo.dart';
 import 'package:dental_clinic/firebase/firebase.dart';
 import 'package:dental_clinic/utils/enums.dart';
+import 'package:dental_clinic/widgets/error_widget.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
@@ -46,48 +48,65 @@ class PatientManagementController extends BaseController {
       String gender,
       int phone,
       String address,
-      String allergicMedicine) async {
+      String allergicMedicine,
+      TextEditingController banReason,
+      BuildContext context) async {
     setLoadingState = LoadingState.loading;
 
-    final patient = PatientVO(
-        address: address,
-        allergicMedicine: allergicMedicine,
-        phone: phone,
-        id: id,
-        url: url,
-        name: name,
-        isBanned: isBanned,
-        age: age,
-        gender: gender);
+    if (isBanned && banReason.text.isEmpty) {
+      setLoadingState = LoadingState.error;
+      setErrorMessage = "Please write the reason to ban this user!";
+      showDialog(
+        context: context,
+        builder: (context) => CustomErrorWidget(
+          errorMessage: getErrorMessage,
+          function: () => Get.back(),
+        ),
+      );
+    } else {
+      final patient = PatientVO(
+          banReason: banReason.text,
+          address: address,
+          allergicMedicine: allergicMedicine,
+          phone: phone,
+          id: id,
+          url: url,
+          name: name,
+          isBanned: isBanned,
+          age: age,
+          gender: gender);
 
-    _firebaseService.savePatient(patient).then(
-      (value) {
-        setLoadingState = LoadingState.complete;
+      _firebaseService.savePatient(patient).then(
+        (value) {
+          setLoadingState = LoadingState.complete;
+          Fluttertoast.showToast(
+              msg: "Patient Status Updated!",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 2,
+              backgroundColor: kSuccessColor,
+              textColor: kFourthColor,
+              fontSize: 20);
+          banReason.clear();
+          Get.back();
+          Get.back();
+          callPatients();
+        },
+      ).catchError((error) {
+        print(error);
+        setLoadingState = LoadingState.error;
+        setErrorMessage = error;
         Fluttertoast.showToast(
-            msg: "Patient Banned!",
+            msg: getErrorMessage,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 2,
-            backgroundColor: kSuccessColor,
-            textColor: kFourthColor,
+            backgroundColor: kErrorColor,
+            textColor: kPrimaryColor,
             fontSize: 20);
+      });
+    }
 
-        Get.back();
-        callPatients();
-      },
-    ).catchError((error) {
-      print(error);
-      setLoadingState = LoadingState.error;
-      setErrorMessage = error;
-      Fluttertoast.showToast(
-          msg: getErrorMessage,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 2,
-          backgroundColor: kErrorColor,
-          textColor: kPrimaryColor,
-          fontSize: 20);
-    });
     update();
   }
 }

@@ -7,16 +7,16 @@ part of 'patient_vo.dart';
 // **************************************************************************
 
 PatientVO _$PatientVOFromJson(Map<String, dynamic> json) => PatientVO(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      phone: (json['phone'] as num).toInt(),
-      address: json['address'] as String,
-      allergicMedicine: json['allergic_medicine'] as String,
-      isBanned: json['is_banned'] as bool,
-      url: json['url'] as String,
-      age: (json['age'] as num).toInt(),
-      gender: json['gender'] as String,
-    );
+    id: json['id'] as String,
+    name: json['name'] as String,
+    phone: (json['phone'] as num).toInt(),
+    address: json['address'] as String,
+    allergicMedicine: json['allergic_medicine'] as String,
+    isBanned: json['is_banned'] as bool,
+    url: json['url'] as String,
+    age: (json['age'] as num).toInt(),
+    gender: json['gender'] as String,
+    banReason: json['ban_reason'] as String);
 
 Map<String, dynamic> _$PatientVOToJson(PatientVO instance) => <String, dynamic>{
       'id': instance.id,
@@ -28,4 +28,5 @@ Map<String, dynamic> _$PatientVOToJson(PatientVO instance) => <String, dynamic>{
       'url': instance.url,
       'age': instance.age,
       'gender': instance.gender,
+      'ban_reason': instance.banReason
     };

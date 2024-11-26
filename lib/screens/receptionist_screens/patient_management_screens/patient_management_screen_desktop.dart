@@ -504,6 +504,7 @@ class PatientTile extends StatefulWidget {
 }
 
 class _PatientTileState extends State<PatientTile> {
+  final banReasonController = TextEditingController();
   bool isDrop = false;
   @override
   Widget build(BuildContext context) {
@@ -543,7 +544,9 @@ class _PatientTileState extends State<PatientTile> {
                                 widget.patient.gender,
                                 widget.patient.phone,
                                 widget.patient.address,
-                                widget.patient.allergicMedicine);
+                                widget.patient.allergicMedicine,
+                                banReasonController,
+                                context);
                           },
                         ),
                         loadingInitWidget: UnbanBtn(
@@ -557,7 +560,9 @@ class _PatientTileState extends State<PatientTile> {
                                 widget.patient.gender,
                                 widget.patient.phone,
                                 widget.patient.address,
-                                widget.patient.allergicMedicine);
+                                widget.patient.allergicMedicine,
+                                banReasonController,
+                                context);
                           },
                         ),
                         paddingTop: 0,
@@ -569,6 +574,7 @@ class _PatientTileState extends State<PatientTile> {
                         loadingState:
                             _patientManagementController.getLoadingState,
                         loadingSuccessWidget: BanBtn(
+                          reasonController: banReasonController,
                           function: () {
                             _patientManagementController.banOrUnbanPatient(
                                 widget.patient.id,
@@ -579,10 +585,13 @@ class _PatientTileState extends State<PatientTile> {
                                 widget.patient.gender,
                                 widget.patient.phone,
                                 widget.patient.address,
-                                widget.patient.allergicMedicine);
+                                widget.patient.allergicMedicine,
+                                banReasonController,
+                                context);
                           },
                         ),
                         loadingInitWidget: BanBtn(
+                          reasonController: banReasonController,
                           function: () {
                             _patientManagementController.banOrUnbanPatient(
                                 widget.patient.id,
@@ -593,7 +602,9 @@ class _PatientTileState extends State<PatientTile> {
                                 widget.patient.gender,
                                 widget.patient.phone,
                                 widget.patient.address,
-                                widget.patient.allergicMedicine);
+                                widget.patient.allergicMedicine,
+                                banReasonController,
+                                context);
                           },
                         ),
                         paddingTop: 0,
@@ -677,6 +688,27 @@ class _PatientTileState extends State<PatientTile> {
                             ),
                           ),
                         ),
+                        widget.patient.banReason.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 15),
+                                child: SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.35,
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "Banned Reason : ${widget.patient.banReason}",
+                                          style: const TextStyle(
+                                              color: kErrorColor),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : const SizedBox()
                       ],
                     )
                   : SizedBox(
@@ -799,9 +831,12 @@ class UnbanBtn extends StatelessWidget {
 }
 
 class BanBtn extends StatelessWidget {
-  const BanBtn({super.key, required this.function});
+  const BanBtn(
+      {super.key, required this.function, required this.reasonController});
 
   final VoidCallback function;
+
+  final TextEditingController reasonController;
 
   @override
   Widget build(BuildContext context) {
@@ -830,7 +865,42 @@ class BanBtn extends StatelessWidget {
                         width: 20,
                       ),
                       TextButton(
-                        onPressed: function,
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              actions: [
+                                TextButton(
+                                    style: const ButtonStyle(
+                                        backgroundColor: WidgetStatePropertyAll(
+                                            kSecondaryColor)),
+                                    onPressed: function,
+                                    child: const Text(
+                                      "Ban",
+                                      style: TextStyle(color: kPrimaryColor),
+                                    ))
+                              ],
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                    "Write a reason to ban this user",
+                                    style: TextStyle(
+                                        fontSize: 19,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  CustomTextField(
+                                      hintText: "Enter reason to ban",
+                                      label: "Reason",
+                                      controller: reasonController)
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                         style: const ButtonStyle(
                             backgroundColor:
                                 WidgetStatePropertyAll(kSecondaryColor)),

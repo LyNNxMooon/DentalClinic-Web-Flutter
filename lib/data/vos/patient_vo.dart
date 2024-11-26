@@ -14,6 +14,8 @@ class PatientVO {
   final String url;
   final int age;
   final String gender;
+  @JsonKey(name: 'ban_reason')
+  final String banReason;
 
   PatientVO(
       {required this.id,
@@ -24,7 +26,8 @@ class PatientVO {
       required this.isBanned,
       required this.url,
       required this.age,
-      required this.gender});
+      required this.gender,
+      required this.banReason});
 
   factory PatientVO.fromJson(Map<String, dynamic> json) =>
       _$PatientVOFromJson(json);
